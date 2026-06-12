@@ -4,6 +4,10 @@ import { filter } from 'rxjs/operators';
 import { Command } from '../models/command';
 import { CommandRegistry } from './command-registry';
 
+interface RouteWithLoadedChildren extends Route {
+	_loadedRoutes?: Route[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class RouterCommandExtractor {
 	private readonly router: Router = inject(Router);
@@ -76,10 +80,9 @@ export class RouterCommandExtractor {
 				commands.push(...this.walkRoutes(route.children, fullPath));
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			if ((route as any)._loadedRoutes) {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				commands.push(...this.walkRoutes((route as any)._loadedRoutes as Route[], fullPath));
+			const loadedRoutes: Route[] | undefined = (route as RouteWithLoadedChildren)._loadedRoutes;
+			if (loadedRoutes) {
+				commands.push(...this.walkRoutes(loadedRoutes, fullPath));
 			}
 		}
 
