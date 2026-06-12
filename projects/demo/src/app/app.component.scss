@@ -25,3 +25,60 @@ kbd {
 	border: 1px solid #e2e8f0;
 	border-radius: 4px;
 }
+
+.page-nav {
+	display: flex;
+	gap: 16px;
+
+	a {
+		color: #3b82f6;
+		text-decoration: none;
+		font-weight: 500;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+.examples {
+	margin: 24px 0;
+	padding: 20px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+
+	h3 {
+		margin: 0 0 16px;
+		font-size: 16px;
+	}
+}
+
+.example-group {
+	margin-bottom: 16px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	h4 {
+		margin: 0 0 4px;
+		font-size: 14px;
+		color: #334155;
+	}
+
+	ul {
+		margin: 0;
+		padding-left: 20px;
+		color: #64748b;
+		font-size: 14px;
+		line-height: 1.8;
+	}
+
+	.note {
+		font-size: 13px;
+		color: #94a3b8;
+		font-style: italic;
+		margin: 2px 0 6px;
+	}
+}

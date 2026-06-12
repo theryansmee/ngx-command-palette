@@ -1,4 +1,4 @@
-import { Injectable, inject, signal, computed, effect, DestroyRef, Signal, WritableSignal } from '@angular/core';
+import { Injectable, inject, signal, computed, effect, untracked, DestroyRef, Signal, WritableSignal } from '@angular/core';
 import { Command, ScoredCommand, SearchProvider } from '../models/command';
 import { CommandRegistry } from './command-registry';
 import { SearchEngine } from './search-engine';
@@ -107,7 +107,7 @@ export class CommandPaletteService {
 	#dispatchAsyncSearchOnQueryChange(): void {
 		effect(() => {
 			const query: string = this.#query();
-			this.#asyncSearch.search(query);
+			untracked(() => this.#asyncSearch.search(query));
 		});
 	}
 }
