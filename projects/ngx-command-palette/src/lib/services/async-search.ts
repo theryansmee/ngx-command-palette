@@ -66,11 +66,11 @@ export class AsyncSearchCoordinator {
 	}
 
 	public clear(): void {
-		this.#providerStates.update((map: Map<string, ProviderState>) => {
-			for (const state of map.values()) {
-				state.querySubject.next('');
-			}
+		for (const state of this.#providerStates().values()) {
+			state.querySubject.next('');
+		}
 
+		this.#providerStates.update((map: Map<string, ProviderState>) => {
 			const updated: Map<string, ProviderState> = new Map(map);
 
 			for (const [
@@ -218,10 +218,12 @@ export class AsyncSearchCoordinator {
 	public destroyProvider(providerId: string): void {
 		const state: ProviderState | undefined = this.#providerStates().get(providerId);
 
-		if (state) {
-			state.subscription?.unsubscribe();
-			state.querySubject.complete();
+		if (!state) {
+			return;
 		}
+
+		state.subscription?.unsubscribe();
+		state.querySubject.complete();
 
 		this.#providerStates.update((map: Map<string, ProviderState>) => {
 			const updated: Map<string, ProviderState> = new Map(map);

@@ -76,8 +76,9 @@ export class SearchEngine {
 		}
 
 		const regexPattern: string = pattern
+			.replace(/\*\*/g, '<<<GLOBSTAR>>>')
 			.replace(/\*/g, '[^/]*')
-			.replace(/\*\*/g, '.*');
+			.replace(/<<<GLOBSTAR>>>/g, '.*');
 
 		const regex: RegExp = new RegExp(`^${regexPattern}$`);
 		return regex.test(normalizedUrl);

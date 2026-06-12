@@ -1,8 +1,8 @@
 <div class="cmd-footer">
 	<span class="cmd-footer-hint"><kbd>↑↓</kbd> Navigate</span>
 	<span class="cmd-footer-hint"><kbd>↵</kbd> Select</span>
-	@for (hint of prefixHints(); track hint.prefix) {
-		<span class="cmd-footer-hint"><kbd>{{ hint.prefix }}</kbd> {{ hint.category }}</span>
-	}
+		@for (hint of prefixHints(); track hint.prefix) {
+			<span class="cmd-footer-hint"><kbd>{{ hint.prefix }}</kbd> {{ hint.category }}</span>
+		}
 	<span class="cmd-footer-hint"><kbd>Esc</kbd> Close</span>
 </div>

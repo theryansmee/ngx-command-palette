@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, Signal, WritableSignal, effect } from '@angular/core';
 import { CommandPaletteService } from '../../services/command-palette.service';
 import { ScoredCommand, Command } from '../../models/command';
-import { AsyncSearchCoordinator } from '../../services/async-search';
 import { CmdGroupComponent } from '../group/group.component';
 import { CmdItemComponent } from '../item/item.component';
 import { CmdEmptyComponent } from '../empty/empty.component';
@@ -30,11 +29,9 @@ interface CommandGroup {
 export class CmdListComponent {
 	readonly #palette: CommandPaletteService = inject(CommandPaletteService);
 
-	readonly #asyncSearch: AsyncSearchCoordinator = inject(AsyncSearchCoordinator);
-
 	readonly #activeIndex: WritableSignal<number> = signal<number>(0);
 
-	public readonly loading: Signal<boolean> = this.#asyncSearch.loading;
+	public readonly loading: Signal<boolean> = this.#palette.loading;
 
 	constructor() {
 		this.#resetSelectionOnQueryChange();

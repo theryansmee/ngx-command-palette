@@ -225,6 +225,28 @@ describe('SearchEngine', () => {
 		expect(results[0].command.id).toBe('admin-only');
 	});
 
+	it('should match double-star glob patterns across multiple segments', () => {
+		Object.defineProperty(router, 'url', { get: () => '/admin/users/edit/42' });
+
+		registry.register([
+			makeCommand({
+				id: 'deep-admin',
+				label: 'Deep Admin Action',
+				context: { routes: ['/admin/**'] },
+			}),
+			makeCommand({
+				id: 'shallow-admin',
+				label: 'Shallow Admin Action',
+				context: { routes: ['/admin/*'] },
+			}),
+		]);
+
+		const results: ScoredCommand[] = engine.search('admin');
+		const ids: string[] = results.map((result: ScoredCommand) => result.command.id);
+		expect(ids).toContain('deep-admin');
+		expect(ids).not.toContain('shallow-admin');
+	});
+
 	it('should hide commands when context.when() returns false', () => {
 		registry.register([
 			makeCommand({
