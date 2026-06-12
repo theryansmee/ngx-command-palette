@@ -1,5 +1,6 @@
-import { Injectable, inject, PLATFORM_ID, signal, computed } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID, signal, computed, WritableSignal, Signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { CommandPaletteConfig } from '../models/command';
 import { COMMAND_PALETTE_CONFIG } from '../provide';
 
 const STORAGE_KEY: string = 'ngx-command-palette-recent';
@@ -7,10 +8,10 @@ const STORAGE_KEY: string = 'ngx-command-palette-recent';
 @Injectable({ providedIn: 'root' })
 export class RecentCommandsStore {
 	private readonly platformId: object = inject(PLATFORM_ID);
-	private readonly config = inject(COMMAND_PALETTE_CONFIG);
-	private readonly recentIds = signal<string[]>(this.load());
+	private readonly config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
+	private readonly recentIds: WritableSignal<string[]> = signal<string[]>(this.load());
 
-	public readonly ids = computed(() => this.recentIds());
+	public readonly ids: Signal<string[]> = computed(() => this.recentIds());
 
 	public record(commandId: string): void {
 		this.recentIds.update((ids: string[]) => {

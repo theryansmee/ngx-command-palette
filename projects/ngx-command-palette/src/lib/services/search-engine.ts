@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Command, ScoredCommand } from '../models/command';
+import { Command, ScoredCommand, CommandPaletteConfig } from '../models/command';
 import { CommandRegistry } from './command-registry';
 import { RecentCommandsStore } from './recent-store';
 import { COMMAND_PALETTE_CONFIG } from '../provide';
@@ -7,9 +7,9 @@ import { fuzzyMatch } from '../utils/fuzzy-match';
 
 @Injectable({ providedIn: 'root' })
 export class SearchEngine {
-	private readonly registry = inject(CommandRegistry);
-	private readonly recentStore = inject(RecentCommandsStore);
-	private readonly config = inject(COMMAND_PALETTE_CONFIG);
+	private readonly registry: CommandRegistry = inject(CommandRegistry);
+	private readonly recentStore: RecentCommandsStore = inject(RecentCommandsStore);
+	private readonly config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
 
 	public search(query: string): ScoredCommand[] {
 		const commands: Command[] = this.registry.commands();
@@ -57,7 +57,6 @@ export class SearchEngine {
 	}
 
 	private getDefaultResults(commands: Command[]): ScoredCommand[] {
-		const recentIds: string[] = this.recentStore.ids();
 		const scored: ScoredCommand[] = [];
 
 		for (const command of commands) {

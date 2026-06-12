@@ -66,7 +66,9 @@ export class RouterCommandExtractor {
 					icon: config?.['icon'] as string | undefined,
 					keywords: (config?.['keywords'] as string[] | undefined) ?? [],
 					priority: (config?.['priority'] as number | undefined) ?? 0,
-					action: (): void => { this.router.navigate(['/' + fullPath]); },
+					action: (): void => {
+						this.router.navigate(['/' + fullPath]); 
+					},
 				});
 			}
 

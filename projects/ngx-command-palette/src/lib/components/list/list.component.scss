@@ -1,0 +1,6 @@
+:host {
+	display: block;
+	max-height: var(--cmd-max-height, 400px);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}

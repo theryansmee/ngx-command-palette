@@ -1,0 +1,15 @@
+@if (groups().length === 0) {
+	<cmd-empty />
+} @else {
+	@for (group of groups(); track group.category) {
+		<cmd-group [heading]="group.category">
+			@for (item of group.items; track item.command.id) {
+				<cmd-item
+					[command]="item.command"
+					[isActive]="item.command.id === activeCommandId()"
+					(selected)="onSelect($event)"
+				/>
+			}
+		</cmd-group>
+	}
+}

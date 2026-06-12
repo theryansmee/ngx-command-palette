@@ -1,0 +1,33 @@
+:host {
+	position: fixed;
+	z-index: 9999;
+	top: 0;
+	left: 0;
+}
+
+.cmd-backdrop {
+	position: fixed;
+	inset: 0;
+	background: var(--cmd-backdrop, rgba(0, 0, 0, 0.5));
+	z-index: 9999;
+}
+
+.cmd-dialog {
+	position: fixed;
+	top: 20%;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 10000;
+	width: var(--cmd-width, 640px);
+	max-width: calc(100vw - 32px);
+	background: var(--cmd-bg, #ffffff);
+	border: 1px solid var(--cmd-border, #e2e8f0);
+	border-radius: var(--cmd-border-radius, 12px);
+	box-shadow: var(--cmd-shadow, 0 16px 70px rgba(0, 0, 0, 0.2));
+	overflow: hidden;
+}
+
+.cmd-divider {
+	height: 1px;
+	background: var(--cmd-border, #e2e8f0);
+}

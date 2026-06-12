@@ -1,10 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject, effect, PLATFORM_ID, HostListener, viewChild, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, Signal, PLATFORM_ID, viewChild, OnDestroy, computed } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Overlay, OverlayRef, OverlayModule } from '@angular/cdk/overlay';
-import { ComponentPortal, PortalModule } from '@angular/cdk/portal';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { PortalModule } from '@angular/cdk/portal';
 import { A11yModule } from '@angular/cdk/a11y';
 import { CommandPaletteService } from '../../services/command-palette.service';
 import { COMMAND_PALETTE_CONFIG } from '../../provide';
+import { CommandPaletteConfig } from '../../models/command';
 import { CmdInputComponent } from '../input/input.component';
 import { CmdListComponent } from '../list/list.component';
 import { CmdFooterComponent } from '../footer/footer.component';
@@ -21,56 +22,21 @@ import { CmdFooterComponent } from '../footer/footer.component';
 		CmdListComponent,
 		CmdFooterComponent,
 	],
-	template: `
-		@if (palette.isOpen()) {
-			<div class="cmd-backdrop" (click)="palette.close()"></div>
-			<div class="cmd-dialog" role="dialog" aria-label="Command palette" cdkTrapFocus>
-				<cmd-input (keydown)="onKeydown($event)" />
-				<div class="cmd-divider"></div>
-				<cmd-list />
-				<cmd-footer />
-			</div>
-		}
-	`,
-	styles: [`
-		:host {
-			position: fixed;
-			z-index: 9999;
-			top: 0;
-			left: 0;
-		}
-		.cmd-backdrop {
-			position: fixed;
-			inset: 0;
-			background: var(--cmd-backdrop, rgba(0, 0, 0, 0.5));
-			z-index: 9999;
-		}
-		.cmd-dialog {
-			position: fixed;
-			top: 20%;
-			left: 50%;
-			transform: translateX(-50%);
-			z-index: 10000;
-			width: var(--cmd-width, 640px);
-			max-width: calc(100vw - 32px);
-			background: var(--cmd-bg, #ffffff);
-			border: 1px solid var(--cmd-border, #e2e8f0);
-			border-radius: var(--cmd-border-radius, 12px);
-			box-shadow: var(--cmd-shadow, 0 16px 70px rgba(0, 0, 0, 0.2));
-			overflow: hidden;
-		}
-		.cmd-divider {
-			height: 1px;
-			background: var(--cmd-border, #e2e8f0);
-		}
-	`],
+	templateUrl: './palette.component.html',
+	styleUrl: './palette.component.scss',
 })
 export class CmdPaletteComponent implements OnDestroy {
 	public readonly palette: CommandPaletteService = inject(CommandPaletteService);
-	private readonly config = inject(COMMAND_PALETTE_CONFIG);
+	private readonly config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
 	private readonly platformId: object = inject(PLATFORM_ID);
 
-	private readonly listComponent = viewChild(CmdListComponent);
+	private readonly listComponent: Signal<CmdListComponent | undefined> = viewChild(CmdListComponent);
+
+	public readonly activeDescendantId: Signal<string | null> = computed(() => {
+		const list: CmdListComponent | undefined = this.listComponent();
+		const id: string | null = list?.activeCommandId() ?? null;
+		return id ? `cmd-item-${id}` : null;
+	});
 
 	private keydownListener: ((e: KeyboardEvent) => void) | null = null;
 

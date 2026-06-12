@@ -1,0 +1,13 @@
+<input
+	#inputEl
+	type="text"
+	role="combobox"
+	aria-expanded="true"
+	aria-controls="cmd-listbox"
+	aria-autocomplete="list"
+	[attr.aria-activedescendant]="activeDescendantId()"
+	[placeholder]="config.placeholder"
+	[value]="palette.query()"
+	(input)="onInput($event)"
+	(keydown)="inputKeydown.emit($event)"
+/>

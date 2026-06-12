@@ -1,12 +1,12 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, WritableSignal, Signal } from '@angular/core';
 import { Command } from '../models/command';
 
 @Injectable({ providedIn: 'root' })
 export class CommandRegistry {
-	private readonly commandMap = signal<Map<string, Command>>(new Map());
-	private readonly sourceMap = signal<Map<string, Set<string>>>(new Map());
+	private readonly commandMap: WritableSignal<Map<string, Command>> = signal<Map<string, Command>>(new Map());
+	private readonly sourceMap: WritableSignal<Map<string, Set<string>>> = signal<Map<string, Set<string>>>(new Map());
 
-	public readonly commands = computed(() => [...this.commandMap().values()]);
+	public readonly commands: Signal<Command[]> = computed(() => [...this.commandMap().values()]);
 
 	public register(commands: Command[], source: string = 'manual'): void {
 		this.commandMap.update((map: Map<string, Command>) => {

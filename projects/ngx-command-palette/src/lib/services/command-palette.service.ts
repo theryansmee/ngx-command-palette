@@ -1,9 +1,8 @@
-import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
-import { Command } from '../models/command';
+import { Injectable, inject, signal, computed, DestroyRef, Signal, WritableSignal } from '@angular/core';
+import { Command, ScoredCommand } from '../models/command';
 import { CommandRegistry } from './command-registry';
 import { SearchEngine } from './search-engine';
 import { RecentCommandsStore } from './recent-store';
-import { ScoredCommand } from '../models/command';
 
 @Injectable({ providedIn: 'root' })
 export class CommandPaletteService {
@@ -11,13 +10,13 @@ export class CommandPaletteService {
 	private readonly searchEngine: SearchEngine = inject(SearchEngine);
 	private readonly recentStore: RecentCommandsStore = inject(RecentCommandsStore);
 
-	private readonly _isOpen = signal<boolean>(false);
-	private readonly _query = signal<string>('');
+	private readonly _isOpen: WritableSignal<boolean> = signal<boolean>(false);
+	private readonly _query: WritableSignal<string> = signal<string>('');
 
-	public readonly isOpen = this._isOpen.asReadonly();
-	public readonly query = this._query.asReadonly();
+	public readonly isOpen: Signal<boolean> = this._isOpen.asReadonly();
+	public readonly query: Signal<string> = this._query.asReadonly();
 
-	public readonly results = computed<ScoredCommand[]>(() => {
+	public readonly results: Signal<ScoredCommand[]> = computed<ScoredCommand[]>(() => {
 		return this.searchEngine.search(this._query());
 	});
 

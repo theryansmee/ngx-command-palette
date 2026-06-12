@@ -1,0 +1,42 @@
+:host {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	height: var(--cmd-item-height, 44px);
+	padding: 0 16px;
+	color: var(--cmd-item-color, #334155);
+	cursor: pointer;
+	user-select: none;
+}
+
+:host(:hover) {
+	background: var(--cmd-item-hover-bg, #f1f5f9);
+}
+
+:host(.active) {
+	background: var(--cmd-item-active-bg, #e2e8f0);
+}
+
+.cmd-item-icon {
+	flex-shrink: 0;
+	width: 20px;
+	text-align: center;
+	opacity: 0.7;
+}
+
+.cmd-item-label {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.cmd-item-shortcut {
+	flex-shrink: 0;
+	padding: 2px 6px;
+	font-size: 12px;
+	background: var(--cmd-shortcut-bg, #f1f5f9);
+	color: var(--cmd-shortcut-color, #64748b);
+	border: 1px solid var(--cmd-shortcut-border, #e2e8f0);
+	border-radius: 4px;
+}

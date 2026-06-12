@@ -1,0 +1,12 @@
+:host {
+	display: block;
+}
+
+.cmd-group-heading {
+	padding: 8px 16px 4px;
+	font-size: var(--cmd-group-heading-size, 12px);
+	font-weight: 500;
+	color: var(--cmd-group-heading-color, #64748b);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}

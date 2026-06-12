@@ -1,0 +1,19 @@
+:host {
+	display: block;
+}
+
+input {
+	width: 100%;
+	height: var(--cmd-input-height, 56px);
+	padding: 0 16px;
+	border: none;
+	outline: none;
+	font-size: var(--cmd-input-font-size, 16px);
+	color: var(--cmd-input-color, #1a1a1a);
+	background: transparent;
+	box-sizing: border-box;
+}
+
+input::placeholder {
+	color: var(--cmd-input-placeholder, #94a3b8);
+}

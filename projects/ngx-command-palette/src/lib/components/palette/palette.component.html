@@ -1,0 +1,9 @@
+@if (palette.isOpen()) {
+	<div class="cmd-backdrop" (click)="palette.close()"></div>
+	<div class="cmd-dialog" role="dialog" aria-label="Command palette" cdkTrapFocus>
+		<cmd-input [activeDescendantId]="activeDescendantId()" (inputKeydown)="onKeydown($event)" />
+		<div class="cmd-divider"></div>
+		<cmd-list />
+		<cmd-footer />
+	</div>
+}

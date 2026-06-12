@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, Signal, WritableSignal, effect } from '@angular/core';
 import { CommandPaletteService } from '../../services/command-palette.service';
 import { ScoredCommand, Command } from '../../models/command';
 import { CmdGroupComponent } from '../group/group.component';
@@ -23,40 +23,22 @@ interface CommandGroup {
 		'id': 'cmd-listbox',
 		'role': 'listbox',
 	},
-	template: `
-		@if (groups().length === 0) {
-			<cmd-empty />
-		} @else {
-			@for (group of groups(); track group.category) {
-				<cmd-group [heading]="group.category">
-					@for (item of group.items; track item.command.id) {
-						<cmd-item
-							[command]="item.command"
-							[isActive]="item.command.id === activeCommandId()"
-							(selected)="onSelect($event)"
-						/>
-					}
-				</cmd-group>
-			}
-		}
-	`,
-	styles: [`
-		:host {
-			display: block;
-			max-height: var(--cmd-max-height, 400px);
-			overflow-y: auto;
-			overscroll-behavior: contain;
-		}
-	`],
+	templateUrl: './list.component.html',
+	styleUrl: './list.component.scss',
 })
 export class CmdListComponent {
 	private readonly palette: CommandPaletteService = inject(CommandPaletteService);
 
-	private readonly _activeIndex = signal<number>(0);
+	private readonly _activeIndex: WritableSignal<number> = signal<number>(0);
 
-	public readonly flatItems = computed<ScoredCommand[]>(() => this.palette.results());
+	constructor() {
+		effect(() => {
+			this.palette.query();
+			this._activeIndex.set(0);
+		});
+	}
 
-	public readonly groups = computed<CommandGroup[]>(() => {
+	public readonly groups: Signal<CommandGroup[]> = computed<CommandGroup[]>(() => {
 		const results: ScoredCommand[] = this.palette.results();
 		const groupMap: Map<string, ScoredCommand[]> = new Map();
 
@@ -70,10 +52,15 @@ export class CmdListComponent {
 		return [...groupMap.entries()].map(([
 			category,
 			items,
-		]: [string, ScoredCommand[]]) => ({ category, items }));
+		]: [string, ScoredCommand[]
+]) => ({ category, items }));
 	});
 
-	public readonly activeCommandId = computed<string | null>(() => {
+	public readonly flatItems: Signal<ScoredCommand[]> = computed<ScoredCommand[]>(() => {
+		return this.groups().flatMap((g: CommandGroup) => g.items);
+	});
+
+	public readonly activeCommandId: Signal<string | null> = computed<string | null>(() => {
 		const items: ScoredCommand[] = this.flatItems();
 		const index: number = this._activeIndex();
 
