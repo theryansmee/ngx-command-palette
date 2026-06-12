@@ -4,6 +4,8 @@ export { CommandRegistry } from './lib/services/command-registry';
 export { SearchEngine } from './lib/services/search-engine';
 export { RecentCommandsStore } from './lib/services/recent-store';
 export { RouterCommandExtractor } from './lib/services/router-extractor';
+export { ProviderRegistry } from './lib/services/provider-registry';
+export { AsyncSearchCoordinator } from './lib/services/async-search';
 export { CmdPaletteComponent } from './lib/components/palette/palette.component';
 export { CmdInputComponent } from './lib/components/input/input.component';
 export { CmdListComponent } from './lib/components/list/list.component';

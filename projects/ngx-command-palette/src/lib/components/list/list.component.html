@@ -1,5 +1,9 @@
 @if (groups().length === 0) {
-	<cmd-empty />
+	@if (loading()) {
+		<div class="cmd-loading">Searching...</div>
+	} @else {
+		<cmd-empty />
+	}
 } @else {
 	@for (group of groups(); track group.category) {
 		<cmd-group [heading]="group.category">
@@ -11,5 +15,8 @@
 				/>
 			}
 		</cmd-group>
+	}
+	@if (loading()) {
+		<div class="cmd-loading">Searching...</div>
 	}
 }

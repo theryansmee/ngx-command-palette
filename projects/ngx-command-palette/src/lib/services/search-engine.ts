@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Command, ScoredCommand, CommandPaletteConfig } from '../models/command';
+import { Router } from '@angular/router';
+import { Command, CommandContext, ScoredCommand, CommandPaletteConfig } from '../models/command';
 import { CommandRegistry } from './command-registry';
 import { RecentCommandsStore } from './recent-store';
 import { COMMAND_PALETTE_CONFIG } from '../provide';
@@ -13,8 +14,10 @@ export class SearchEngine {
 
 	readonly #config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
 
+	readonly #router: Router = inject(Router);
+
 	public search(query: string): ScoredCommand[] {
-		const commands: Command[] = this.#registry.commands();
+		const commands: Command[] = this.#getVisibleCommands();
 
 		if (!query.trim()) {
 			return this.#getDefaultResults(commands);
@@ -32,6 +35,52 @@ export class SearchEngine {
 
 		scored.sort((first: ScoredCommand, second: ScoredCommand) => second.score - first.score);
 		return scored.slice(0, this.#config.maxResults);
+	}
+
+	#getVisibleCommands(): Command[] {
+		const allCommands: Command[] = this.#registry.commands();
+		const currentUrl: string = this.#router.url;
+
+		return allCommands.filter((command: Command) => this.#isCommandVisible(command, currentUrl));
+	}
+
+	#isCommandVisible(command: Command, currentUrl: string): boolean {
+		const context: CommandContext | undefined = command.context;
+
+		if (!context) {
+			return true;
+		}
+
+		if (context.routes && context.routes.length > 0) {
+			const matchesRoute: boolean = context.routes.some(
+				(pattern: string) => this.#matchRoutePattern(currentUrl, pattern),
+			);
+
+			if (!matchesRoute) {
+				return false;
+			}
+		}
+
+		if (context.when && !context.when()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	#matchRoutePattern(url: string, pattern: string): boolean {
+		const normalizedUrl: string = url.split('?')[0].split('#')[0];
+
+		if (pattern === '*' || pattern === '**') {
+			return true;
+		}
+
+		const regexPattern: string = pattern
+			.replace(/\*/g, '[^/]*')
+			.replace(/\*\*/g, '.*');
+
+		const regex: RegExp = new RegExp(`^${regexPattern}$`);
+		return regex.test(normalizedUrl);
 	}
 
 	#scoreCommand(command: Command, query: string): number {

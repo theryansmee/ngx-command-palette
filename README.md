@@ -1,6 +1,6 @@
 # @theryansmee/ngx-command-palette
 
-A keyboard-driven command palette for Angular. Routes are auto-registered from your Router config - zero setup required. Add custom commands, fuzzy search, recent command tracking, and full keyboard navigation out of the box.
+A keyboard-driven command palette for Angular. Routes are auto-registered from your Router config - zero setup required. Add custom commands, async search providers, contextual visibility, and full keyboard navigation out of the box.
 
 Inspired by tools like Linear, GitHub, and Raycast.
 
@@ -8,6 +8,9 @@ Inspired by tools like Linear, GitHub, and Raycast.
 
 - **Auto-registers routes** - walks your Angular Router config and creates searchable commands from every route with a `title`
 - **Lazy-load aware** - re-scans routes as lazy modules load
+- **Async search providers** - register API-backed search sources with per-provider debounce and loading states
+- **Prefix routing** - scope providers behind prefixes (`@` for users, `#` for tickets) so they only fire when needed
+- **Contextual commands** - show or hide commands based on the current route or dynamic conditions
 - **Fuzzy search** - built-in scoring that ranks exact matches, prefix matches, word boundary matches, and character-by-character fuzzy matches
 - **Keyword search** - add extra search terms to any command
 - **Recent commands** - tracks recently used commands in localStorage with a configurable recency boost
@@ -112,14 +115,14 @@ Routes with a `title` property are auto-registered with no extra config:
 
 ```typescript
 { path: 'dashboard', component: DashboardComponent, title: 'Dashboard' }
-// → Appears as "Dashboard" in the palette, navigates to /dashboard
+// -> Appears as "Dashboard" in the palette, navigates to /dashboard
 ```
 
 Routes without a `title` still get registered - the label is generated from the path:
 
 ```typescript
 { path: 'user-settings', component: UserSettingsComponent }
-// → Appears as "User Settings" in the palette
+// -> Appears as "User Settings" in the palette
 ```
 
 ### Enriching Routes
@@ -252,6 +255,35 @@ this.palette.register(commands, this.destroyRef);
 
 Without a `DestroyRef`, commands persist until manually deregistered or the app is destroyed.
 
+### Contextual Commands
+
+Commands can be scoped to specific routes or dynamic conditions using the `context` property:
+
+```typescript
+this.palette.register(
+  [
+    {
+      id: 'delete-project',
+      label: 'Delete Project',
+      category: 'Danger',
+      action: () => this.deleteProject(),
+      context: {
+        routes: ['/projects/*'],       // Only visible on /projects/* pages
+        when: () => this.canDelete(),  // And only when the user has permission
+      },
+    },
+  ],
+  this.destroyRef,
+);
+```
+
+Context rules:
+
+- **`routes`** - an array of glob patterns matched against the current URL. Supports `*` (single segment) and `**` (any depth).
+- **`when`** - a function that returns `boolean`. Re-evaluated each time the palette opens or the query changes.
+- If both are provided, both must pass for the command to be visible.
+- Commands without a `context` are always visible.
+
 ### Command Interface
 
 ```typescript
@@ -264,7 +296,121 @@ interface Command {
   shortcut?: string;                       // Display-only shortcut hint (e.g. "Cmd+N")
   action: () => void | Promise<void>;      // What happens when the command is executed
   priority?: number;                       // Ranking boost (higher = appears first)
+  context?: {
+    routes?: string[];                     // Glob patterns for route visibility
+    when?: () => boolean;                  // Dynamic visibility check
+  };
 }
+```
+
+## Async Search Providers
+
+Register API-backed search sources that return results asynchronously. Results are merged with static commands and grouped by category.
+
+### Basic Provider (Universal)
+
+A provider without a `prefix` fires on every query:
+
+```typescript
+import { Component, inject, DestroyRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs';
+import { CommandPaletteService } from '@theryansmee/ngx-command-palette';
+
+@Component({ ... })
+export class AppComponent {
+  readonly #palette = inject(CommandPaletteService);
+  readonly #destroyRef = inject(DestroyRef);
+  readonly #http = inject(HttpClient);
+
+  constructor() {
+    this.#palette.registerProvider(
+      {
+        id: 'doc-search',
+        category: 'Documentation',
+        minQueryLength: 2,
+        debounce: 300,
+        search: (query) => this.#http.get<Doc[]>(`/api/docs?q=${query}`).pipe(
+          map(docs => docs.map(doc => ({
+            id: `doc:${doc.id}`,
+            label: doc.title,
+            action: () => window.open(doc.url),
+          }))),
+        ),
+      },
+      this.#destroyRef,
+    );
+  }
+}
+```
+
+### Prefixed Provider
+
+A provider with a `prefix` only fires when the user types that prefix. This prevents unnecessary API calls when you have many providers:
+
+```typescript
+this.palette.registerProvider(
+  {
+    id: 'user-search',
+    category: 'Users',
+    prefix: '@',                    // Only fires when query starts with @
+    minQueryLength: 2,
+    debounce: 300,
+    search: (query) => this.userService.search(query).pipe(
+      map(users => users.map(user => ({
+        id: `user:${user.id}`,
+        label: user.name,
+        icon: 'person',
+        action: () => this.router.navigate(['/users', user.id]),
+      }))),
+    ),
+  },
+  this.destroyRef,
+);
+
+this.palette.registerProvider(
+  {
+    id: 'ticket-search',
+    category: 'Tickets',
+    prefix: '#',                    // Only fires when query starts with #
+    minQueryLength: 1,
+    debounce: 200,
+    search: (query) => this.ticketService.search(query).pipe(
+      map(tickets => tickets.map(ticket => ({
+        id: `ticket:${ticket.id}`,
+        label: `${ticket.key}: ${ticket.title}`,
+        action: () => this.router.navigate(['/tickets', ticket.id]),
+      }))),
+    ),
+  },
+  this.destroyRef,
+);
+```
+
+With the above, typing `@john` only hits the user API, typing `#billing` only hits the ticket API, and typing `dashboard` only searches static commands. The prefix is stripped before being passed to the provider's `search` function.
+
+Registered prefixes are automatically shown as hints in the palette footer.
+
+### SearchProvider Interface
+
+```typescript
+interface SearchProvider {
+  id: string;                                        // Unique identifier
+  category: string;                                  // Group heading for results
+  search: (query: string) => Observable<Command[]>;  // The search function
+  prefix?: string;                                   // Prefix trigger (e.g. '@', '#')
+  debounce?: number;                                 // Debounce in ms (default: 300)
+  minQueryLength?: number;                           // Minimum chars before searching (default: 1)
+  order?: number;                                    // Category sort order
+}
+```
+
+### Loading State
+
+The palette shows a "Searching..." indicator while async providers are in-flight. You can also read the loading state programmatically:
+
+```typescript
+const isLoading: boolean = this.palette.loading();
 ```
 
 ## Programmatic Control
@@ -294,6 +440,7 @@ palette.execute(someCommand);
 const isOpen: boolean = palette.isOpen();
 const query: string = palette.query();
 const results: ScoredCommand[] = palette.results();
+const isLoading: boolean = palette.loading();
 ```
 
 ## Keyboard Shortcuts
@@ -318,10 +465,10 @@ The built-in search engine uses a multi-signal scoring approach:
 | Label starts with query | 80 | Label begins with the query |
 | Word boundary match | 60 | Query matches at a word boundary |
 | Fuzzy substring match | 40 | Characters appear in order within the label |
-| Fuzzy character match | 0–35 | Characters match with gaps (consecutive matches score higher) |
+| Fuzzy character match | 0-35 | Characters match with gaps (consecutive matches score higher) |
 | Keyword match | Capped below label | Keywords contribute but never outrank a label match |
 | Recent command boost | +4 to +20 | Recently used commands get a boost (most recent = highest) |
-| Priority boost | `priority * 2` | Manual priority multiplier |
+| Priority boost | `priority * 10` | Manual priority multiplier |
 
 When the query is empty, commands are sorted by priority (highest first) and limited to `maxResults`.
 
@@ -428,13 +575,15 @@ The main service for interacting with the palette.
 | `toggle` | `() => void` | Toggles the palette open/closed |
 | `updateQuery` | `(query: string) => void` | Updates the search query |
 | `execute` | `(command: Command) => void` | Executes a command, records it as recent, and closes |
-| `register` | `(commands: Command[], destroyRef?: DestroyRef) => void` | Registers commands with optional auto-cleanup |
+| `register` | `(commands: Command[], destroyRef?: DestroyRef) => void` | Registers static commands with optional auto-cleanup |
+| `registerProvider` | `(provider: SearchProvider, destroyRef?: DestroyRef) => void` | Registers an async search provider with optional auto-cleanup |
 
 | Signal | Type | Description |
 |--------|------|-------------|
 | `isOpen` | `Signal<boolean>` | Whether the palette is currently open |
 | `query` | `Signal<string>` | The current search query |
 | `results` | `Signal<ScoredCommand[]>` | The current search results (scored and sorted) |
+| `loading` | `Signal<boolean>` | Whether any async provider is currently searching |
 
 ### `CmdPaletteComponent`
 

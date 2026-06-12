@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
+import { Router, provideRouter } from '@angular/router';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { SearchEngine } from './search-engine';
 import { CommandRegistry } from './command-registry';
@@ -20,6 +21,7 @@ describe('SearchEngine', () => {
 	let engine: SearchEngine;
 	let registry: CommandRegistry;
 	let recentStore: RecentCommandsStore;
+	let router: Router;
 
 	const config: CommandPaletteConfig = {
 		maxResults: 5,
@@ -33,12 +35,14 @@ describe('SearchEngine', () => {
 			providers: [
 				{ provide: PLATFORM_ID, useValue: 'browser' },
 				{ provide: COMMAND_PALETTE_CONFIG, useValue: config },
+				provideRouter([]),
 			],
 		});
 
 		engine = TestBed.inject(SearchEngine);
 		registry = TestBed.inject(CommandRegistry);
 		recentStore = TestBed.inject(RecentCommandsStore);
+		router = TestBed.inject(Router);
 	});
 
 	it('should return all commands for an empty query', () => {
@@ -178,5 +182,103 @@ describe('SearchEngine', () => {
 
 		const results: ScoredCommand[] = engine.search('');
 		expect(results.length).toBe(config.maxResults);
+	});
+
+	it('should show commands without a context on any route', () => {
+		registry.register([makeCommand({ id: 'global', label: 'Global Action' })]);
+
+		const results: ScoredCommand[] = engine.search('global');
+		expect(results.length).toBe(1);
+	});
+
+	it('should hide commands whose context.routes do not match the current URL', () => {
+		Object.defineProperty(router, 'url', { get: () => '/settings' });
+
+		registry.register([
+			makeCommand({
+				id: 'admin-only',
+				label: 'Admin Action',
+				context: { routes: ['/admin/*'] },
+			}),
+			makeCommand({ id: 'global', label: 'Global Action' }),
+		]);
+
+		const results: ScoredCommand[] = engine.search('action');
+		const ids: string[] = results.map((result: ScoredCommand) => result.command.id);
+		expect(ids).toContain('global');
+		expect(ids).not.toContain('admin-only');
+	});
+
+	it('should show commands whose context.routes match the current URL', () => {
+		Object.defineProperty(router, 'url', { get: () => '/admin/users' });
+
+		registry.register([
+			makeCommand({
+				id: 'admin-only',
+				label: 'Admin Action',
+				context: { routes: ['/admin/*'] },
+			}),
+		]);
+
+		const results: ScoredCommand[] = engine.search('admin');
+		expect(results.length).toBe(1);
+		expect(results[0].command.id).toBe('admin-only');
+	});
+
+	it('should hide commands when context.when() returns false', () => {
+		registry.register([
+			makeCommand({
+				id: 'conditional',
+				label: 'Conditional Action',
+				context: { when: () => false },
+			}),
+			makeCommand({ id: 'always', label: 'Always Visible' }),
+		]);
+
+		const results: ScoredCommand[] = engine.search('');
+		const ids: string[] = results.map((result: ScoredCommand) => result.command.id);
+		expect(ids).toContain('always');
+		expect(ids).not.toContain('conditional');
+	});
+
+	it('should show commands when context.when() returns true', () => {
+		registry.register([
+			makeCommand({
+				id: 'conditional',
+				label: 'Conditional Action',
+				context: { when: () => true },
+			}),
+		]);
+
+		const results: ScoredCommand[] = engine.search('conditional');
+		expect(results.length).toBe(1);
+	});
+
+	it('should require both context.routes and context.when to pass', () => {
+		Object.defineProperty(router, 'url', { get: () => '/admin/dashboard' });
+
+		registry.register([
+			makeCommand({
+				id: 'both-pass',
+				label: 'Both Pass',
+				context: { routes: ['/admin/*'], when: () => true },
+			}),
+			makeCommand({
+				id: 'route-pass-when-fail',
+				label: 'Route Pass When Fail',
+				context: { routes: ['/admin/*'], when: () => false },
+			}),
+			makeCommand({
+				id: 'route-fail-when-pass',
+				label: 'Route Fail When Pass',
+				context: { routes: ['/settings/*'], when: () => true },
+			}),
+		]);
+
+		const results: ScoredCommand[] = engine.search('');
+		const ids: string[] = results.map((result: ScoredCommand) => result.command.id);
+		expect(ids).toContain('both-pass');
+		expect(ids).not.toContain('route-pass-when-fail');
+		expect(ids).not.toContain('route-fail-when-pass');
 	});
 });
