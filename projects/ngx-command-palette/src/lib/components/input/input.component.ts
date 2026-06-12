@@ -12,18 +12,17 @@ import { COMMAND_PALETTE_CONFIG } from '../../provide';
 })
 export class CmdInputComponent {
 	public readonly inputKeydown: OutputEmitterRef<KeyboardEvent> = output<KeyboardEvent>();
+
 	public readonly activeDescendantId: InputSignal<string | null> = input<string | null>(null);
+
 	public readonly palette: CommandPaletteService = inject(CommandPaletteService);
+
 	public readonly config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
 
-	private readonly inputEl: Signal<ElementRef<HTMLInputElement>> = viewChild.required<ElementRef<HTMLInputElement>>('inputEl');
+	public readonly inputEl: Signal<ElementRef<HTMLInputElement>> = viewChild.required<ElementRef<HTMLInputElement>>('inputEl');
 
 	constructor() {
-		effect(() => {
-			if (this.palette.isOpen()) {
-				setTimeout(() => this.inputEl().nativeElement.focus(), 0);
-			}
-		});
+		this.#focusInputOnOpen();
 	}
 
 	public onInput(event: Event): void {
@@ -31,7 +30,17 @@ export class CmdInputComponent {
 		this.palette.updateQuery(value);
 	}
 
-	public focus(): void {
-		this.inputEl().nativeElement.focus();
+	#focusInputOnOpen(): void {
+		let wasOpen: boolean = false;
+
+		effect(() => {
+			const isOpen: boolean = this.palette.isOpen();
+
+			if (isOpen && !wasOpen) {
+				requestAnimationFrame(() => this.inputEl().nativeElement.focus());
+			}
+
+			wasOpen = isOpen;
+		});
 	}
 }

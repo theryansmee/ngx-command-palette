@@ -6,32 +6,36 @@ import { RecentCommandsStore } from './recent-store';
 
 @Injectable({ providedIn: 'root' })
 export class CommandPaletteService {
-	private readonly registry: CommandRegistry = inject(CommandRegistry);
-	private readonly searchEngine: SearchEngine = inject(SearchEngine);
-	private readonly recentStore: RecentCommandsStore = inject(RecentCommandsStore);
+	readonly #registry: CommandRegistry = inject(CommandRegistry);
 
-	private readonly _isOpen: WritableSignal<boolean> = signal<boolean>(false);
-	private readonly _query: WritableSignal<string> = signal<string>('');
+	readonly #searchEngine: SearchEngine = inject(SearchEngine);
 
-	public readonly isOpen: Signal<boolean> = this._isOpen.asReadonly();
-	public readonly query: Signal<string> = this._query.asReadonly();
+	readonly #recentStore: RecentCommandsStore = inject(RecentCommandsStore);
+
+	readonly #isOpen: WritableSignal<boolean> = signal<boolean>(false);
+
+	readonly #query: WritableSignal<string> = signal<string>('');
+
+	public readonly isOpen: Signal<boolean> = this.#isOpen.asReadonly();
+
+	public readonly query: Signal<string> = this.#query.asReadonly();
 
 	public readonly results: Signal<ScoredCommand[]> = computed<ScoredCommand[]>(() => {
-		return this.searchEngine.search(this._query());
+		return this.#searchEngine.search(this.#query());
 	});
 
 	public open(initialQuery: string = ''): void {
-		this._query.set(initialQuery);
-		this._isOpen.set(true);
+		this.#query.set(initialQuery);
+		this.#isOpen.set(true);
 	}
 
 	public close(): void {
-		this._isOpen.set(false);
-		this._query.set('');
+		this.#isOpen.set(false);
+		this.#query.set('');
 	}
 
 	public toggle(): void {
-		if (this._isOpen()) {
+		if (this.#isOpen()) {
 			this.close();
 		} else {
 			this.open();
@@ -39,22 +43,22 @@ export class CommandPaletteService {
 	}
 
 	public updateQuery(query: string): void {
-		this._query.set(query);
+		this.#query.set(query);
 	}
 
 	public execute(command: Command): void {
-		this.recentStore.record(command.id);
+		this.#recentStore.record(command.id);
 		this.close();
 		command.action();
 	}
 
 	public register(commands: Command[], destroyRef?: DestroyRef): void {
-		const ids: string[] = commands.map((c: Command) => c.id);
-		this.registry.register(commands);
+		const ids: string[] = commands.map((command: Command) => command.id);
+		this.#registry.register(commands);
 
 		if (destroyRef) {
 			destroyRef.onDestroy(() => {
-				this.registry.deregister(ids);
+				this.#registry.deregister(ids);
 			});
 		}
 	}

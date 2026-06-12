@@ -4,38 +4,38 @@ export interface FuzzyMatchResult {
 }
 
 export function fuzzyMatch(query: string, target: string): FuzzyMatchResult {
-	const q: string = query.toLowerCase();
-	const t: string = target.toLowerCase();
+	const normalizedQuery: string = query.toLowerCase();
+	const normalizedTarget: string = target.toLowerCase();
 
-	if (t === q) {
+	if (normalizedTarget === normalizedQuery) {
 		return { match: true, score: 100 };
 	}
 
-	if (t.includes(q)) {
-		const index: number = t.indexOf(q);
+	if (normalizedTarget.includes(normalizedQuery)) {
+		const index: number = normalizedTarget.indexOf(normalizedQuery);
 
 		if (index === 0) {
 			return { match: true, score: 80 };
 		}
 
-		if (t[index - 1] === ' ') {
+		if (normalizedTarget[index - 1] === ' ') {
 			return { match: true, score: 60 };
 		}
 
 		return { match: true, score: 40 };
 	}
 
-	let qi: number = 0;
+	let queryIndex: number = 0;
 	let score: number = 0;
 	let consecutive: number = 0;
 
-	for (let ti: number = 0; ti < t.length && qi < q.length; ti++) {
-		if (t[ti] === q[qi]) {
-			qi++;
+	for (let targetIndex: number = 0; targetIndex < normalizedTarget.length && queryIndex < normalizedQuery.length; targetIndex++) {
+		if (normalizedTarget[targetIndex] === normalizedQuery[queryIndex]) {
+			queryIndex++;
 			consecutive++;
 			score += consecutive * 2;
 
-			if (ti === 0 || t[ti - 1] === ' ' || t[ti - 1] === '/') {
+			if (targetIndex === 0 || normalizedTarget[targetIndex - 1] === ' ' || normalizedTarget[targetIndex - 1] === '/') {
 				score += 5;
 			}
 		} else {
@@ -43,7 +43,7 @@ export function fuzzyMatch(query: string, target: string): FuzzyMatchResult {
 		}
 	}
 
-	if (qi === q.length) {
+	if (queryIndex === normalizedQuery.length) {
 		return { match: true, score: Math.min(score, 35) };
 	}
 

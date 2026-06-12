@@ -14,7 +14,7 @@
 		"sourceMap": true,
 		"paths": {
 			"ngx-command-palette": [
-				"dist/ngx-command-palette"
+				"projects/ngx-command-palette/src/public-api"
 			]
 		},
 		"declaration": false,

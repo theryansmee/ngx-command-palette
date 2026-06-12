@@ -3,28 +3,29 @@ import { Command } from '../models/command';
 
 @Injectable({ providedIn: 'root' })
 export class CommandRegistry {
-	private readonly commandMap: WritableSignal<Map<string, Command>> = signal<Map<string, Command>>(new Map());
-	private readonly sourceMap: WritableSignal<Map<string, Set<string>>> = signal<Map<string, Set<string>>>(new Map());
+	readonly #commandMap: WritableSignal<Map<string, Command>> = signal<Map<string, Command>>(new Map());
 
-	public readonly commands: Signal<Command[]> = computed(() => [...this.commandMap().values()]);
+	readonly #sourceMap: WritableSignal<Map<string, Set<string>>> = signal<Map<string, Set<string>>>(new Map());
+
+	public readonly commands: Signal<Command[]> = computed(() => [...this.#commandMap().values()]);
 
 	public register(commands: Command[], source: string = 'manual'): void {
-		this.commandMap.update((map: Map<string, Command>) => {
+		this.#commandMap.update((map: Map<string, Command>) => {
 			const updated: Map<string, Command> = new Map(map);
 
-			for (const cmd of commands) {
-				updated.set(cmd.id, cmd);
+			for (const command of commands) {
+				updated.set(command.id, command);
 			}
 
 			return updated;
 		});
 
-		this.sourceMap.update((map: Map<string, Set<string>>) => {
+		this.#sourceMap.update((map: Map<string, Set<string>>) => {
 			const updated: Map<string, Set<string>> = new Map(map);
 			const ids: Set<string> = updated.get(source) ?? new Set();
 
-			for (const cmd of commands) {
-				ids.add(cmd.id);
+			for (const command of commands) {
+				ids.add(command.id);
 			}
 
 			updated.set(source, ids);
@@ -33,7 +34,7 @@ export class CommandRegistry {
 	}
 
 	public deregister(commandIds: string[], source: string = 'manual'): void {
-		this.commandMap.update((map: Map<string, Command>) => {
+		this.#commandMap.update((map: Map<string, Command>) => {
 			const updated: Map<string, Command> = new Map(map);
 
 			for (const id of commandIds) {
@@ -43,14 +44,18 @@ export class CommandRegistry {
 			return updated;
 		});
 
-		this.sourceMap.update((map: Map<string, Set<string>>) => {
+		this.#sourceMap.update((map: Map<string, Set<string>>) => {
 			const updated: Map<string, Set<string>> = new Map(map);
-			const ids: Set<string> | undefined = updated.get(source);
+			const existing: Set<string> | undefined = updated.get(source);
 
-			if (ids) {
+			if (existing) {
+				const filtered: Set<string> = new Set(existing);
+
 				for (const id of commandIds) {
-					ids.delete(id);
+					filtered.delete(id);
 				}
+
+				updated.set(source, filtered);
 			}
 
 			return updated;
@@ -58,7 +63,7 @@ export class CommandRegistry {
 	}
 
 	public registerBatch(source: string, commands: Command[]): void {
-		const existingIds: Set<string> | undefined = this.sourceMap().get(source);
+		const existingIds: Set<string> | undefined = this.#sourceMap().get(source);
 
 		if (existingIds) {
 			this.deregister([...existingIds], source);
@@ -68,6 +73,6 @@ export class CommandRegistry {
 	}
 
 	public getById(id: string): Command | undefined {
-		return this.commandMap().get(id);
+		return this.#commandMap().get(id);
 	}
 }

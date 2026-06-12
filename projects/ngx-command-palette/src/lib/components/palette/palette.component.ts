@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, Signal, PLATFORM_ID, viewChild, OnDestroy, computed } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Component, ChangeDetectionStrategy, inject, Signal, viewChild, computed, HostListener } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { A11yModule } from '@angular/cdk/a11y';
@@ -9,6 +8,14 @@ import { CommandPaletteConfig } from '../../models/command';
 import { CmdInputComponent } from '../input/input.component';
 import { CmdListComponent } from '../list/list.component';
 import { CmdFooterComponent } from '../footer/footer.component';
+
+interface ParsedShortcut {
+	key: string;
+	meta: boolean;
+	ctrl: boolean;
+	shift: boolean;
+	alt: boolean;
+}
 
 @Component({
 	selector: 'cmd-palette',
@@ -25,12 +32,12 @@ import { CmdFooterComponent } from '../footer/footer.component';
 	templateUrl: './palette.component.html',
 	styleUrl: './palette.component.scss',
 })
-export class CmdPaletteComponent implements OnDestroy {
+export class CmdPaletteComponent {
 	public readonly palette: CommandPaletteService = inject(CommandPaletteService);
-	private readonly config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
-	private readonly platformId: object = inject(PLATFORM_ID);
 
-	private readonly listComponent: Signal<CmdListComponent | undefined> = viewChild(CmdListComponent);
+	public readonly listComponent: Signal<CmdListComponent | undefined> = viewChild(CmdListComponent);
+
+	readonly #parsedShortcut: ParsedShortcut;
 
 	public readonly activeDescendantId: Signal<string | null> = computed(() => {
 		const list: CmdListComponent | undefined = this.listComponent();
@@ -38,36 +45,29 @@ export class CmdPaletteComponent implements OnDestroy {
 		return id ? `cmd-item-${id}` : null;
 	});
 
-	private keydownListener: ((e: KeyboardEvent) => void) | null = null;
-
 	constructor() {
-		if (isPlatformBrowser(this.platformId)) {
-			this.keydownListener = (e: KeyboardEvent): void => this.onGlobalKeydown(e);
-			document.addEventListener('keydown', this.keydownListener);
-		}
+		const config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
+		const parts: string[] = (config.shortcut ?? 'meta.k').split('.');
+
+		this.#parsedShortcut = {
+			key: parts[parts.length - 1],
+			meta: parts.includes('meta'),
+			ctrl: parts.includes('ctrl'),
+			shift: parts.includes('shift'),
+			alt: parts.includes('alt'),
+		};
 	}
 
-	public ngOnDestroy(): void {
-		if (this.keydownListener) {
-			document.removeEventListener('keydown', this.keydownListener);
-		}
-	}
-
-	private onGlobalKeydown(event: KeyboardEvent): void {
-		const shortcut: string = this.config.shortcut ?? 'meta.k';
-		const parts: string[] = shortcut.split('.');
-		const key: string = parts[parts.length - 1];
-		const requiresMeta: boolean = parts.includes('meta');
-		const requiresCtrl: boolean = parts.includes('ctrl');
-		const requiresShift: boolean = parts.includes('shift');
-		const requiresAlt: boolean = parts.includes('alt');
+	@HostListener('document:keydown', ['$event'])
+	public onGlobalKeydown(event: KeyboardEvent): void {
+		const shortcut: ParsedShortcut = this.#parsedShortcut;
 
 		if (
-			event.key.toLowerCase() === key.toLowerCase() &&
-			(!requiresMeta || event.metaKey) &&
-			(!requiresCtrl || event.ctrlKey) &&
-			(!requiresShift || event.shiftKey) &&
-			(!requiresAlt || event.altKey)
+			event.key.toLowerCase() === shortcut.key.toLowerCase()
+			&& (!shortcut.meta || event.metaKey)
+			&& (!shortcut.ctrl || event.ctrlKey)
+			&& (!shortcut.shift || event.shiftKey)
+			&& (!shortcut.alt || event.altKey)
 		) {
 			event.preventDefault();
 			this.palette.toggle();

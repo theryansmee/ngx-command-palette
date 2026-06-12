@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, Route, RouteConfigLoadEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Command } from '../models/command';
@@ -10,23 +11,27 @@ interface RouteWithLoadedChildren extends Route {
 
 @Injectable({ providedIn: 'root' })
 export class RouterCommandExtractor {
-	private readonly router: Router = inject(Router);
-	private readonly registry: CommandRegistry = inject(CommandRegistry);
+	readonly #router: Router = inject(Router);
+
+	readonly #registry: CommandRegistry = inject(CommandRegistry);
+
+	readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
 	public init(): void {
-		this.extractAndRegister();
+		this.#extractAndRegister();
 
-		this.router.events.pipe(
-			filter((e: unknown) => e instanceof RouteConfigLoadEnd),
-		).subscribe(() => this.extractAndRegister());
+		this.#router.events.pipe(
+			filter((event: unknown) => event instanceof RouteConfigLoadEnd),
+			takeUntilDestroyed(this.#destroyRef),
+		).subscribe(() => this.#extractAndRegister());
 	}
 
-	private extractAndRegister(): void {
-		const commands: Command[] = this.walkRoutes(this.router.config, '');
-		this.registry.registerBatch('router', commands);
+	#extractAndRegister(): void {
+		const commands: Command[] = this.#walkRoutes(this.#router.config, '');
+		this.#registry.registerBatch('router', commands);
 	}
 
-	private walkRoutes(routes: Route[], parentPath: string): Command[] {
+	#walkRoutes(routes: Route[], parentPath: string): Command[] {
 		const commands: Command[] = [];
 
 		for (const route of routes) {
@@ -60,7 +65,7 @@ export class RouterCommandExtractor {
 
 			const label: string | null = (config?.['label'] as string | undefined)
 				?? (typeof route.title === 'string' ? route.title : null)
-				?? this.pathToLabel(fullPath);
+				?? this.#pathToLabel(fullPath);
 
 			if (label && !hasParams) {
 				commands.push({
@@ -71,28 +76,28 @@ export class RouterCommandExtractor {
 					keywords: (config?.['keywords'] as string[] | undefined) ?? [],
 					priority: (config?.['priority'] as number | undefined) ?? 0,
 					action: (): void => {
-						this.router.navigate(['/' + fullPath]); 
+						this.#router.navigate(['/' + fullPath]);
 					},
 				});
 			}
 
 			if (route.children) {
-				commands.push(...this.walkRoutes(route.children, fullPath));
+				commands.push(...this.#walkRoutes(route.children, fullPath));
 			}
 
 			const loadedRoutes: Route[] | undefined = (route as RouteWithLoadedChildren)._loadedRoutes;
 			if (loadedRoutes) {
-				commands.push(...this.walkRoutes(loadedRoutes, fullPath));
+				commands.push(...this.#walkRoutes(loadedRoutes, fullPath));
 			}
 		}
 
 		return commands;
 	}
 
-	private pathToLabel(path: string): string {
+	#pathToLabel(path: string): string {
 		const last: string = path.split('/').pop() ?? '';
 		return last
 			.replace(/-/g, ' ')
-			.replace(/\b\w/g, (c: string) => c.toUpperCase());
+			.replace(/\b\w/g, (char: string) => char.toUpperCase());
 	}
 }
