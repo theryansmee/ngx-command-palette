@@ -1,0 +1,32 @@
+/* To learn more about this file see: https://angular.dev/reference/configs/workspace-config */
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"ignoreDeprecations": "6.0",
+		"baseUrl": "./",
+		"outDir": "./dist/out-tsc",
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"noImplicitOverride": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"sourceMap": true,
+		"paths": {
+			"ngx-command-palette": [
+				"dist/ngx-command-palette"
+			]
+		},
+		"declaration": false,
+		"moduleResolution": "bundler",
+		"importHelpers": true,
+		"target": "es2022",
+		"module": "es2022"
+	},
+	"angularCompilerOptions": {
+		"enableI18nLegacyMessageIdFormat": false,
+		"strictInjectionParameters": true,
+		"strictInputAccessModifiers": true,
+		"strictTemplates": true
+	}
+}

@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main, angular/*]
+  pull_request:
+    branches: [main, angular/*]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.3
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run lint
+
+      - run: pnpm run test:ci
+
+      - run: pnpm run build:lib
+
+      - run: pnpm run build:demo

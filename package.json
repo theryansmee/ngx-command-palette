@@ -1,0 +1,55 @@
+{
+	"name": "ngx-command-palette-workspace",
+	"version": "0.0.0",
+	"private": true,
+	"packageManager": "pnpm@11.3.0",
+	"scripts": {
+		"ng": "ng",
+		"build:lib": "ng build ngx-command-palette --configuration production",
+		"build:demo": "ng build demo",
+		"start": "pnpm run build:lib && ng serve demo",
+		"test": "ng test ngx-command-palette",
+		"test:ci": "ng test ngx-command-palette --watch=false",
+		"lint": "ng lint",
+		"lint:fix": "ng lint --fix",
+		"prepare": "husky"
+	},
+	"dependencies": {
+		"@angular/animations": "~22.0.0",
+		"@angular/cdk": "~22.0.0",
+		"@angular/common": "~22.0.0",
+		"@angular/compiler": "~22.0.0",
+		"@angular/core": "~22.0.0",
+		"@angular/forms": "~22.0.0",
+		"@angular/platform-browser": "~22.0.0",
+		"@angular/platform-browser-dynamic": "~22.0.0",
+		"@angular/router": "~22.0.0",
+		"rxjs": "~7.8.0",
+		"tslib": "^2.3.0"
+	},
+	"lint-staged": {
+		"*.ts": "eslint --fix",
+		"*.html": "eslint --fix"
+	},
+	"devDependencies": {
+		"@angular-eslint/builder": "^22.0.0",
+		"@angular-eslint/eslint-plugin": "^22.0.0",
+		"@angular-eslint/eslint-plugin-template": "^22.0.0",
+		"@angular-eslint/schematics": "^22.0.0",
+		"@angular-eslint/template-parser": "^22.0.0",
+		"@angular/build": "~22.0.0",
+		"@angular/cli": "~22.0.0",
+		"@angular/compiler-cli": "~22.0.0",
+		"@types/node": "^22.0.0",
+		"@typescript-eslint/eslint-plugin": "^8.33.1",
+		"@typescript-eslint/parser": "^8.33.1",
+		"angular-eslint": "^22.0.0",
+		"eslint": "^9.28.0",
+		"husky": "^9.1.7",
+		"jsdom": "^29.1.1",
+		"lint-staged": "^15.5.2",
+		"ng-packagr": "~22.0.0",
+		"typescript": "~6.0.3",
+		"vitest": "^4.0.8"
+	}
+}

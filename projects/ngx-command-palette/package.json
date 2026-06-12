@@ -1,0 +1,32 @@
+{
+	"name": "@theryansmee/ngx-command-palette",
+	"version": "22.0.0",
+	"description": "A keyboard-driven command palette for Angular. Auto-registers routes from your Router config, supports custom commands and async search providers.",
+	"license": "MIT",
+	"keywords": [
+		"angular",
+		"angular22",
+		"angular-component",
+		"command-palette",
+		"cmdk",
+		"spotlight",
+		"cmd-k",
+		"keyboard-navigation",
+		"fuzzy-search",
+		"ngx",
+		"angular-command-palette",
+		"command-menu",
+		"search",
+		"navigation"
+	],
+	"peerDependencies": {
+		"@angular/cdk": "^22.0.0",
+		"@angular/common": "^22.0.0",
+		"@angular/core": "^22.0.0",
+		"@angular/router": "^22.0.0"
+	},
+	"dependencies": {
+		"tslib": "^2.3.0"
+	},
+	"sideEffects": false
+}

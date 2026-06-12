@@ -1,0 +1,15 @@
+export { Command, CommandContext, SearchProvider, CommandPaletteConfig, ScoredCommand } from './lib/models/command';
+export { CommandPaletteService } from './lib/services/command-palette.service';
+export { CommandRegistry } from './lib/services/command-registry';
+export { SearchEngine } from './lib/services/search-engine';
+export { RecentCommandsStore } from './lib/services/recent-store';
+export { RouterCommandExtractor } from './lib/services/router-extractor';
+export { CmdPaletteComponent } from './lib/components/palette/palette.component';
+export { CmdInputComponent } from './lib/components/input/input.component';
+export { CmdListComponent } from './lib/components/list/list.component';
+export { CmdGroupComponent } from './lib/components/group/group.component';
+export { CmdItemComponent } from './lib/components/item/item.component';
+export { CmdEmptyComponent } from './lib/components/empty/empty.component';
+export { CmdFooterComponent } from './lib/components/footer/footer.component';
+export { provideCommandPalette, COMMAND_PALETTE_CONFIG } from './lib/provide';
+export { fuzzyMatch, FuzzyMatchResult } from './lib/utils/fuzzy-match';
