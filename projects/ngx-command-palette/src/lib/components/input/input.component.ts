@@ -21,13 +21,30 @@ export class CmdInputComponent {
 
 	public readonly inputEl: Signal<ElementRef<HTMLInputElement>> = viewChild.required<ElementRef<HTMLInputElement>>('inputEl');
 
+	#debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+	readonly #debounceMs: number = this.config.debounce ?? 0;
+
 	constructor() {
 		this.#focusInputOnOpen();
 	}
 
 	public onInput(event: Event): void {
 		const value: string = (event.target as HTMLInputElement).value;
-		this.palette.updateQuery(value);
+
+		if (this.#debounceMs <= 0) {
+			this.palette.updateQuery(value);
+			return;
+		}
+
+		if (this.#debounceTimer !== null) {
+			clearTimeout(this.#debounceTimer);
+		}
+
+		this.#debounceTimer = setTimeout(() => {
+			this.palette.updateQuery(value);
+			this.#debounceTimer = null;
+		}, this.#debounceMs);
 	}
 
 	#focusInputOnOpen(): void {

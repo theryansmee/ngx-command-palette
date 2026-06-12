@@ -33,6 +33,7 @@ export interface CommandPaletteConfig {
 	autoRegisterRoutes?: boolean;
 	maxResults?: number;
 	recentCount?: number;
+	debounce?: number;
 	animation?: 'scale' | 'slide' | 'none';
 }
 
