@@ -13,21 +13,33 @@
 }
 
 .cmd-dialog {
-	position: fixed;
-	top: 20%;
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 10000;
+	background: var(--cmd-bg, #ffffff);
 	width: var(--cmd-width, 640px);
 	max-width: calc(100vw - 32px);
-	background: var(--cmd-bg, #ffffff);
+	max-height: calc(100dvh - max(15%, 80px) - 40px);
 	border: 1px solid var(--cmd-border, #e2e8f0);
 	border-radius: var(--cmd-border-radius, 12px);
 	box-shadow: var(--cmd-shadow, 0 16px 70px rgba(0, 0, 0, 0.2));
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	top: max(15%, 80px);
+	left: 50%;
+	transform: translateX(-50%);
 	overflow: hidden;
+	z-index: 10000;
 }
 
 .cmd-divider {
-	height: 1px;
 	background: var(--cmd-border, #e2e8f0);
+	flex-shrink: 0;
+	height: 1px;
+}
+
+@media (max-width: 480px) {
+	.cmd-dialog {
+		top: 16px;
+		max-height: calc(100dvh - 32px);
+		border-radius: var(--cmd-border-radius, 8px);
+	}
 }

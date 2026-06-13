@@ -1,12 +1,13 @@
 :host {
+	padding: var(--cmd-item-padding, 10px 16px);
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	height: var(--cmd-item-height, 44px);
-	padding: 0 16px;
-	color: var(--cmd-item-color, #334155);
-	cursor: pointer;
 	user-select: none;
+	cursor: pointer;
+
+	color: var(--cmd-item-color, #334155);
+	font-size: 14px;
 }
 
 :host(:hover) {
@@ -18,8 +19,8 @@
 }
 
 .cmd-item-icon {
-	flex-shrink: 0;
 	width: 20px;
+	flex-shrink: 0;
 	text-align: center;
 	opacity: 0.7;
 }
@@ -32,11 +33,12 @@
 }
 
 .cmd-item-shortcut {
-	flex-shrink: 0;
-	padding: 2px 6px;
-	font-size: 12px;
 	background: var(--cmd-shortcut-bg, #f1f5f9);
-	color: var(--cmd-shortcut-color, #64748b);
+	padding: 2px 6px;
 	border: 1px solid var(--cmd-shortcut-border, #e2e8f0);
 	border-radius: 4px;
+	flex-shrink: 0;
+
+	color: var(--cmd-shortcut-color, #64748b);
+	font-size: 12px;
 }
