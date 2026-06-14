@@ -86,6 +86,21 @@
 							{
 								"glob": "**/*",
 								"input": "projects/demo/public"
+							},
+							{
+								"glob": "robots.txt",
+								"input": "projects/demo/src",
+								"output": ""
+							},
+							{
+								"glob": "sitemap.xml",
+								"input": "projects/demo/src",
+								"output": ""
+							},
+							{
+								"glob": "404.html",
+								"input": "projects/demo/src",
+								"output": ""
 							}
 						],
 						"styles": [

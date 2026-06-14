@@ -2,12 +2,54 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>ngx-command-palette</title>
+		<title>Angular Command Palette | ngx-command-palette - Keyboard-Driven Cmd+K</title>
 		<base href="/" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/x-icon" href="favicon.ico" />
+		<link rel="canonical" href="https://theryansmee.github.io/ngx-command-palette/" />
+
+		<meta name="description" content="A keyboard-driven command palette for Angular. Auto-registers routes from your Router config, supports custom commands, async search providers, and full keyboard navigation. The Cmd+K solution for Angular." />
+		<meta name="keywords" content="angular command palette, angular cmd-k, angular spotlight, angular keyboard navigation, ngx command palette, angular search, angular fuzzy search, angular cmdk, command menu angular, angular 22" />
+		<meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+		<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+		<!-- Open Graph -->
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="ngx-command-palette - Angular Command Palette Component" />
+		<meta property="og:description" content="A keyboard-driven command palette for Angular. Auto-registers routes, supports custom commands, async search providers, and full keyboard navigation. The Cmd+K solution for Angular." />
+		<meta property="og:url" content="https://theryansmee.github.io/ngx-command-palette/" />
+		<meta property="og:site_name" content="ngx-command-palette" />
+
+		<!-- Twitter Card -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="ngx-command-palette - Angular Command Palette Component" />
+		<meta name="twitter:description" content="A keyboard-driven command palette for Angular. Auto-registers routes, supports custom commands, async search providers, and full keyboard navigation. The Cmd+K solution for Angular." />
+
+		<!-- JSON-LD Structured Data -->
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "SoftwareSourceCode",
+			"name": "ngx-command-palette",
+			"description": "A keyboard-driven command palette for Angular. Auto-registers routes from your Router config, supports custom commands, async search providers, and full keyboard navigation.",
+			"codeRepository": "https://github.com/theryansmee/ngx-command-palette",
+			"programmingLanguage": ["TypeScript", "Angular"],
+			"license": "https://opensource.org/licenses/MIT",
+			"runtimePlatform": "Angular 22",
+			"keywords": "angular, command palette, cmd-k, spotlight, keyboard navigation, fuzzy search, command menu"
+		}
+		</script>
 	</head>
 	<body>
+		<script>
+			// GitHub Pages SPA redirect handler
+			(function () {
+				var redirect = new URLSearchParams(window.location.search).get('p');
+				if (redirect) {
+					history.replaceState(null, '', decodeURIComponent(redirect));
+				}
+			})();
+		</script>
 		<app-root></app-root>
 	</body>
 </html>

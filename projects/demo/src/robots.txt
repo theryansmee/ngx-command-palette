@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://theryansmee.github.io/ngx-command-palette/sitemap.xml
