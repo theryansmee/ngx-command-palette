@@ -1,5 +1,11 @@
 # @theryansmee/ngx-command-palette
 
+[![npm version](https://img.shields.io/npm/v/@theryansmee/ngx-command-palette.svg)](https://www.npmjs.com/package/@theryansmee/ngx-command-palette)
+[![npm downloads](https://img.shields.io/npm/dw/@theryansmee/ngx-command-palette.svg)](https://www.npmjs.com/package/@theryansmee/ngx-command-palette)
+[![license](https://img.shields.io/npm/l/@theryansmee/ngx-command-palette.svg)](https://github.com/theryansmee/ngx-command-palette/blob/main/LICENSE)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@theryansmee/ngx-command-palette)](https://bundlephobia.com/package/@theryansmee/ngx-command-palette)
+[![Angular](https://img.shields.io/badge/Angular-22-dd0031)](https://angular.dev)
+
 A keyboard-driven command palette for Angular. Routes are auto-registered from your Router config - zero setup required. Add custom commands, async search providers, contextual visibility, and full keyboard navigation out of the box.
 
 Inspired by tools like Linear, GitHub, and Raycast.
@@ -25,7 +31,19 @@ Inspired by tools like Linear, GitHub, and Raycast.
 ## Installation
 
 ```bash
+ng add @theryansmee/ngx-command-palette
+```
+
+This automatically adds `provideCommandPalette()` to your app config, imports `CmdPaletteComponent`, and adds `<cmd-palette />` to your root template.
+
+Or install manually:
+
+```bash
 npm install @theryansmee/ngx-command-palette
+# or
+yarn add @theryansmee/ngx-command-palette
+# or
+pnpm add @theryansmee/ngx-command-palette
 ```
 
 ### Peer Dependencies
@@ -91,7 +109,6 @@ provideCommandPalette({
   maxResults: 10,               // Maximum search results shown (default: 10)
   recentCount: 5,               // Number of recent commands to track (default: 5)
   debounce: 150,                // Input debounce in milliseconds (default: 0)
-  animation: 'scale',           // Open/close animation: 'scale' | 'slide' | 'none' (default: 'scale')
 });
 ```
 
@@ -490,13 +507,13 @@ cmd-palette {
   --cmd-max-height: 400px;
 
   /* Input */
-  --cmd-input-height: 56px;
+  --cmd-input-padding: 16px;
   --cmd-input-font-size: 16px;
   --cmd-input-color: #1a1a1a;
-  --cmd-input-placeholder: #94a3b8;
+  --cmd-input-placeholder: #64748b;
 
   /* Items */
-  --cmd-item-height: 44px;
+  --cmd-item-padding: 10px 16px;
   --cmd-item-color: #334155;
   --cmd-item-hover-bg: #f1f5f9;
   --cmd-item-active-bg: #e2e8f0;
@@ -511,7 +528,7 @@ cmd-palette {
   --cmd-shortcut-border: #e2e8f0;
 
   /* Empty state */
-  --cmd-empty-color: #94a3b8;
+  --cmd-empty-color: #64748b;
 }
 ```
 
@@ -537,16 +554,13 @@ cmd-palette.dark {
 }
 ```
 
+### Preset Themes (Coming Soon)
+
+Built-in themes like dark mode, GitHub-style, and Linear-style. Applied via a CSS class or config option.
+
 ## Accessibility
 
-The palette implements the [WAI-ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/):
-
-- `role="dialog"` on the palette container with `aria-label`
-- `role="combobox"` on the search input with `aria-expanded`, `aria-controls`, and `aria-activedescendant`
-- `role="listbox"` on the results list
-- `role="option"` on each result item with `aria-selected`
-- Focus is trapped inside the palette while open using `cdkTrapFocus`
-- Focus is restored to the previously focused element when the palette closes
+The palette follows the [WAI-ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) out of the box with no configuration needed. Focus trapping, focus restoration, screen reader announcements, keyboard navigation, and active item scrolling all work automatically.
 
 ## API Reference
 
@@ -562,7 +576,8 @@ Environment provider factory. Call in your `appConfig.providers` array.
 | `maxResults` | `number` | `10` | Maximum results shown |
 | `recentCount` | `number` | `5` | Number of recent commands tracked |
 | `debounce` | `number` | `0` | Input debounce in milliseconds |
-| `animation` | `'scale' \| 'slide' \| 'none'` | `'scale'` | Open/close animation style |
+
+> **Coming soon:** Configurable open/close animations and a headless (renderless) mode.
 
 ### `CommandPaletteService`
 
