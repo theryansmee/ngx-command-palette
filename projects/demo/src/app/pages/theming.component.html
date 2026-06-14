@@ -1,0 +1,65 @@
+<div class="docs-page">
+	<h1>Theming</h1>
+	<p class="subtitle">Full visual control via CSS custom properties.</p>
+
+	<p>Try it now: open the palette with <kbd>Cmd+K</kbd> and search for "Toggle Dark Mode".</p>
+
+	<h2>CSS Custom Properties</h2>
+	<p>Override any variable on the <code>cmd-palette</code> selector or a parent element:</p>
+<pre><code>cmd-palette &#123;
+  /* Backdrop */
+  --cmd-backdrop: rgba(0, 0, 0, 0.5);
+
+  /* Dialog */
+  --cmd-bg: #ffffff;
+  --cmd-border: #e2e8f0;
+  --cmd-border-radius: 12px;
+  --cmd-shadow: 0 16px 70px rgba(0, 0, 0, 0.2);
+  --cmd-width: 640px;
+  --cmd-max-height: 400px;
+
+  /* Input */
+  --cmd-input-padding: 16px;
+  --cmd-input-font-size: 16px;
+  --cmd-input-color: #1a1a1a;
+  --cmd-input-placeholder: #64748b;
+
+  /* Items */
+  --cmd-item-padding: 10px 16px;
+  --cmd-item-color: #334155;
+  --cmd-item-hover-bg: #f1f5f9;
+  --cmd-item-active-bg: #e2e8f0;
+
+  /* Group headings */
+  --cmd-group-heading-color: #64748b;
+  --cmd-group-heading-size: 12px;
+
+  /* Shortcut badges */
+  --cmd-shortcut-bg: #f1f5f9;
+  --cmd-shortcut-color: #64748b;
+  --cmd-shortcut-border: #e2e8f0;
+
+  /* Empty state */
+  --cmd-empty-color: #64748b;
+&#125;</code></pre>
+
+	<h2>Dark Theme Example</h2>
+<pre><code>.dark cmd-palette &#123;
+  --cmd-backdrop: rgba(0, 0, 0, 0.7);
+  --cmd-bg: #1e1e2e;
+  --cmd-border: #313244;
+  --cmd-shadow: 0 16px 70px rgba(0, 0, 0, 0.5);
+  --cmd-input-color: #cdd6f4;
+  --cmd-input-placeholder: #6c7086;
+  --cmd-item-color: #cdd6f4;
+  --cmd-item-hover-bg: #313244;
+  --cmd-item-active-bg: #45475a;
+  --cmd-group-heading-color: #a6adc8;
+  --cmd-shortcut-bg: #313244;
+  --cmd-shortcut-color: #a6adc8;
+  --cmd-shortcut-border: #45475a;
+  --cmd-empty-color: #6c7086;
+&#125;</code></pre>
+
+	<p>This site uses exactly this approach. The "Toggle Dark Mode" command adds a <code>.dark</code> class to the root element, and the CSS variables handle the rest.</p>
+</div>

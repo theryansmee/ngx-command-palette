@@ -1,0 +1,110 @@
+<div class="docs-page">
+	<h1>Configuration</h1>
+	<p class="subtitle">Customise the palette behaviour via the provider config.</p>
+
+<pre><code>provideCommandPalette(&#123;
+  shortcut: 'meta.k',
+  placeholder: 'Search...',
+  autoRegisterRoutes: true,
+  maxResults: 10,
+  recentCount: 5,
+  debounce: 150,
+&#125;)</code></pre>
+
+	<h2>Options</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Option</th>
+				<th>Type</th>
+				<th>Default</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><code>shortcut</code></td>
+				<td><code>string</code></td>
+				<td><code>'meta.k'</code></td>
+				<td>Keyboard shortcut to open the palette</td>
+			</tr>
+			<tr>
+				<td><code>placeholder</code></td>
+				<td><code>string</code></td>
+				<td><code>'Search or type a command...'</code></td>
+				<td>Input placeholder text</td>
+			</tr>
+			<tr>
+				<td><code>autoRegisterRoutes</code></td>
+				<td><code>boolean</code></td>
+				<td><code>true</code></td>
+				<td>Auto-register routes from Router config</td>
+			</tr>
+			<tr>
+				<td><code>maxResults</code></td>
+				<td><code>number</code></td>
+				<td><code>10</code></td>
+				<td>Maximum results shown</td>
+			</tr>
+			<tr>
+				<td><code>recentCount</code></td>
+				<td><code>number</code></td>
+				<td><code>5</code></td>
+				<td>Number of recent commands tracked</td>
+			</tr>
+			<tr>
+				<td><code>debounce</code></td>
+				<td><code>number</code></td>
+				<td><code>0</code></td>
+				<td>Input debounce in milliseconds</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>Shortcut Format</h2>
+	<p>The shortcut string uses dot-separated modifier keys followed by the key.</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Shortcut</th>
+				<th>Keys</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><code>meta.k</code></td>
+				<td>Cmd+K (Mac) / Win+K (Windows)</td>
+			</tr>
+			<tr>
+				<td><code>ctrl.k</code></td>
+				<td>Ctrl+K</td>
+			</tr>
+			<tr>
+				<td><code>ctrl.shift.p</code></td>
+				<td>Ctrl+Shift+P</td>
+			</tr>
+			<tr>
+				<td><code>meta.shift.p</code></td>
+				<td>Cmd+Shift+P</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>Route Configuration</h2>
+	<p>Routes with a <code>title</code> property are auto-registered. You can enrich them with extra metadata:</p>
+<pre><code>&#123;
+  path: 'settings/billing',
+  component: BillingComponent,
+  title: 'Billing',
+  data: &#123;
+    commandPalette: &#123;
+      label: 'Billing &amp; Payments',
+      category: 'Settings',
+      keywords: ['invoice', 'payment', 'subscription'],
+      priority: 5,
+    &#125;,
+  &#125;,
+&#125;</code></pre>
+
+	<p>Set <code>commandPalette: false</code> in route data to exclude a route. Parameterised routes (e.g. <code>:id</code>) are excluded automatically unless you provide an explicit config.</p>
+</div>

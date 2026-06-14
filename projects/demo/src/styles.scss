@@ -1,1 +1,172 @@
-/* You can add global styles to this file, and also import other style files */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+}
+
+:root {
+	--docs-bg: #ffffff;
+	--docs-text: #1a1a2e;
+	--docs-text-secondary: #64748b;
+	--docs-sidebar-bg: #f8fafc;
+	--docs-border: #e2e8f0;
+	--docs-link: #3b82f6;
+	--docs-code-bg: #f1f5f9;
+	--docs-code-text: #1e293b;
+	--docs-kbd-bg: #f1f5f9;
+	--docs-kbd-border: #e2e8f0;
+}
+
+html.dark {
+	--docs-bg: #0f172a;
+	--docs-text: #e2e8f0;
+	--docs-text-secondary: #94a3b8;
+	--docs-sidebar-bg: #1e293b;
+	--docs-border: #334155;
+	--docs-link: #60a5fa;
+	--docs-code-bg: #1e293b;
+	--docs-code-text: #e2e8f0;
+	--docs-kbd-bg: #1e293b;
+	--docs-kbd-border: #475569;
+
+	cmd-palette {
+		--cmd-backdrop: rgba(0, 0, 0, 0.7);
+		--cmd-bg: #1e293b;
+		--cmd-border: #334155;
+		--cmd-shadow: 0 16px 70px rgba(0, 0, 0, 0.5);
+		--cmd-input-color: #e2e8f0;
+		--cmd-input-placeholder: #94a3b8;
+		--cmd-item-color: #e2e8f0;
+		--cmd-item-hover-bg: #334155;
+		--cmd-item-active-bg: #475569;
+		--cmd-group-heading-color: #94a3b8;
+		--cmd-shortcut-bg: #334155;
+		--cmd-shortcut-color: #94a3b8;
+		--cmd-shortcut-border: #475569;
+		--cmd-empty-color: #94a3b8;
+	}
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	background: var(--docs-bg);
+	color: var(--docs-text);
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+}
+
+.docs-page {
+	max-width: 720px;
+
+	h1 {
+		font-size: 32px;
+		font-weight: 700;
+		margin-bottom: 12px;
+	}
+
+	h2 {
+		font-size: 22px;
+		font-weight: 600;
+		margin-top: 40px;
+		margin-bottom: 12px;
+	}
+
+	h3 {
+		font-size: 16px;
+		font-weight: 600;
+		margin-top: 28px;
+		margin-bottom: 8px;
+	}
+
+	p {
+		margin-bottom: 16px;
+		color: var(--docs-text-secondary);
+	}
+
+	a {
+		color: var(--docs-link);
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	pre {
+		background: var(--docs-code-bg);
+		color: var(--docs-code-text);
+		padding: 16px;
+		border-radius: 8px;
+		overflow-x: auto;
+		margin-bottom: 16px;
+		font-size: 13px;
+		line-height: 1.6;
+	}
+
+	code {
+		font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, monospace;
+		font-size: 13px;
+	}
+
+	p code {
+		background: var(--docs-code-bg);
+		padding: 2px 6px;
+		border-radius: 4px;
+	}
+
+	kbd {
+		background: var(--docs-kbd-bg);
+		border: 1px solid var(--docs-kbd-border);
+		border-radius: 4px;
+		padding: 2px 6px;
+		font-family: inherit;
+		font-size: 13px;
+	}
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		margin-bottom: 16px;
+		font-size: 14px;
+	}
+
+	th,
+	td {
+		text-align: left;
+		padding: 8px 12px;
+		border-bottom: 1px solid var(--docs-border);
+	}
+
+	th {
+		font-weight: 600;
+		color: var(--docs-text);
+	}
+
+	td {
+		color: var(--docs-text-secondary);
+	}
+
+	td code {
+		background: var(--docs-code-bg);
+		padding: 1px 5px;
+		border-radius: 3px;
+		white-space: nowrap;
+	}
+
+	ul {
+		margin-bottom: 16px;
+		padding-left: 20px;
+		color: var(--docs-text-secondary);
+	}
+
+	li {
+		margin-bottom: 6px;
+	}
+
+	.subtitle {
+		font-size: 18px;
+		color: var(--docs-text-secondary);
+		margin-bottom: 32px;
+	}
+}

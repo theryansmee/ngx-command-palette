@@ -1,0 +1,30 @@
+<div class="docs-page">
+	<h1>ngx-command-palette</h1>
+	<p class="subtitle">
+		A keyboard-driven command palette for Angular. Two lines of setup and all your routes are searchable.
+	</p>
+
+	<p>Press <kbd>Cmd+K</kbd> (or <kbd>Ctrl+K</kbd>) right now to try it. Every page on this site is registered automatically from the router config.</p>
+
+	<p>You can also try "Toggle Dark Mode", "Copy Install Command", or "Open GitHub Repository". Those are custom commands registered in the app component.</p>
+
+	<h2>Features</h2>
+	<ul>
+		<li><strong>Auto-registers routes</strong> from your Angular Router config</li>
+		<li><strong>Lazy-load aware</strong>. Re-scans routes as lazy modules load</li>
+		<li><strong>Async search providers</strong> with per-provider debounce and loading states</li>
+		<li><strong>Prefix routing</strong>. Scope providers behind prefixes like <code>@</code> or <code>#</code></li>
+		<li><strong>Contextual commands</strong>. Show or hide commands based on route or dynamic conditions</li>
+		<li><strong>Fuzzy search</strong> with scoring for exact, prefix, word boundary, and character matches</li>
+		<li><strong>Recent commands</strong> tracked in localStorage with a recency boost</li>
+		<li><strong>Accessible</strong>. WAI-ARIA combobox pattern, focus trapping, screen reader announcements</li>
+		<li><strong>Fully themeable</strong> via CSS custom properties</li>
+		<li><strong>Signal-based</strong> reactive state with Angular signals</li>
+	</ul>
+
+	<h2>Quick Install</h2>
+	<pre><code>ng add @theryansmee/ngx-command-palette</code></pre>
+	<p>
+		That's it. See <a routerLink="/getting-started">Getting Started</a> for the full setup guide.
+	</p>
+</div>

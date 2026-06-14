@@ -554,10 +554,6 @@ cmd-palette.dark {
 }
 ```
 
-### Preset Themes (Coming Soon)
-
-Built-in themes like dark mode, GitHub-style, and Linear-style. Applied via a CSS class or config option.
-
 ## Accessibility
 
 The palette follows the [WAI-ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) out of the box with no configuration needed. Focus trapping, focus restoration, screen reader announcements, keyboard navigation, and active item scrolling all work automatically.
@@ -607,6 +603,13 @@ The root component. Add it once in your app root template.
 ```html
 <cmd-palette />
 ```
+
+## Future Plans
+
+- **Headless mode**. Use all the search, routing, and provider logic with your own custom UI
+- **Configurable animations**. Open/close transitions on the backdrop and dialog
+- **Preset themes**. Dark, GitHub-style, Linear-style, and an Angular Material mixin
+- **CI/CD**. GitHub Actions for automated testing and npm publishing
 
 ## License
 

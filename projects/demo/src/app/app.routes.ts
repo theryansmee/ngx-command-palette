@@ -3,46 +3,49 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
 	{
 		path: '',
-		redirectTo: 'dashboard',
+		redirectTo: 'home',
 		pathMatch: 'full',
 	},
 	{
-		path: 'dashboard',
-		title: 'Dashboard',
-		loadComponent: () => import('./pages/dashboard.component').then((m: typeof import('./pages/dashboard.component')) => m.DashboardComponent),
+		path: 'home',
+		title: 'Home',
+		loadComponent: () => import('./pages/home.component').then(
+			(m: typeof import('./pages/home.component')) => m.HomeComponent,
+		),
 	},
 	{
-		path: 'settings',
-		title: 'Settings',
-		loadComponent: () => import('./pages/settings.component').then((m: typeof import('./pages/settings.component')) => m.SettingsComponent),
+		path: 'getting-started',
+		title: 'Getting Started',
+		loadComponent: () => import('./pages/getting-started.component').then(
+			(m: typeof import('./pages/getting-started.component')) => m.GettingStartedComponent,
+		),
 	},
 	{
-		path: 'settings/billing',
-		title: 'Billing',
-		loadComponent: () => import('./pages/billing.component').then((m: typeof import('./pages/billing.component')) => m.BillingComponent),
-		data: {
-			commandPalette: {
-				label: 'Billing & Payments',
-				keywords: [
-					'invoice',
-					'payment',
-					'subscription',
-				],
-				category: 'Settings',
-			},
-		},
+		path: 'configuration',
+		title: 'Configuration',
+		loadComponent: () => import('./pages/configuration.component').then(
+			(m: typeof import('./pages/configuration.component')) => m.ConfigurationComponent,
+		),
 	},
 	{
-		path: 'profile',
-		title: 'Profile',
-		loadComponent: () => import('./pages/profile.component').then((m: typeof import('./pages/profile.component')) => m.ProfileComponent),
+		path: 'custom-commands',
+		title: 'Custom Commands',
+		loadComponent: () => import('./pages/custom-commands.component').then(
+			(m: typeof import('./pages/custom-commands.component')) => m.CustomCommandsComponent,
+		),
 	},
 	{
-		path: 'users/:id',
-		title: 'User Detail',
-		loadComponent: () => import('./pages/user-detail.component').then((m: typeof import('./pages/user-detail.component')) => m.UserDetailComponent),
-		data: {
-			commandPalette: false,
-		},
+		path: 'async-providers',
+		title: 'Async Providers',
+		loadComponent: () => import('./pages/async-providers.component').then(
+			(m: typeof import('./pages/async-providers.component')) => m.AsyncProvidersComponent,
+		),
+	},
+	{
+		path: 'theming',
+		title: 'Theming',
+		loadComponent: () => import('./pages/theming.component').then(
+			(m: typeof import('./pages/theming.component')) => m.ThemingComponent,
+		),
 	},
 ];

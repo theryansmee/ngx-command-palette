@@ -1,0 +1,108 @@
+<div class="docs-page">
+	<h1>Custom Commands</h1>
+	<p class="subtitle">Register your own actions alongside auto-registered routes.</p>
+
+	<h2>Registering Commands</h2>
+	<p>Inject <code>CommandPaletteService</code> and call <code>register()</code>. Pass a <code>DestroyRef</code> to auto-deregister when the component is destroyed.</p>
+<pre><code>import &#123; Component, inject, DestroyRef &#125; from '&#64;angular/core';
+import &#123; CommandPaletteService &#125; from '&#64;theryansmee/ngx-command-palette';
+
+&#64;Component(&#123; ... &#125;)
+export class ProjectListComponent &#123;
+  readonly #palette = inject(CommandPaletteService);
+  readonly #destroyRef = inject(DestroyRef);
+
+  constructor() &#123;
+    this.#palette.register([
+      &#123;
+        id: 'create-project',
+        label: 'Create New Project',
+        category: 'Actions',
+        shortcut: 'Cmd+N',
+        keywords: ['new', 'add'],
+        priority: 10,
+        action: () =&gt; this.openCreateDialog(),
+      &#125;,
+    ], this.#destroyRef);
+  &#125;
+&#125;</code></pre>
+
+	<h2>Command Interface</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><code>id</code></td>
+				<td><code>string</code></td>
+				<td>Unique identifier</td>
+			</tr>
+			<tr>
+				<td><code>label</code></td>
+				<td><code>string</code></td>
+				<td>Display text</td>
+			</tr>
+			<tr>
+				<td><code>category</code></td>
+				<td><code>string?</code></td>
+				<td>Group heading (e.g. "Pages", "Actions")</td>
+			</tr>
+			<tr>
+				<td><code>icon</code></td>
+				<td><code>string?</code></td>
+				<td>Icon name or identifier</td>
+			</tr>
+			<tr>
+				<td><code>keywords</code></td>
+				<td><code>string[]?</code></td>
+				<td>Additional search terms</td>
+			</tr>
+			<tr>
+				<td><code>shortcut</code></td>
+				<td><code>string?</code></td>
+				<td>Display-only shortcut hint</td>
+			</tr>
+			<tr>
+				<td><code>action</code></td>
+				<td><code>() =&gt; void</code></td>
+				<td>What happens when executed</td>
+			</tr>
+			<tr>
+				<td><code>priority</code></td>
+				<td><code>number?</code></td>
+				<td>Ranking boost (higher = appears first)</td>
+			</tr>
+			<tr>
+				<td><code>context</code></td>
+				<td><code>CommandContext?</code></td>
+				<td>Visibility constraints</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>Contextual Commands</h2>
+	<p>Commands can be scoped to specific routes or dynamic conditions using the <code>context</code> property.</p>
+<pre><code>this.palette.register([
+  &#123;
+    id: 'delete-project',
+    label: 'Delete Project',
+    action: () =&gt; this.deleteProject(),
+    context: &#123;
+      routes: ['/projects/*'],
+      when: () =&gt; this.canDelete(),
+    &#125;,
+  &#125;,
+], this.destroyRef);</code></pre>
+
+	<ul>
+		<li><code>routes</code> accepts glob patterns. <code>*</code> matches a single segment, <code>**</code> matches any depth.</li>
+		<li><code>when</code> is a function returning a boolean, re-evaluated on each search.</li>
+		<li>If both are provided, both must pass for the command to be visible.</li>
+		<li>Commands without a <code>context</code> are always visible.</li>
+	</ul>
+</div>

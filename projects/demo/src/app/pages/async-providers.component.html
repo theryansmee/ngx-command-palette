@@ -1,0 +1,99 @@
+<div class="docs-page">
+	<h1>Async Search Providers</h1>
+	<p class="subtitle">Register API-backed search sources that return results asynchronously.</p>
+
+	<h2>Basic Provider</h2>
+	<p>A provider without a <code>prefix</code> fires on every query:</p>
+<pre><code>this.palette.registerProvider(
+  &#123;
+    id: 'doc-search',
+    category: 'Documentation',
+    minQueryLength: 2,
+    debounce: 300,
+    search: (query) =&gt; this.http.get&lt;Doc[]&gt;(`/api/docs?q=$&#123;query&#125;`).pipe(
+      map(docs =&gt; docs.map(doc =&gt; (&#123;
+        id: `doc:$&#123;doc.id&#125;`,
+        label: doc.title,
+        action: () =&gt; window.open(doc.url),
+      &#125;))),
+    ),
+  &#125;,
+  this.destroyRef,
+);</code></pre>
+
+	<h2>Prefixed Provider</h2>
+	<p>
+		A provider with a <code>prefix</code> only fires when the user types that prefix.
+		The prefix is stripped before being passed to the <code>search</code> function.
+	</p>
+<pre><code>this.palette.registerProvider(
+  &#123;
+    id: 'user-search',
+    category: 'Users',
+    prefix: '&#64;',
+    minQueryLength: 2,
+    debounce: 300,
+    search: (query) =&gt; this.userService.search(query).pipe(
+      map(users =&gt; users.map(user =&gt; (&#123;
+        id: `user:$&#123;user.id&#125;`,
+        label: user.name,
+        action: () =&gt; this.router.navigate(['/users', user.id]),
+      &#125;))),
+    ),
+  &#125;,
+  this.destroyRef,
+);</code></pre>
+
+	<p>
+		With this setup, typing <code>@john</code> only hits the user API. Typing
+		<code>dashboard</code> only searches static commands. Registered prefixes are
+		automatically shown as hints in the palette footer.
+	</p>
+
+	<h2>Provider Interface</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><code>id</code></td>
+				<td><code>string</code></td>
+				<td>Unique identifier</td>
+			</tr>
+			<tr>
+				<td><code>category</code></td>
+				<td><code>string</code></td>
+				<td>Group heading for results</td>
+			</tr>
+			<tr>
+				<td><code>search</code></td>
+				<td><code>(query: string) =&gt; Observable&lt;Command[]&gt;</code></td>
+				<td>The search function</td>
+			</tr>
+			<tr>
+				<td><code>prefix</code></td>
+				<td><code>string?</code></td>
+				<td>Prefix trigger (e.g. <code>@</code>, <code>#</code>)</td>
+			</tr>
+			<tr>
+				<td><code>debounce</code></td>
+				<td><code>number?</code></td>
+				<td>Debounce in ms (default: 300)</td>
+			</tr>
+			<tr>
+				<td><code>minQueryLength</code></td>
+				<td><code>number?</code></td>
+				<td>Minimum chars before searching (default: 1)</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>Loading State</h2>
+	<p>The palette shows a "Searching..." indicator while providers are in-flight. You can also read the state programmatically:</p>
+<pre><code>const isLoading: boolean = this.palette.loading();</code></pre>
+</div>
