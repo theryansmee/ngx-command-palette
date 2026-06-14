@@ -18,6 +18,38 @@
 	--docs-kbd-border: #e2e8f0;
 }
 
+@media (prefers-color-scheme: dark) {
+	:root:not(.light) {
+		--docs-bg: #0f172a;
+		--docs-text: #e2e8f0;
+		--docs-text-secondary: #94a3b8;
+		--docs-sidebar-bg: #1e293b;
+		--docs-border: #334155;
+		--docs-link: #60a5fa;
+		--docs-code-bg: #1e293b;
+		--docs-code-text: #e2e8f0;
+		--docs-kbd-bg: #1e293b;
+		--docs-kbd-border: #475569;
+
+		cmd-palette {
+			--cmd-backdrop: rgba(0, 0, 0, 0.7);
+			--cmd-bg: #1e293b;
+			--cmd-border: #334155;
+			--cmd-shadow: 0 16px 70px rgba(0, 0, 0, 0.5);
+			--cmd-input-color: #e2e8f0;
+			--cmd-input-placeholder: #94a3b8;
+			--cmd-item-color: #e2e8f0;
+			--cmd-item-hover-bg: #334155;
+			--cmd-item-active-bg: #475569;
+			--cmd-group-heading-color: #94a3b8;
+			--cmd-shortcut-bg: #334155;
+			--cmd-shortcut-color: #94a3b8;
+			--cmd-shortcut-border: #475569;
+			--cmd-empty-color: #94a3b8;
+		}
+	}
+}
+
 html.dark {
 	--docs-bg: #0f172a;
 	--docs-text: #e2e8f0;

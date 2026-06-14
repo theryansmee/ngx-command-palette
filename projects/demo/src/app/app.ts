@@ -32,7 +32,13 @@ export class AppComponent {
 					'appearance',
 				],
 				action: (): void => {
-					document.documentElement.classList.toggle('dark');
+					const root: HTMLElement = document.documentElement;
+					const isDark: boolean = root.classList.contains('dark')
+						|| (!root.classList.contains('light')
+						&& window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+					root.classList.toggle('dark', !isDark);
+					root.classList.toggle('light', isDark);
 				},
 			},
 			{
