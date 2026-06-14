@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"lib": ["es2022"],
+		"module": "commonjs",
+		"moduleResolution": "node10",
+		"rootDir": "schematics",
+		"outDir": "../../dist/ngx-command-palette/schematics",
+		"declaration": true,
+		"target": "es2022",
+		"types": ["node"],
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"ignoreDeprecations": "6.0"
+	},
+	"include": ["schematics/**/*.ts"],
+	"exclude": ["schematics/**/*.spec.ts"]
+}

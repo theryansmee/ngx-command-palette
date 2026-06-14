@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, InputSignal, OutputEmitterRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, InputSignal, OutputEmitterRef, ElementRef, inject, effect } from '@angular/core';
 import { Command } from '../../models/command';
 
 @Component({
@@ -16,7 +16,21 @@ import { Command } from '../../models/command';
 	styleUrl: './item.component.scss',
 })
 export class CmdItemComponent {
+	readonly #elementRef: ElementRef<HTMLElement> = inject(ElementRef);
+
 	public readonly command: InputSignal<Command> = input.required<Command>();
 	public readonly isActive: InputSignal<boolean> = input<boolean>(false);
 	public readonly selected: OutputEmitterRef<Command> = output<Command>();
+
+	constructor() {
+		this.#scrollActiveItemIntoView();
+	}
+
+	#scrollActiveItemIntoView(): void {
+		effect(() => {
+			if (this.isActive()) {
+				this.#elementRef.nativeElement.scrollIntoView({ block: 'nearest' });
+			}
+		});
+	}
 }

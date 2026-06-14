@@ -1,6 +1,6 @@
 @if (palette.isOpen()) {
-	<div class="cmd-backdrop" (click)="palette.close()"></div>
-	<div class="cmd-dialog" role="dialog" aria-label="Command palette" cdkTrapFocus>
+	<div class="cmd-backdrop" aria-hidden="true" (click)="palette.close()"></div>
+	<div class="cmd-dialog" role="dialog" aria-modal="true" aria-label="Command palette" cdkTrapFocus>
 		<cmd-input [activeDescendantId]="activeDescendantId()" (inputKeydown)="onKeydown($event)" />
 		<div class="cmd-divider"></div>
 		<cmd-list />

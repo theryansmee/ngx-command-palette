@@ -22,6 +22,7 @@ interface CommandGroup {
 	host: {
 		'id': 'cmd-listbox',
 		'role': 'listbox',
+		'aria-label': 'Command results',
 	},
 	templateUrl: './list.component.html',
 	styleUrl: './list.component.scss',

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, Signal, viewChild, computed, HostListener } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, Signal, viewChild, computed, HostListener, effect } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { A11yModule } from '@angular/cdk/a11y';
@@ -39,6 +39,8 @@ export class CmdPaletteComponent {
 
 	readonly #parsedShortcut: ParsedShortcut;
 
+	#previouslyFocusedElement: HTMLElement | null = null;
+
 	public readonly activeDescendantId: Signal<string | null> = computed(() => {
 		const list: CmdListComponent | undefined = this.listComponent();
 		const id: string | null = list?.activeCommandId() ?? null;
@@ -56,6 +58,8 @@ export class CmdPaletteComponent {
 			shift: parts.includes('shift'),
 			alt: parts.includes('alt'),
 		};
+
+		this.#restoreFocusOnClose();
 	}
 
 	@HostListener('document:keydown', ['$event'])
@@ -72,6 +76,25 @@ export class CmdPaletteComponent {
 			event.preventDefault();
 			this.palette.toggle();
 		}
+	}
+
+	#restoreFocusOnClose(): void {
+		let wasOpen: boolean = false;
+
+		effect(() => {
+			const isOpen: boolean = this.palette.isOpen();
+
+			if (isOpen && !wasOpen) {
+				this.#previouslyFocusedElement = document.activeElement as HTMLElement;
+			}
+
+			if (!isOpen && wasOpen && this.#previouslyFocusedElement) {
+				this.#previouslyFocusedElement.focus();
+				this.#previouslyFocusedElement = null;
+			}
+
+			wasOpen = isOpen;
+		});
 	}
 
 	public onKeydown(event: KeyboardEvent): void {

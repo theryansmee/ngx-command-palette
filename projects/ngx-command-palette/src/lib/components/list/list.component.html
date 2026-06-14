@@ -1,6 +1,9 @@
+<div class="cmd-sr-only" aria-live="polite" aria-atomic="true">
+	{{ flatItems().length }} results available
+</div>
 @if (groups().length === 0) {
 	@if (loading()) {
-		<div class="cmd-loading">Searching...</div>
+		<div class="cmd-loading" role="status">Searching...</div>
 	} @else {
 		<cmd-empty />
 	}
