@@ -1,10 +1,11 @@
 # @theryansmee/ngx-command-palette
 
-[![npm version](https://img.shields.io/npm/v/@theryansmee/ngx-command-palette.svg)](https://www.npmjs.com/package/@theryansmee/ngx-command-palette)
+[![npm version](https://img.shields.io/npm/v/@theryansmee/ngx-command-palette/beta.svg)](https://www.npmjs.com/package/@theryansmee/ngx-command-palette)
 [![npm downloads](https://img.shields.io/npm/dw/@theryansmee/ngx-command-palette.svg)](https://www.npmjs.com/package/@theryansmee/ngx-command-palette)
-[![license](https://img.shields.io/npm/l/@theryansmee/ngx-command-palette.svg)](https://github.com/theryansmee/ngx-command-palette/blob/main/LICENSE)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@theryansmee/ngx-command-palette)](https://bundlephobia.com/package/@theryansmee/ngx-command-palette)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/theryansmee/ngx-command-palette/blob/main/LICENSE)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@theryansmee/ngx-command-palette@beta)](https://bundlephobia.com/package/@theryansmee/ngx-command-palette@beta)
 [![Angular](https://img.shields.io/badge/Angular-22-dd0031)](https://angular.dev)
+[![docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://theryansmee.github.io/ngx-command-palette/)
 
 > **Beta**: This library is in active development. The core API is stable but minor changes may occur before v1.0. Feedback and issues are welcome.
 
