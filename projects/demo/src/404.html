@@ -6,11 +6,12 @@
 		<script>
 			// GitHub Pages SPA redirect
 			// Converts the path to a query param so index.html can restore it
+			var baseHref = '/ngx-command-palette/';
 			var path = window.location.pathname;
 			var search = window.location.search;
 			var hash = window.location.hash;
 			window.location.replace(
-				window.location.origin + '/?p=' + encodeURIComponent(path) + search + hash
+				window.location.origin + baseHref + '?p=' + encodeURIComponent(path) + search + hash
 			);
 		</script>
 	</head>
