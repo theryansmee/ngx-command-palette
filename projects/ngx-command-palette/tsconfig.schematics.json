@@ -9,8 +9,7 @@
 		"target": "es2022",
 		"types": ["node"],
 		"skipLibCheck": true,
-		"esModuleInterop": true,
-		"ignoreDeprecations": "6.0"
+		"esModuleInterop": true
 	},
 	"include": ["schematics/**/*.ts"],
 	"exclude": ["schematics/**/*.spec.ts"]

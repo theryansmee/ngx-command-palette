@@ -20,14 +20,14 @@ import {
 	styleUrl: './app.component.scss',
 })
 export class AppComponent {
-	static readonly themeLabels: Record<CommandPaletteTheme, string> = {
+	public static readonly themeLabels: Record<CommandPaletteTheme, string> = {
 		default: 'Default (Light)',
 		dark: 'Dark',
 		github: 'GitHub',
 		linear: 'Linear',
 	};
 
-	static readonly animationLabels: Record<CommandPaletteAnimation, string> = {
+	public static readonly animationLabels: Record<CommandPaletteAnimation, string> = {
 		scale: 'Scale',
 		slide: 'Slide',
 		none: 'None',
