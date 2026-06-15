@@ -5,7 +5,7 @@
 	"packageManager": "pnpm@11.3.0",
 	"scripts": {
 		"ng": "ng",
-		"build:lib": "ng build ngx-command-palette --configuration production && pnpm run build:schematics",
+		"build:lib": "ng build ngx-command-palette --configuration production && pnpm run build:schematics && cp README.md dist/ngx-command-palette/README.md",
 		"build:schematics": "tsc -p projects/ngx-command-palette/tsconfig.schematics.json",
 		"build:demo": "ng build demo",
 		"start": "pnpm run build:lib && ng serve demo",

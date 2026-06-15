@@ -6,6 +6,8 @@
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@theryansmee/ngx-command-palette)](https://bundlephobia.com/package/@theryansmee/ngx-command-palette)
 [![Angular](https://img.shields.io/badge/Angular-22-dd0031)](https://angular.dev)
 
+> **Beta**: This library is in active development. The core API is stable but minor changes may occur before v1.0. Feedback and issues are welcome.
+
 A keyboard-driven command palette for Angular. Routes are auto-registered from your Router config - zero setup required. Add custom commands, async search providers, contextual visibility, and full keyboard navigation out of the box.
 
 Inspired by tools like Linear, GitHub, and Raycast.
