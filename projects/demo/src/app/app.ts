@@ -20,14 +20,14 @@ import {
 	styleUrl: './app.component.scss',
 })
 export class AppComponent {
-	static readonly themeLabels: Record<CommandPaletteTheme, string> = {
+	public static readonly themeLabels: Record<CommandPaletteTheme, string> = {
 		default: 'Default (Light)',
 		dark: 'Dark',
 		github: 'GitHub',
 		linear: 'Linear',
 	};
 
-	static readonly animationLabels: Record<CommandPaletteAnimation, string> = {
+	public static readonly animationLabels: Record<CommandPaletteAnimation, string> = {
 		scale: 'Scale',
 		slide: 'Slide',
 		none: 'None',
@@ -52,7 +52,7 @@ export class AppComponent {
 			...(Object.keys(AppComponent.themeLabels) as CommandPaletteTheme[]).map((theme: CommandPaletteTheme) => ({
 				id: `theme-${theme}`,
 				label: `Theme: ${AppComponent.themeLabels[theme]}`,
-				category: 'Appearance',
+				category: 'Palette Appearance',
 				keywords: [
 					'theme',
 					'colour',
@@ -65,7 +65,7 @@ export class AppComponent {
 			...(Object.keys(AppComponent.animationLabels) as CommandPaletteAnimation[]).map((animation: CommandPaletteAnimation) => ({
 				id: `animation-${animation}`,
 				label: `Animation: ${AppComponent.animationLabels[animation]}`,
-				category: 'Appearance',
+				category: 'Palette Appearance',
 				keywords: [
 					'animation',
 					'transition',
