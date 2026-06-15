@@ -1,4 +1,4 @@
-import { ApplicationConfig, Injectable, provideZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, Injectable, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideRouter, TitleStrategy, RouterStateSnapshot } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { provideCommandPalette } from 'ngx-command-palette';
@@ -18,7 +18,7 @@ class PageTitleStrategy extends TitleStrategy {
 
 export const appConfig: ApplicationConfig = {
 	providers: [
-		provideZonelessChangeDetection(),
+		provideExperimentalZonelessChangeDetection(),
 		provideRouter(routes),
 		provideCommandPalette(),
 		{ provide: TitleStrategy, useClass: PageTitleStrategy },

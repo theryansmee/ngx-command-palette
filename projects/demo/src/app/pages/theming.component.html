@@ -20,7 +20,7 @@
 &lt;/body&gt;</code></pre>
 
 	<p>When using the CSS class approach, import the theme file in your global styles:</p>
-<pre><code>@import '@theryansmee/ngx-command-palette/themes/dark.css';</code></pre>
+<pre><code>&#64;import '&#64;theryansmee/ngx-command-palette/themes/dark.css';</code></pre>
 
 	<h3>Available Themes</h3>
 	<table>
@@ -106,7 +106,7 @@
 
 	<h2>Conditional Dark Mode</h2>
 	<p>For dynamic dark mode (e.g. respecting OS preference), set the variables conditionally in your global styles:</p>
-<pre><code>@media (prefers-color-scheme: dark) &#123;
+<pre><code>&#64;media (prefers-color-scheme: dark) &#123;
   cmd-palette &#123;
     --cmd-bg: #1e293b;
     --cmd-border: #334155;
