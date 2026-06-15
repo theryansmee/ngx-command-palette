@@ -34,7 +34,7 @@ jobs:
 
       - run: pnpm run build:lib
 
-      - run: pnpm run build:demo
+      - run: pnpm run build:demo -- --base-href /ngx-command-palette/
 
       - uses: actions/configure-pages@v5
 
