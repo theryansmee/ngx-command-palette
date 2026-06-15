@@ -3,10 +3,15 @@
 }
 
 .cmd-group-heading {
+	background: var(--cmd-bg, #ffffff);
 	padding: 8px 16px 4px;
+	position: sticky;
+	top: 0;
+	z-index: 1;
+
+	color: var(--cmd-group-heading-color, #64748b);
 	font-size: var(--cmd-group-heading-size, 12px);
 	font-weight: 500;
-	color: var(--cmd-group-heading-color, #64748b);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 }

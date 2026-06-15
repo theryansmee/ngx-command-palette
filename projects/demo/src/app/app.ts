@@ -1,6 +1,11 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, signal, WritableSignal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { CmdPaletteComponent, CommandPaletteService } from 'ngx-command-palette';
+import {
+	CmdPaletteComponent,
+	CommandPaletteService,
+	CommandPaletteTheme,
+	CommandPaletteAnimation,
+} from 'ngx-command-palette';
 
 @Component({
 	selector: 'app-root',
@@ -15,11 +20,28 @@ import { CmdPaletteComponent, CommandPaletteService } from 'ngx-command-palette'
 	styleUrl: './app.component.scss',
 })
 export class AppComponent {
+	static readonly themeLabels: Record<CommandPaletteTheme, string> = {
+		default: 'Default (Light)',
+		dark: 'Dark',
+		github: 'GitHub',
+		linear: 'Linear',
+	};
+
+	static readonly animationLabels: Record<CommandPaletteAnimation, string> = {
+		scale: 'Scale',
+		slide: 'Slide',
+		none: 'None',
+	};
+
 	readonly #palette: CommandPaletteService = inject(CommandPaletteService);
 
 	readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
 	public menuOpen: boolean = false;
+
+	public readonly activeTheme: WritableSignal<CommandPaletteTheme> = signal<CommandPaletteTheme>('default');
+
+	public readonly activeAnimation: WritableSignal<CommandPaletteAnimation> = signal<CommandPaletteAnimation>('scale');
 
 	public closeMenu(): void {
 		this.menuOpen = false;
@@ -27,26 +49,31 @@ export class AppComponent {
 
 	constructor() {
 		this.#palette.register([
-			{
-				id: 'toggle-dark-mode',
-				label: 'Toggle Dark Mode',
-				category: 'Actions',
+			...(Object.keys(AppComponent.themeLabels) as CommandPaletteTheme[]).map((theme: CommandPaletteTheme) => ({
+				id: `theme-${theme}`,
+				label: `Theme: ${AppComponent.themeLabels[theme]}`,
+				category: 'Appearance',
 				keywords: [
 					'theme',
-					'light',
-					'dark',
-					'appearance',
+					'colour',
+					'color',
+					'style',
+					theme,
 				],
-				action: (): void => {
-					const root: HTMLElement = document.documentElement;
-					const isDark: boolean = root.classList.contains('dark')
-						|| (!root.classList.contains('light')
-						&& window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-					root.classList.toggle('dark', !isDark);
-					root.classList.toggle('light', isDark);
-				},
-			},
+				action: (): void => this.activeTheme.set(theme),
+			})),
+			...(Object.keys(AppComponent.animationLabels) as CommandPaletteAnimation[]).map((animation: CommandPaletteAnimation) => ({
+				id: `animation-${animation}`,
+				label: `Animation: ${AppComponent.animationLabels[animation]}`,
+				category: 'Appearance',
+				keywords: [
+					'animation',
+					'transition',
+					'motion',
+					animation,
+				],
+				action: (): void => this.activeAnimation.set(animation),
+			})),
 			{
 				id: 'copy-install',
 				label: 'Copy Install Command',

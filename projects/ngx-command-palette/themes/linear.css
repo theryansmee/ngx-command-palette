@@ -1,0 +1,33 @@
+/**
+ * ngx-command-palette - Linear theme
+ *
+ * Purple/violet accents inspired by Linear's command palette.
+ *
+ * Apply via config:
+ *   provideCommandPalette({ theme: 'linear' })
+ *
+ * Or via CSS class on any ancestor or cmd-palette itself:
+ *   <body class="cmd-theme-linear">
+ *   <cmd-palette class="cmd-theme-linear" />
+ *
+ * Or import this file and scope it yourself:
+ *   @import '@theryansmee/ngx-command-palette/themes/linear.css';
+ */
+
+.cmd-theme-linear {
+	--cmd-backdrop: rgba(10, 5, 20, 0.75);
+	--cmd-bg: #191a23;
+	--cmd-border: rgba(130, 90, 255, 0.15);
+	--cmd-border-radius: 8px;
+	--cmd-shadow: 0 0 0 1px rgba(130, 90, 255, 0.1), 0 24px 60px rgba(10, 5, 20, 0.65);
+	--cmd-input-color: #f0eef5;
+	--cmd-input-placeholder: #6e6a8a;
+	--cmd-item-color: #dddaf0;
+	--cmd-item-hover-bg: rgba(130, 90, 255, 0.12);
+	--cmd-item-active-bg: rgba(130, 90, 255, 0.22);
+	--cmd-group-heading-color: #a78bfa;
+	--cmd-shortcut-bg: rgba(130, 90, 255, 0.1);
+	--cmd-shortcut-color: #a78bfa;
+	--cmd-shortcut-border: rgba(130, 90, 255, 0.25);
+	--cmd-empty-color: #6e6a8a;
+}

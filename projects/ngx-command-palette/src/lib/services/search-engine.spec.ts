@@ -25,6 +25,7 @@ describe('SearchEngine', () => {
 
 	const config: CommandPaletteConfig = {
 		maxResults: 5,
+		trackRecent: true,
 		recentCount: 5,
 	};
 

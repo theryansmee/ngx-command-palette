@@ -1,4 +1,4 @@
-<cmd-palette />
+<cmd-palette [theme]="activeTheme()" [animation]="activeAnimation()" />
 
 <button class="menu-toggle" [class.open]="menuOpen" (click)="menuOpen = !menuOpen" aria-label="Toggle navigation">
 	<span></span>

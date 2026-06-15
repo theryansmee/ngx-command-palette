@@ -9,6 +9,7 @@ describe('RecentCommandsStore', () => {
 	let store: RecentCommandsStore;
 
 	const defaultConfig: CommandPaletteConfig = {
+		trackRecent: true,
 		recentCount: 3,
 		maxResults: 10,
 	};

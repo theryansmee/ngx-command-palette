@@ -1,0 +1,33 @@
+/**
+ * ngx-command-palette - Dark theme
+ *
+ * Warm neutral greys with amber-tinted accents.
+ *
+ * Apply via config:
+ *   provideCommandPalette({ theme: 'dark' })
+ *
+ * Or via CSS class on any ancestor or cmd-palette itself:
+ *   <body class="cmd-theme-dark">
+ *   <cmd-palette class="cmd-theme-dark" />
+ *
+ * Or import this file and scope it yourself:
+ *   @import '@theryansmee/ngx-command-palette/themes/dark.css';
+ */
+
+.cmd-theme-dark {
+	--cmd-backdrop: rgba(0, 0, 0, 0.7);
+	--cmd-bg: #1a1a1a;
+	--cmd-border: #3a3a3a;
+	--cmd-border-radius: 12px;
+	--cmd-shadow: 0 16px 70px rgba(0, 0, 0, 0.5);
+	--cmd-input-color: #e8e0d6;
+	--cmd-input-placeholder: #756e65;
+	--cmd-item-color: #e8e0d6;
+	--cmd-item-hover-bg: #2c2724;
+	--cmd-item-active-bg: #3d3530;
+	--cmd-group-heading-color: #a09080;
+	--cmd-shortcut-bg: #2c2724;
+	--cmd-shortcut-color: #a09080;
+	--cmd-shortcut-border: #4a4038;
+	--cmd-empty-color: #756e65;
+}

@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, Signal, viewChild, computed, HostListener, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, Signal, viewChild, computed, HostListener, effect, input, InputSignal } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { A11yModule } from '@angular/cdk/a11y';
 import { CommandPaletteService } from '../../services/command-palette.service';
 import { COMMAND_PALETTE_CONFIG } from '../../provide';
-import { CommandPaletteConfig } from '../../models/command';
+import { CommandPaletteConfig, CommandPaletteTheme, CommandPaletteAnimation } from '../../models/command';
 import { CmdInputComponent } from '../input/input.component';
 import { CmdListComponent } from '../list/list.component';
 import { CmdFooterComponent } from '../footer/footer.component';
@@ -29,6 +29,10 @@ interface ParsedShortcut {
 		CmdListComponent,
 		CmdFooterComponent,
 	],
+	host: {
+		'[attr.data-theme]': 'activeTheme()',
+		'[attr.data-animation]': 'activeAnimation()',
+	},
 	templateUrl: './palette.component.html',
 	styleUrl: './palette.component.scss',
 })
@@ -36,6 +40,18 @@ export class CmdPaletteComponent {
 	public readonly palette: CommandPaletteService = inject(CommandPaletteService);
 
 	public readonly listComponent: Signal<CmdListComponent | undefined> = viewChild(CmdListComponent);
+
+	public readonly theme: InputSignal<CommandPaletteTheme | undefined> = input<CommandPaletteTheme | undefined>(undefined);
+
+	public readonly animation: InputSignal<CommandPaletteAnimation | undefined> = input<CommandPaletteAnimation | undefined>(undefined);
+
+	readonly #configTheme: string;
+
+	readonly #configAnimation: string;
+
+	public readonly activeTheme: Signal<string> = computed(() => this.theme() ?? this.#configTheme);
+
+	public readonly activeAnimation: Signal<string> = computed(() => this.animation() ?? this.#configAnimation);
 
 	readonly #parsedShortcut: ParsedShortcut;
 
@@ -49,6 +65,10 @@ export class CmdPaletteComponent {
 
 	constructor() {
 		const config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
+
+		this.#configTheme = config.theme ?? 'default';
+		this.#configAnimation = config.animation ?? 'scale';
+
 		const parts: string[] = (config.shortcut ?? 'mod.k').split('.');
 		const isMac: boolean = /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
 		const hasMod: boolean = parts.includes('mod');

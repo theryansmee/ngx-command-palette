@@ -1,4 +1,4 @@
-export { Command, CommandContext, SearchProvider, CommandPaletteConfig, ScoredCommand } from './lib/models/command';
+export { Command, CommandContext, SearchProvider, CommandPaletteConfig, CommandPaletteTheme, CommandPaletteAnimation, ScoredCommand } from './lib/models/command';
 export { CommandPaletteService } from './lib/services/command-palette.service';
 export { CommandRegistry } from './lib/services/command-registry';
 export { SearchEngine } from './lib/services/search-engine';

@@ -5,12 +5,20 @@
 	left: 0;
 }
 
+// ---------------------------------------------------------------------------
+// Backdrop
+// ---------------------------------------------------------------------------
+
 .cmd-backdrop {
 	position: fixed;
 	inset: 0;
 	background: var(--cmd-backdrop, rgba(0, 0, 0, 0.5));
 	z-index: 9999;
 }
+
+// ---------------------------------------------------------------------------
+// Dialog
+// ---------------------------------------------------------------------------
 
 .cmd-dialog {
 	background: var(--cmd-bg, #ffffff);
@@ -42,4 +50,116 @@
 		max-height: calc(100dvh - 32px);
 		border-radius: var(--cmd-border-radius, 8px);
 	}
+}
+
+// ---------------------------------------------------------------------------
+// Animations
+// ---------------------------------------------------------------------------
+
+@keyframes cmd-backdrop-enter {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes cmd-dialog-scale-enter {
+	from {
+		opacity: 0;
+		transform: translateX(-50%) scale(0.88);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(-50%) scale(1);
+	}
+}
+
+@keyframes cmd-dialog-slide-enter {
+	from {
+		opacity: 0;
+		transform: translateX(-50%) translateY(-48px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+
+:host([data-animation="scale"]) .cmd-backdrop,
+:host([data-animation="slide"]) .cmd-backdrop {
+	animation: cmd-backdrop-enter 200ms ease-out;
+}
+
+:host([data-animation="scale"]) .cmd-dialog {
+	animation: cmd-dialog-scale-enter 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:host([data-animation="slide"]) .cmd-dialog {
+	animation: cmd-dialog-slide-enter 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:host .cmd-backdrop,
+	:host .cmd-dialog {
+		animation: none !important;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Built-in themes
+// ---------------------------------------------------------------------------
+
+// Dark: warm neutral greys, amber-tinted accents
+:host([data-theme="dark"]) {
+	--cmd-backdrop: rgba(0, 0, 0, 0.7);
+	--cmd-bg: #1a1a1a;
+	--cmd-border: #3a3a3a;
+	--cmd-border-radius: 12px;
+	--cmd-shadow: 0 16px 70px rgba(0, 0, 0, 0.5);
+	--cmd-input-color: #e8e0d6;
+	--cmd-input-placeholder: #756e65;
+	--cmd-item-color: #e8e0d6;
+	--cmd-item-hover-bg: #2c2724;
+	--cmd-item-active-bg: #3d3530;
+	--cmd-group-heading-color: #a09080;
+	--cmd-shortcut-bg: #2c2724;
+	--cmd-shortcut-color: #a09080;
+	--cmd-shortcut-border: #4a4038;
+	--cmd-empty-color: #756e65;
+}
+
+// GitHub: cool blue tones, GitHub's signature blue accent
+:host([data-theme="github"]) {
+	--cmd-backdrop: rgba(1, 4, 9, 0.8);
+	--cmd-bg: #0d1117;
+	--cmd-border: #1f6feb44;
+	--cmd-border-radius: 14px;
+	--cmd-shadow: 0 0 0 1px #1f6feb33, 0 16px 48px rgba(1, 4, 9, 0.6);
+	--cmd-input-color: #e6edf3;
+	--cmd-input-placeholder: #6e7681;
+	--cmd-item-color: #c9d1d9;
+	--cmd-item-hover-bg: rgba(56, 139, 253, 0.15);
+	--cmd-item-active-bg: rgba(56, 139, 253, 0.25);
+	--cmd-group-heading-color: #58a6ff;
+	--cmd-shortcut-bg: rgba(56, 139, 253, 0.12);
+	--cmd-shortcut-color: #58a6ff;
+	--cmd-shortcut-border: rgba(56, 139, 253, 0.3);
+	--cmd-empty-color: #6e7681;
+}
+
+// Linear: purple/violet accent, minimal borders, tight radius
+:host([data-theme="linear"]) {
+	--cmd-backdrop: rgba(10, 5, 20, 0.75);
+	--cmd-bg: #191a23;
+	--cmd-border: rgba(130, 90, 255, 0.15);
+	--cmd-border-radius: 8px;
+	--cmd-shadow: 0 0 0 1px rgba(130, 90, 255, 0.1), 0 24px 60px rgba(10, 5, 20, 0.65);
+	--cmd-input-color: #f0eef5;
+	--cmd-input-placeholder: #6e6a8a;
+	--cmd-item-color: #dddaf0;
+	--cmd-item-hover-bg: rgba(130, 90, 255, 0.12);
+	--cmd-item-active-bg: rgba(130, 90, 255, 0.22);
+	--cmd-group-heading-color: #a78bfa;
+	--cmd-shortcut-bg: rgba(130, 90, 255, 0.1);
+	--cmd-shortcut-color: #a78bfa;
+	--cmd-shortcut-border: rgba(130, 90, 255, 0.25);
+	--cmd-empty-color: #6e6a8a;
 }

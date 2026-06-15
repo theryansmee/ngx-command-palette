@@ -13,7 +13,7 @@ import { Command, CommandPaletteConfig, ScoredCommand } from './models/command';
 @Component({ standalone: true, template: '' })
 class DummyComponent {}
 
-const TEST_ROUTES: Routes = [
+const testRoutes: Routes = [
 	{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 	{ path: 'dashboard', component: DummyComponent, title: 'Dashboard' },
 	{ path: 'settings', component: DummyComponent, title: 'Settings' },
@@ -41,8 +41,9 @@ const TEST_ROUTES: Routes = [
 	},
 ];
 
-const CONFIG: CommandPaletteConfig = {
+const config: CommandPaletteConfig = {
 	maxResults: 10,
+	trackRecent: true,
 	recentCount: 5,
 	autoRegisterRoutes: false,
 };
@@ -70,8 +71,8 @@ describe('Integration', () => {
 		TestBed.configureTestingModule({
 			providers: [
 				{ provide: PLATFORM_ID, useValue: 'browser' },
-				{ provide: COMMAND_PALETTE_CONFIG, useValue: CONFIG },
-				provideRouter(TEST_ROUTES),
+				{ provide: COMMAND_PALETTE_CONFIG, useValue: config },
+				provideRouter(testRoutes),
 			],
 		});
 

@@ -1,0 +1,33 @@
+/**
+ * ngx-command-palette - GitHub theme
+ *
+ * Cool blue tones inspired by GitHub's command palette.
+ *
+ * Apply via config:
+ *   provideCommandPalette({ theme: 'github' })
+ *
+ * Or via CSS class on any ancestor or cmd-palette itself:
+ *   <body class="cmd-theme-github">
+ *   <cmd-palette class="cmd-theme-github" />
+ *
+ * Or import this file and scope it yourself:
+ *   @import '@theryansmee/ngx-command-palette/themes/github.css';
+ */
+
+.cmd-theme-github {
+	--cmd-backdrop: rgba(1, 4, 9, 0.8);
+	--cmd-bg: #0d1117;
+	--cmd-border: #1f6feb44;
+	--cmd-border-radius: 14px;
+	--cmd-shadow: 0 0 0 1px #1f6feb33, 0 16px 48px rgba(1, 4, 9, 0.6);
+	--cmd-input-color: #e6edf3;
+	--cmd-input-placeholder: #6e7681;
+	--cmd-item-color: #c9d1d9;
+	--cmd-item-hover-bg: rgba(56, 139, 253, 0.15);
+	--cmd-item-active-bg: rgba(56, 139, 253, 0.25);
+	--cmd-group-heading-color: #58a6ff;
+	--cmd-shortcut-bg: rgba(56, 139, 253, 0.12);
+	--cmd-shortcut-color: #58a6ff;
+	--cmd-shortcut-border: rgba(56, 139, 253, 0.3);
+	--cmd-empty-color: #6e7681;
+}

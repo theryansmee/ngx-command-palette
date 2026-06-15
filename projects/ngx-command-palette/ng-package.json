@@ -6,6 +6,7 @@
   },
   "assets": [
     "schematics/collection.json",
-    "schematics/ng-add/schema.json"
+    "schematics/ng-add/schema.json",
+    "themes/*.css"
   ]
 }

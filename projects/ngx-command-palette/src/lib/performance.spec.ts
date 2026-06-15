@@ -7,7 +7,7 @@ import { CommandRegistry } from './services/command-registry';
 import { COMMAND_PALETTE_CONFIG } from './provide';
 import { Command, CommandPaletteConfig, ScoredCommand } from './models/command';
 
-const CATEGORIES: string[] = [
+const categories: string[] = [
 	'Navigation',
 	'Settings',
 	'User Management',
@@ -20,7 +20,7 @@ const CATEGORIES: string[] = [
 	'Integrations',
 ];
 
-const LABEL_PREFIXES: string[] = [
+const labelPrefixes: string[] = [
 	'Open',
 	'Navigate to',
 	'Toggle',
@@ -38,7 +38,7 @@ const LABEL_PREFIXES: string[] = [
 	'Download',
 ];
 
-const LABEL_SUBJECTS: string[] = [
+const labelSubjects: string[] = [
 	'Dashboard',
 	'User Profile',
 	'Settings Panel',
@@ -61,7 +61,7 @@ const LABEL_SUBJECTS: string[] = [
 	'Environment Variables',
 ];
 
-const KEYWORD_POOL: string[] = [
+const keywordPool: string[] = [
 	'admin',
 	'config',
 	'monitor',
@@ -107,18 +107,18 @@ function generateRealisticCommands(count: number): Command[] {
 	const commands: Command[] = [];
 
 	for (let index: number = 0; index < count; index++) {
-		const prefixIndex: number = index % LABEL_PREFIXES.length;
-		const subjectIndex: number = index % LABEL_SUBJECTS.length;
-		const categoryIndex: number = index % CATEGORIES.length;
+		const prefixIndex: number = index % labelPrefixes.length;
+		const subjectIndex: number = index % labelSubjects.length;
+		const categoryIndex: number = index % categories.length;
 
-		const label: string = `${LABEL_PREFIXES[prefixIndex]} ${LABEL_SUBJECTS[subjectIndex]} ${index}`;
-		const category: string = CATEGORIES[categoryIndex];
+		const label: string = `${labelPrefixes[prefixIndex]} ${labelSubjects[subjectIndex]} ${index}`;
+		const category: string = categories[categoryIndex];
 
-		const keywordStartIndex: number = index % KEYWORD_POOL.length;
+		const keywordStartIndex: number = index % keywordPool.length;
 		const keywords: string[] = [
-			KEYWORD_POOL[keywordStartIndex],
-			KEYWORD_POOL[(keywordStartIndex + 7) % KEYWORD_POOL.length],
-			KEYWORD_POOL[(keywordStartIndex + 13) % KEYWORD_POOL.length],
+			keywordPool[keywordStartIndex],
+			keywordPool[(keywordStartIndex + 7) % keywordPool.length],
+			keywordPool[(keywordStartIndex + 13) % keywordPool.length],
 		];
 
 		const priority: number = index % 10;

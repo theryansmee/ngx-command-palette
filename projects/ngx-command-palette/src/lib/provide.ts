@@ -2,11 +2,12 @@ import { InjectionToken, Provider, EnvironmentProviders, makeEnvironmentProvider
 import { CommandPaletteConfig } from './models/command';
 import { RouterCommandExtractor } from './services/router-extractor';
 
-const DEFAULT_CONFIG: CommandPaletteConfig = {
+const defaultConfig: CommandPaletteConfig = {
 	shortcut: 'mod.k',
 	placeholder: 'Search or type a command...',
 	autoRegisterRoutes: true,
 	maxResults: 10,
+	trackRecent: false,
 	recentCount: 5,
 	animation: 'scale',
 };
@@ -19,7 +20,7 @@ function initRouterExtractor(): () => void {
 }
 
 export function provideCommandPalette(config: Partial<CommandPaletteConfig> = {}): EnvironmentProviders {
-	const mergedConfig: CommandPaletteConfig = { ...DEFAULT_CONFIG, ...config };
+	const mergedConfig: CommandPaletteConfig = { ...defaultConfig, ...config };
 
 	const providers: Provider[] = [
 		{

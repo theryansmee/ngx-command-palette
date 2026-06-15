@@ -23,6 +23,7 @@ describe('CommandPaletteService', () => {
 
 	const config: CommandPaletteConfig = {
 		maxResults: 10,
+		trackRecent: true,
 		recentCount: 5,
 	};
 

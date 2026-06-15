@@ -7,8 +7,11 @@
   placeholder: 'Search...',
   autoRegisterRoutes: true,
   maxResults: 10,
+  trackRecent: false,
   recentCount: 5,
   debounce: 150,
+  animation: 'scale',
+  theme: 'default',
 &#125;)</code></pre>
 
 	<h2>Options</h2>
@@ -47,16 +50,34 @@
 				<td>Maximum results shown</td>
 			</tr>
 			<tr>
+				<td><code>trackRecent</code></td>
+				<td><code>boolean</code></td>
+				<td><code>false</code></td>
+				<td>Track recently executed commands and boost them in results</td>
+			</tr>
+			<tr>
 				<td><code>recentCount</code></td>
 				<td><code>number</code></td>
 				<td><code>5</code></td>
-				<td>Number of recent commands tracked</td>
+				<td>Number of recent commands tracked (requires <code>trackRecent: true</code>)</td>
 			</tr>
 			<tr>
 				<td><code>debounce</code></td>
 				<td><code>number</code></td>
 				<td><code>0</code></td>
 				<td>Input debounce in milliseconds</td>
+			</tr>
+			<tr>
+				<td><code>animation</code></td>
+				<td><code>'scale' | 'slide' | 'none'</code></td>
+				<td><code>'scale'</code></td>
+				<td>Open animation style</td>
+			</tr>
+			<tr>
+				<td><code>theme</code></td>
+				<td><code>'default' | 'dark' | 'github' | 'linear'</code></td>
+				<td><code>'default'</code></td>
+				<td>Built-in colour theme</td>
 			</tr>
 		</tbody>
 	</table>

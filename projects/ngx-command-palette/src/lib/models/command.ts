@@ -28,14 +28,20 @@ export interface SearchProvider {
 	order?: number;
 }
 
+export type CommandPaletteTheme = 'default' | 'dark' | 'github' | 'linear';
+
+export type CommandPaletteAnimation = 'scale' | 'slide' | 'none';
+
 export interface CommandPaletteConfig {
 	shortcut?: string;
 	placeholder?: string;
 	autoRegisterRoutes?: boolean;
 	maxResults?: number;
+	trackRecent?: boolean;
 	recentCount?: number;
 	debounce?: number;
-	animation?: 'scale' | 'slide' | 'none';
+	animation?: CommandPaletteAnimation;
+	theme?: CommandPaletteTheme;
 }
 
 export interface ScoredCommand {
