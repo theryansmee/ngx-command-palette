@@ -1,11 +1,11 @@
 {
 	"name": "@theryansmee/ngx-command-palette",
-	"version": "20.0.0-beta.1",
+	"version": "19.0.0-beta.1",
 	"description": "A keyboard-driven command palette for Angular. Auto-registers routes from your Router config, supports custom commands and async search providers.",
 	"license": "MIT",
 	"keywords": [
 		"angular",
-		"angular20",
+		"angular19",
 		"angular-component",
 		"command-palette",
 		"cmdk",
@@ -20,10 +20,10 @@
 		"navigation"
 	],
 	"peerDependencies": {
-		"@angular/cdk": "^20.0.0",
-		"@angular/common": "^20.0.0",
-		"@angular/core": "^20.0.0",
-		"@angular/router": "^20.0.0"
+		"@angular/cdk": "^19.0.0",
+		"@angular/common": "^19.0.0",
+		"@angular/core": "^19.0.0",
+		"@angular/router": "^19.0.0"
 	},
 	"dependencies": {
 		"tslib": "^2.3.0"
