@@ -10,7 +10,7 @@
 			"prefix": "cmd",
 			"architect": {
 				"build": {
-					"builder": "@angular/build:ng-packagr",
+					"builder": "@angular-devkit/build-angular:ng-packagr",
 					"options": {
 						"project": "projects/ngx-command-palette/ng-package.json"
 					},
@@ -25,7 +25,7 @@
 					"defaultConfiguration": "production"
 				},
 				"test": {
-					"builder": "@angular/build:unit-test",
+					"builder": "@angular-devkit/build-angular:unit-test",
 					"options": {
 						"tsConfig": "projects/ngx-command-palette/tsconfig.spec.json"
 					}
@@ -75,7 +75,7 @@
 			"prefix": "app",
 			"architect": {
 				"build": {
-					"builder": "@angular/build:application",
+					"builder": "@angular-devkit/build-angular:application",
 					"options": {
 						"outputPath": "dist/demo",
 						"index": "projects/demo/src/index.html",
@@ -132,7 +132,7 @@
 					"defaultConfiguration": "production"
 				},
 				"serve": {
-					"builder": "@angular/build:dev-server",
+					"builder": "@angular-devkit/build-angular:dev-server",
 					"configurations": {
 						"production": {
 							"buildTarget": "demo:build:production"
