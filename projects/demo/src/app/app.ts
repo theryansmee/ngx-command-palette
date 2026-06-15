@@ -19,6 +19,12 @@ export class AppComponent {
 
 	readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
+	public menuOpen: boolean = false;
+
+	public closeMenu(): void {
+		this.menuOpen = false;
+	}
+
 	constructor() {
 		this.#palette.register([
 			{

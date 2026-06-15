@@ -1,19 +1,39 @@
 <cmd-palette />
+
+<button class="menu-toggle" [class.open]="menuOpen" (click)="menuOpen = !menuOpen" aria-label="Toggle navigation">
+	<span></span>
+	<span></span>
+	<span></span>
+</button>
+
 <div class="docs-layout">
-	<aside class="docs-sidebar">
-		<a class="docs-logo" routerLink="/home">ngx-command-palette</a>
+	<aside class="docs-sidebar" [class.open]="menuOpen">
+		<a class="docs-logo" routerLink="/home" (click)="closeMenu()">ngx-command-palette</a>
 		<nav>
-			<a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-			<a routerLink="/getting-started" routerLinkActive="active">Getting Started</a>
-			<a routerLink="/configuration" routerLinkActive="active">Configuration</a>
-			<a routerLink="/custom-commands" routerLinkActive="active">Custom Commands</a>
-			<a routerLink="/async-providers" routerLinkActive="active">Async Providers</a>
-			<a routerLink="/theming" routerLinkActive="active">Theming</a>
+			<a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">Home</a>
+			<a routerLink="/getting-started" routerLinkActive="active" (click)="closeMenu()">Getting Started</a>
+			<a routerLink="/configuration" routerLinkActive="active" (click)="closeMenu()">Configuration</a>
+			<a routerLink="/custom-commands" routerLinkActive="active" (click)="closeMenu()">Custom Commands</a>
+			<a routerLink="/async-providers" routerLinkActive="active" (click)="closeMenu()">Async Providers</a>
+			<a routerLink="/theming" routerLinkActive="active" (click)="closeMenu()">Theming</a>
 		</nav>
-		<div class="docs-shortcut-hint">
-			Press <kbd>Cmd+K</kbd> to search
+		<div class="docs-sidebar-footer">
+			<div class="docs-shortcut-hint">
+				Press <kbd>Cmd+K</kbd> to search
+			</div>
+			<div class="docs-sidebar-links">
+				<a href="https://github.com/theryansmee/ngx-command-palette" target="_blank" rel="noopener">GitHub</a>
+				<a href="https://www.npmjs.com/package/@theryansmee/ngx-command-palette" target="_blank" rel="noopener">npm</a>
+			</div>
+			<div class="docs-also-by">
+				<span>Also by &#64;theryansmee</span>
+				<a href="https://theryansmee.github.io/ngx-virtual-grid/" target="_blank" rel="noopener">ngx-virtual-grid</a>
+			</div>
 		</div>
 	</aside>
+
+	<div class="backdrop" [class.visible]="menuOpen" (click)="closeMenu()"></div>
+
 	<main class="docs-content">
 		<router-outlet />
 	</main>
