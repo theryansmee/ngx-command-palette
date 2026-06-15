@@ -49,12 +49,14 @@ export class CmdPaletteComponent {
 
 	constructor() {
 		const config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
-		const parts: string[] = (config.shortcut ?? 'meta.k').split('.');
+		const parts: string[] = (config.shortcut ?? 'mod.k').split('.');
+		const isMac: boolean = /Mac|iPhone|iPad|iPod/.test(navigator.userAgent);
+		const hasMod: boolean = parts.includes('mod');
 
 		this.#parsedShortcut = {
 			key: parts[parts.length - 1],
-			meta: parts.includes('meta'),
-			ctrl: parts.includes('ctrl'),
+			meta: parts.includes('meta') || (hasMod && isMac),
+			ctrl: parts.includes('ctrl') || (hasMod && !isMac),
 			shift: parts.includes('shift'),
 			alt: parts.includes('alt'),
 		};

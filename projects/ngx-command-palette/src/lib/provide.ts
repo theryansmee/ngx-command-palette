@@ -3,7 +3,7 @@ import { CommandPaletteConfig } from './models/command';
 import { RouterCommandExtractor } from './services/router-extractor';
 
 const DEFAULT_CONFIG: CommandPaletteConfig = {
-	shortcut: 'meta.k',
+	shortcut: 'mod.k',
 	placeholder: 'Search or type a command...',
 	autoRegisterRoutes: true,
 	maxResults: 10,

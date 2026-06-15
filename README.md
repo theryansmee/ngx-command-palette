@@ -106,7 +106,7 @@ Pass a config object to `provideCommandPalette()` to customize behavior:
 
 ```typescript
 provideCommandPalette({
-  shortcut: 'meta.k',           // Keyboard shortcut to open (default: 'meta.k')
+  shortcut: 'mod.k',            // Keyboard shortcut to open (default: 'mod.k')
   placeholder: 'Search...',     // Input placeholder text (default: 'Search or type a command...')
   autoRegisterRoutes: true,     // Auto-register routes from Router config (default: true)
   maxResults: 10,               // Maximum search results shown (default: 10)
@@ -121,6 +121,7 @@ The shortcut string uses dot-separated modifier keys followed by the key:
 
 | Shortcut | Keys |
 |----------|------|
+| `mod.k` | Cmd+K (Mac) / Ctrl+K (Windows/Linux) |
 | `meta.k` | Cmd+K (Mac) / Win+K (Windows) |
 | `ctrl.k` | Ctrl+K |
 | `ctrl.shift.p` | Ctrl+Shift+P |
@@ -569,7 +570,7 @@ Environment provider factory. Call in your `appConfig.providers` array.
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `shortcut` | `string` | `'meta.k'` | Keyboard shortcut to open the palette |
+| `shortcut` | `string` | `'mod.k'` | Keyboard shortcut to open the palette |
 | `placeholder` | `string` | `'Search or type a command...'` | Input placeholder text |
 | `autoRegisterRoutes` | `boolean` | `true` | Auto-register routes from Router config |
 | `maxResults` | `number` | `10` | Maximum results shown |
