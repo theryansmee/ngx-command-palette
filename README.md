@@ -31,6 +31,25 @@ Inspired by tools like Linear, GitHub, and Raycast.
 - **Standalone components** - no `NgModule` needed
 - **Signal-based** - reactive state using Angular signals
 
+## Angular Version Support
+
+Each Angular major version is maintained on its own branch:
+
+| Branch | Angular | Library | npm tag |
+|---|---|---|---|
+| `angular/19` | 19.x | 19.x.x | `angular19` |
+| `angular/20` | 20.x | 20.x.x | `angular20` |
+| `angular/21` | 21.x | 21.x.x | `angular21` |
+| `angular/22` | 22.x | 22.x.x | `latest` |
+
+The `main` branch tracks the latest stable version.
+
+To install a specific Angular version:
+
+```bash
+npm install @theryansmee/ngx-command-palette@angular21
+```
+
 ## Installation
 
 ```bash
