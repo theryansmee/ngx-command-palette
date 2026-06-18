@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 This project follows [Semantic Versioning](https://semver.org/) with the major version matching the supported Angular version.
 
+## [22.0.2] - 2026-06-18
+
+### Fixes
+- Add repository, homepage, and bugs metadata to package.json for npm sidebar links.
+- Remove beta notice and fix badge URLs in README.
+
 ## [22.0.1] - 2026-06-18
 
 > **Note**: Version 22.0.0 has been retracted from npm. 22.0.1 is the first available stable release for Angular 22.
@@ -53,7 +59,7 @@ The library is available for Angular 19 through 22. Each version lives on its ow
 
 | Angular | Package  | Branch       | npm tag     |
 |---------|----------|--------------|-------------|
-| 22      | `22.0.1` | `angular/22` | `latest`    |
+| 22      | `22.0.2` | `angular/22` | `latest`    |
 | 21      | `21.0.1` | `angular/21` | `angular21` |
 | 20      | `20.0.1` | `angular/20` | `angular20` |
 | 19      | `19.0.1` | `angular/19` | `angular19` |
