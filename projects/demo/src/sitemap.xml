@@ -25,6 +25,12 @@
 		<priority>0.7</priority>
 	</url>
 	<url>
+		<loc>https://theryansmee.github.io/ngx-command-palette/custom-templates</loc>
+		<lastmod>2026-06-18</lastmod>
+		<changefreq>monthly</changefreq>
+		<priority>0.7</priority>
+	</url>
+	<url>
 		<loc>https://theryansmee.github.io/ngx-command-palette/async-providers</loc>
 		<lastmod>2026-06-14</lastmod>
 		<changefreq>monthly</changefreq>

@@ -4,7 +4,7 @@
 [![npm downloads](https://img.shields.io/npm/dw/@theryansmee/ngx-command-palette.svg)](https://www.npmjs.com/package/@theryansmee/ngx-command-palette)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/theryansmee/ngx-command-palette/blob/main/LICENSE)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@theryansmee/ngx-command-palette@beta)](https://bundlephobia.com/package/@theryansmee/ngx-command-palette@beta)
-[![Angular](https://img.shields.io/badge/Angular-22-dd0031)](https://angular.dev)
+[![Angular](https://img.shields.io/badge/Angular-20-dd0031)](https://angular.dev)
 [![docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://theryansmee.github.io/ngx-command-palette/)
 
 > **Beta**: This library is in active development. The core API is stable but minor changes may occur before v1.0. Feedback and issues are welcome.
@@ -26,10 +26,30 @@ Inspired by tools like Linear, GitHub, and Raycast.
 - **Priority boosting** - manually rank commands higher or lower
 - **Keyboard navigation** - Arrow keys, Enter, Escape, Tab - all handled
 - **Accessible** - follows the WAI-ARIA combobox pattern with `role="combobox"`, `aria-activedescendant`, and focus trapping
+- **Custom item templates** - override row rendering globally or per-category with `ng-template`
 - **Fully themeable** - CSS custom properties for every visual aspect
 - **SSR-safe** - platform checks for `localStorage` and DOM APIs
 - **Standalone components** - no `NgModule` needed
 - **Signal-based** - reactive state using Angular signals
+
+## Angular Version Support
+
+Each Angular major version is maintained on its own branch:
+
+| Branch | Angular | Library | npm tag |
+|---|---|---|---|
+| `angular/19` | 19.x | 19.x.x | `angular19` |
+| `angular/20` | 20.x | 20.x.x | `angular20` |
+| `angular/21` | 21.x | 21.x.x | `angular21` |
+| `angular/22` | 22.x | 22.x.x | `latest` |
+
+The `main` branch tracks the latest stable version.
+
+To install a specific Angular version:
+
+```bash
+npm install @theryansmee/ngx-command-palette@angular21
+```
 
 ## Installation
 
@@ -53,10 +73,10 @@ pnpm add @theryansmee/ngx-command-palette
 
 | Package | Version |
 |---------|---------|
-| `@angular/core` | `^22.0.0` |
-| `@angular/common` | `^22.0.0` |
-| `@angular/router` | `^22.0.0` |
-| `@angular/cdk` | `^22.0.0` |
+| `@angular/core` | `^20.0.0` |
+| `@angular/common` | `^20.0.0` |
+| `@angular/router` | `^20.0.0` |
+| `@angular/cdk` | `^20.0.0` |
 
 ## Quick Start
 
@@ -321,6 +341,7 @@ interface Command {
     routes?: string[];                     // Glob patterns for route visibility
     when?: () => boolean;                  // Dynamic visibility check
   };
+  data?: Record<string, unknown>;          // Arbitrary metadata for custom templates
 }
 ```
 
@@ -432,6 +453,107 @@ The palette shows a "Searching..." indicator while async providers are in-flight
 
 ```typescript
 const isLoading: boolean = this.palette.loading();
+```
+
+## Custom Item Templates
+
+> Available from v22.1.0
+
+By default, each result row renders an icon, label, and shortcut badge. For richer results (avatars, status badges, descriptions, etc.) you can provide custom templates that override how items are rendered while keeping all keyboard navigation, accessibility, and active-state behavior intact.
+
+### Global Template
+
+A template without a category value applies to all result items:
+
+```html
+<cmd-palette>
+  <ng-template cmdItemTemplate let-command let-active="active">
+    <img [src]="command.data?.['avatar']" class="avatar" />
+    <div class="details">
+      <span>{{ command.label }}</span>
+      <span class="description">{{ command.data?.['description'] }}</span>
+    </div>
+  </ng-template>
+</cmd-palette>
+```
+
+### Per-Category Template
+
+Provide a category name to scope the template to a specific group. Items in other categories fall back to the default rendering:
+
+```html
+<cmd-palette>
+  <ng-template cmdItemTemplate="Jira Issues" let-command let-active="active">
+    <span class="status-badge" [class]="command.data?.['status']">
+      {{ command.data?.['status'] }}
+    </span>
+    <span>{{ command.label }}</span>
+    <span class="ticket-id">{{ command.data?.['ticketId'] }}</span>
+  </ng-template>
+
+  <ng-template cmdItemTemplate="Team Members" let-command let-active="active">
+    <img [src]="command.data?.['avatar']" class="avatar" />
+    <span>{{ command.label }}</span>
+    <span class="role">{{ command.data?.['role'] }}</span>
+  </ng-template>
+</cmd-palette>
+```
+
+### Resolution Order
+
+When rendering an item, the palette resolves its template in this order:
+
+1. **Category-specific template** matching the item's `category`
+2. **Global template** (one with no category value)
+3. **Built-in default** (icon + label + shortcut)
+
+### Template Context
+
+Each template receives the following context variables:
+
+| Variable | Type | Access | Description |
+|----------|------|--------|-------------|
+| `$implicit` | `Command` | `let-command` | The command object for this row |
+| `active` | `boolean` | `let-active="active"` | Whether this row is the currently selected item |
+
+### Using the `data` Property
+
+The `data` property on `Command` is an optional `Record<string, unknown>` for attaching arbitrary metadata that your custom templates can render. Search providers are the primary use case:
+
+```typescript
+this.palette.registerProvider(
+  {
+    id: 'ticket-search',
+    category: 'Jira Issues',
+    search: (query) => this.ticketService.search(query).pipe(
+      map(tickets => tickets.map(ticket => ({
+        id: `ticket:${ticket.id}`,
+        label: ticket.title,
+        action: () => this.router.navigate(['/tickets', ticket.id]),
+        data: {
+          ticketId: ticket.key,
+          status: ticket.status,
+          assignee: ticket.assignee,
+        },
+      }))),
+    ),
+  },
+  this.destroyRef,
+);
+```
+
+### Importing the Directive
+
+The `CmdItemTemplateDirective` is standalone. Import it in the component where you use `<cmd-palette>`:
+
+```typescript
+import { CmdPaletteComponent, CmdItemTemplateDirective } from '@theryansmee/ngx-command-palette';
+
+@Component({
+  imports: [CmdPaletteComponent, CmdItemTemplateDirective],
+  // ...
+})
+export class AppComponent {}
 ```
 
 ## Programmatic Control
@@ -577,7 +699,7 @@ Environment provider factory. Call in your `appConfig.providers` array.
 | `recentCount` | `number` | `5` | Number of recent commands tracked |
 | `debounce` | `number` | `0` | Input debounce in milliseconds |
 
-> **Coming soon:** Configurable open/close animations and a headless (renderless) mode.
+> **Coming soon:** Configurable open/close animations and a headless (renderless) mode. Custom item templates are available now (see [Custom Item Templates](#custom-item-templates)).
 
 ### `CommandPaletteService`
 
@@ -606,6 +728,41 @@ The root component. Add it once in your app root template.
 
 ```html
 <cmd-palette />
+```
+
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `theme` | `CommandPaletteTheme` | config value | Override the theme for this instance |
+| `animation` | `CommandPaletteAnimation` | config value | Override the animation for this instance |
+
+**Content projection:** Place `<ng-template cmdItemTemplate>` elements inside `<cmd-palette>` to customize item rendering. See [Custom Item Templates](#custom-item-templates).
+
+### `CmdItemTemplateDirective`
+
+> Available from v22.1.0
+
+Structural directive used on `<ng-template>` to define custom item templates.
+
+```html
+<ng-template cmdItemTemplate let-command let-active="active">...</ng-template>
+<ng-template cmdItemTemplate="Category Name" let-command let-active="active">...</ng-template>
+```
+
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `cmdItemTemplate` | `string` | `''` | Category name to scope the template to. Empty string applies to all items. |
+
+### `CmdItemTemplateContext`
+
+> Available from v22.1.0
+
+The type-safe context interface for custom item templates.
+
+```typescript
+interface CmdItemTemplateContext {
+  $implicit: Command;  // Available via let-command (or any variable name)
+  active: boolean;     // Available via let-active="active"
+}
 ```
 
 ## Future Plans

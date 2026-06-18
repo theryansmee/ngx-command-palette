@@ -1,6 +1,6 @@
 {
 	"name": "@theryansmee/ngx-command-palette",
-	"version": "20.0.0",
+	"version": "20.0.1",
 	"description": "A keyboard-driven command palette for Angular. Auto-registers routes from your Router config, supports custom commands and async search providers.",
 	"license": "MIT",
 	"keywords": [
