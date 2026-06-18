@@ -35,6 +35,13 @@ export const routes: Routes = [
 		),
 	},
 	{
+		path: 'custom-templates',
+		title: 'Custom Item Templates',
+		loadComponent: () => import('./pages/custom-templates.component').then(
+			(m: typeof import('./pages/custom-templates.component')) => m.CustomTemplatesComponent,
+		),
+	},
+	{
 		path: 'async-providers',
 		title: 'Async Providers',
 		loadComponent: () => import('./pages/async-providers.component').then(

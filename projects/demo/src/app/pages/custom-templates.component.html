@@ -1,0 +1,126 @@
+<div class="docs-page">
+	<h1>Custom Item Templates</h1>
+	<p class="subtitle">Override how result rows are rendered, globally or per-category. Available from v22.1.0.</p>
+
+	<p>
+		By default, each result row renders an icon, label, and shortcut badge.
+		For richer results you can provide custom <code>ng-template</code> elements inside <code>&lt;cmd-palette&gt;</code>
+		that override row content while keeping keyboard navigation, accessibility, and active-state behavior intact.
+	</p>
+
+	<h2>Importing the Directive</h2>
+	<p>
+		Import <code>CmdItemTemplateDirective</code> in the component where you use <code>&lt;cmd-palette&gt;</code>:
+	</p>
+<pre><code>import &#123; CmdPaletteComponent, CmdItemTemplateDirective &#125; from '&#64;theryansmee/ngx-command-palette';
+
+&#64;Component(&#123;
+  imports: [CmdPaletteComponent, CmdItemTemplateDirective],
+  ...
+&#125;)
+export class AppComponent &#123;&#125;</code></pre>
+
+	<h2>Global Template</h2>
+	<p>A template without a category value applies to all result items:</p>
+<pre ngNonBindable><code>&lt;cmd-palette&gt;
+  &lt;ng-template cmdItemTemplate let-command let-active="active"&gt;
+    &lt;img [src]="command.data?.['avatar']" class="avatar" /&gt;
+    &lt;div class="details"&gt;
+      &lt;span&gt;&#123;&#123; command.label &#125;&#125;&lt;/span&gt;
+      &lt;span class="description"&gt;&#123;&#123; command.data?.['description'] &#125;&#125;&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/ng-template&gt;
+&lt;/cmd-palette&gt;</code></pre>
+
+	<h2>Per-Category Template</h2>
+	<p>
+		Provide a category name to scope the template to a specific group.
+		Items in other categories fall back to the next matching template or the built-in default:
+	</p>
+<pre ngNonBindable><code>&lt;cmd-palette&gt;
+  &lt;ng-template cmdItemTemplate="Jira Issues" let-command let-active="active"&gt;
+    &lt;span class="status-badge" [class]="command.data?.['status']"&gt;
+      &#123;&#123; command.data?.['status'] &#125;&#125;
+    &lt;/span&gt;
+    &lt;span&gt;&#123;&#123; command.label &#125;&#125;&lt;/span&gt;
+    &lt;span class="ticket-id"&gt;&#123;&#123; command.data?.['ticketId'] &#125;&#125;&lt;/span&gt;
+  &lt;/ng-template&gt;
+
+  &lt;ng-template cmdItemTemplate="Team Members" let-command let-active="active"&gt;
+    &lt;img [src]="command.data?.['avatar']" class="avatar" /&gt;
+    &lt;span&gt;&#123;&#123; command.label &#125;&#125;&lt;/span&gt;
+    &lt;span class="role"&gt;&#123;&#123; command.data?.['role'] &#125;&#125;&lt;/span&gt;
+  &lt;/ng-template&gt;
+&lt;/cmd-palette&gt;</code></pre>
+
+	<h2>Resolution Order</h2>
+	<p>When rendering an item, the palette resolves its template in this order:</p>
+	<ol>
+		<li><strong>Category-specific template</strong> matching the item's <code>category</code></li>
+		<li><strong>Global template</strong> (one with no category value)</li>
+		<li><strong>Built-in default</strong> (icon + label + shortcut)</li>
+	</ol>
+	<p>This means you can mix and match: provide a per-category template for your search provider results while letting routes and custom commands use the default rendering.</p>
+
+	<h2>Template Context</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Variable</th>
+				<th>Type</th>
+				<th>Access</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><code>$implicit</code></td>
+				<td><code>Command</code></td>
+				<td><code>let-command</code></td>
+				<td>The command object for this row</td>
+			</tr>
+			<tr>
+				<td><code>active</code></td>
+				<td><code>boolean</code></td>
+				<td><code>let-active="active"</code></td>
+				<td>Whether this row is the currently selected item</td>
+			</tr>
+		</tbody>
+	</table>
+	<p>
+		The <code>CmdItemTemplateContext</code> interface is exported for type-safe usage in your components.
+	</p>
+
+	<h2>Using the <code>data</code> Property</h2>
+	<p>
+		The <code>data</code> property on <code>Command</code> is an optional
+		<code>Record&lt;string, unknown&gt;</code> for attaching arbitrary metadata that your custom templates can render.
+		Search providers are the primary use case:
+	</p>
+<pre><code>this.palette.registerProvider(
+  &#123;
+    id: 'ticket-search',
+    category: 'Jira Issues',
+    search: (query) =&gt; this.ticketService.search(query).pipe(
+      map(tickets =&gt; tickets.map(ticket =&gt; (&#123;
+        id: `ticket:$&#123;ticket.id&#125;`,
+        label: ticket.title,
+        action: () =&gt; this.router.navigate(['/tickets', ticket.id]),
+        data: &#123;
+          ticketId: ticket.key,
+          status: ticket.status,
+          assignee: ticket.assignee,
+        &#125;,
+      &#125;))),
+    ),
+  &#125;,
+  this.destroyRef,
+);</code></pre>
+
+	<h2>Design Notes</h2>
+	<ul>
+		<li>Custom templates only control the <strong>inner content</strong> of each row. The host element still handles <code>role="option"</code>, <code>aria-selected</code>, active state, click handling, and scroll-into-view behavior.</li>
+		<li>Keyboard navigation and accessibility work exactly the same regardless of which template is rendered.</li>
+		<li>The <code>active</code> context variable lets you add visual indicators (e.g. a highlight or checkmark) to the active row if needed.</li>
+	</ul>
+</div>

@@ -1,7 +1,11 @@
-@if (command().icon) {
-	<span class="cmd-item-icon">{{ command().icon }}</span>
-}
-<span class="cmd-item-label">{{ command().label }}</span>
-@if (command().shortcut) {
-	<span class="cmd-item-shortcut">{{ command().shortcut }}</span>
+@if (customTemplate()) {
+	<ng-container [ngTemplateOutlet]="customTemplate()!" [ngTemplateOutletContext]="templateContext()" />
+} @else {
+	@if (command().icon) {
+		<span class="cmd-item-icon">{{ command().icon }}</span>
+	}
+	<span class="cmd-item-label">{{ command().label }}</span>
+	@if (command().shortcut) {
+		<span class="cmd-item-shortcut">{{ command().shortcut }}</span>
+	}
 }

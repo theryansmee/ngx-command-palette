@@ -12,17 +12,36 @@ export function fuzzyMatch(query: string, target: string): FuzzyMatchResult {
 	}
 
 	if (normalizedTarget.includes(normalizedQuery)) {
-		const index: number = normalizedTarget.indexOf(normalizedQuery);
+		let bestScore: number = 0;
+		let searchFrom: number = 0;
 
-		if (index === 0) {
-			return { match: true, score: 80 };
+		while (true) {
+			const index: number = normalizedTarget.indexOf(normalizedQuery, searchFrom);
+
+			if (index === -1) {
+				break;
+			}
+
+			let positionScore: number = 40;
+
+			if (index === 0) {
+				positionScore = 80;
+			} else if (normalizedTarget[index - 1] === ' ' || normalizedTarget[index - 1] === '/') {
+				positionScore = 60;
+			}
+
+			if (positionScore > bestScore) {
+				bestScore = positionScore;
+			}
+
+			if (bestScore === 80) {
+				break;
+			}
+
+			searchFrom = index + 1;
 		}
 
-		if (normalizedTarget[index - 1] === ' ') {
-			return { match: true, score: 60 };
-		}
-
-		return { match: true, score: 40 };
+		return { match: true, score: bestScore };
 	}
 
 	let queryIndex: number = 0;

@@ -1,10 +1,11 @@
-import { Component, ChangeDetectionStrategy, inject, Signal, viewChild, computed, HostListener, effect, input, InputSignal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, Signal, viewChild, computed, HostListener, effect, input, InputSignal, contentChildren } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { A11yModule } from '@angular/cdk/a11y';
 import { CommandPaletteService } from '../../services/command-palette.service';
 import { COMMAND_PALETTE_CONFIG } from '../../provide';
 import { CommandPaletteConfig, CommandPaletteTheme, CommandPaletteAnimation } from '../../models/command';
+import { CmdItemTemplateDirective } from '../../directives/item-template.directive';
 import { CmdInputComponent } from '../input/input.component';
 import { CmdListComponent } from '../list/list.component';
 import { CmdFooterComponent } from '../footer/footer.component';
@@ -40,6 +41,8 @@ export class CmdPaletteComponent {
 	public readonly palette: CommandPaletteService = inject(CommandPaletteService);
 
 	public readonly listComponent: Signal<CmdListComponent | undefined> = viewChild(CmdListComponent);
+
+	public readonly itemTemplates: Signal<readonly CmdItemTemplateDirective[]> = contentChildren(CmdItemTemplateDirective);
 
 	public readonly theme: InputSignal<CommandPaletteTheme | undefined> = input<CommandPaletteTheme | undefined>(undefined);
 

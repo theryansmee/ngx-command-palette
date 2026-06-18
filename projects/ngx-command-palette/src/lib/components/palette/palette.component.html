@@ -3,7 +3,7 @@
 	<div class="cmd-dialog" role="dialog" aria-modal="true" aria-label="Command palette" cdkTrapFocus>
 		<cmd-input [activeDescendantId]="activeDescendantId()" (inputKeydown)="onKeydown($event)" />
 		<div class="cmd-divider"></div>
-		<cmd-list />
+		<cmd-list [itemTemplates]="itemTemplates()" />
 		<cmd-footer />
 	</div>
 }
