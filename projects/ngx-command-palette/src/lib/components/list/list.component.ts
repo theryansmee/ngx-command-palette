@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, inject, signal, computed, Signal, WritableSignal, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, computed, Signal, WritableSignal, effect, input, InputSignal, TemplateRef } from '@angular/core';
 import { CommandPaletteService } from '../../services/command-palette.service';
-import { ScoredCommand, Command } from '../../models/command';
+import { ScoredCommand, Command, CmdItemTemplateContext } from '../../models/command';
+import { CmdItemTemplateDirective } from '../../directives/item-template.directive';
 import { CmdGroupComponent } from '../group/group.component';
 import { CmdItemComponent } from '../item/item.component';
 import { CmdEmptyComponent } from '../empty/empty.component';
@@ -31,6 +32,8 @@ export class CmdListComponent {
 	readonly #palette: CommandPaletteService = inject(CommandPaletteService);
 
 	readonly #activeIndex: WritableSignal<number> = signal<number>(0);
+
+	public readonly itemTemplates: InputSignal<readonly CmdItemTemplateDirective[]> = input<readonly CmdItemTemplateDirective[]>([]);
 
 	public readonly loading: Signal<boolean> = this.#palette.loading;
 
@@ -104,6 +107,31 @@ export class CmdListComponent {
 
 	public onSelect(command: Command): void {
 		this.#palette.execute(command);
+	}
+
+	public resolveTemplate(category: string | undefined): TemplateRef<CmdItemTemplateContext> | null {
+		const templates: readonly CmdItemTemplateDirective[] = this.itemTemplates();
+
+		if (templates.length === 0) {
+			return null;
+		}
+
+		const normalizedCategory: string = category ?? 'Commands';
+		let globalTemplate: TemplateRef<CmdItemTemplateContext> | null = null;
+
+		for (const directive of templates) {
+			const templateCategory: string = directive.cmdItemTemplate();
+
+			if (templateCategory === normalizedCategory) {
+				return directive.templateRef;
+			}
+
+			if (templateCategory === '') {
+				globalTemplate = directive.templateRef;
+			}
+		}
+
+		return globalTemplate;
 	}
 
 	#resetSelectionOnQueryChange(): void {

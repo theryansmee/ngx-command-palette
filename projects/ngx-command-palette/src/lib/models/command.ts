@@ -11,6 +11,12 @@ export interface Command {
 	priority?: number;
 	context?: CommandContext;
 	children?: Command[] | (() => Observable<Command[]>);
+	data?: Record<string, unknown>;
+}
+
+export interface CmdItemTemplateContext {
+	$implicit: Command;
+	active: boolean;
 }
 
 export interface CommandContext {

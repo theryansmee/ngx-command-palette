@@ -61,4 +61,22 @@ describe('fuzzyMatch', () => {
 		const withoutBoundary: FuzzyMatchResult = fuzzyMatch('sb', 'xsxbx');
 		expect(withBoundary.score).toBeGreaterThan(withoutBoundary.score);
 	});
+
+	it('should find the best-scoring occurrence when the query appears multiple times', () => {
+		const result: FuzzyMatchResult = fuzzyMatch('foo', 'xfoo foo');
+		expect(result.match).toBe(true);
+		expect(result.score).toBe(60);
+	});
+
+	it('should prefer starts-with over word boundary when both exist', () => {
+		const result: FuzzyMatchResult = fuzzyMatch('foo', 'foobar xfoo foo');
+		expect(result.match).toBe(true);
+		expect(result.score).toBe(80);
+	});
+
+	it('should treat forward slash as a word boundary', () => {
+		const result: FuzzyMatchResult = fuzzyMatch('settings', 'admin/settings');
+		expect(result.match).toBe(true);
+		expect(result.score).toBe(60);
+	});
 });
