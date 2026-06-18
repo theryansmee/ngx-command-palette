@@ -128,8 +128,11 @@ provideCommandPalette({
   placeholder: 'Search...',     // Input placeholder text (default: 'Search or type a command...')
   autoRegisterRoutes: true,     // Auto-register routes from Router config (default: true)
   maxResults: 10,               // Maximum search results shown (default: 10)
+  trackRecent: true,            // Track recently used commands (default: false)
   recentCount: 5,               // Number of recent commands to track (default: 5)
   debounce: 150,                // Input debounce in milliseconds (default: 0)
+  animation: 'scale',           // Open animation: 'scale' | 'slide' | 'none' (default: 'scale')
+  theme: 'default',             // Built-in theme: 'default' | 'dark' | 'github' | 'linear'
 });
 ```
 
@@ -455,7 +458,7 @@ const isLoading: boolean = this.palette.loading();
 
 ## Custom Item Templates
 
-> Available from v22.1.0
+> Available from v22.0.1
 
 By default, each result row renders an icon, label, and shortcut badge. For richer results (avatars, status badges, descriptions, etc.) you can provide custom templates that override how items are rendered while keeping all keyboard navigation, accessibility, and active-state behavior intact.
 
@@ -615,6 +618,60 @@ When the query is empty, commands are sorted by priority (highest first) and lim
 
 ## Theming
 
+### Built-in Themes
+
+Four themes ship out of the box. Set via config for a permanent theme:
+
+```typescript
+provideCommandPalette({
+  theme: 'github',   // 'default' | 'dark' | 'github' | 'linear'
+});
+```
+
+Or bind the `theme` input for dynamic runtime switching:
+
+```html
+<cmd-palette [theme]="activeTheme()" />
+```
+
+Or apply a theme via CSS class on any ancestor element:
+
+```html
+<body class="cmd-theme-dark">
+  <cmd-palette />
+</body>
+```
+
+When using the CSS class approach, import the theme file in your global styles:
+
+```css
+@import '@theryansmee/ngx-command-palette/themes/dark.css';
+```
+
+| Theme | Description | CSS file |
+|-------|-------------|----------|
+| `default` | Clean light theme | n/a (built-in) |
+| `dark` | Neutral dark background with light text | `themes/dark.css` |
+| `github` | Dark theme inspired by GitHub's command palette | `themes/github.css` |
+| `linear` | Minimal dark theme inspired by Linear | `themes/linear.css` |
+
+### Animations
+
+The palette opens with a configurable animation:
+
+```typescript
+provideCommandPalette({
+  animation: 'scale',   // 'scale' | 'slide' | 'none'
+});
+
+// Or dynamically via input:
+// <cmd-palette [animation]="activeAnimation()" />
+```
+
+Animations are automatically disabled when the user has `prefers-reduced-motion` enabled.
+
+### CSS Custom Properties
+
 The palette uses CSS custom properties for full visual control. Override any variable on the `cmd-palette` selector or a parent element:
 
 ```css
@@ -694,10 +751,11 @@ Environment provider factory. Call in your `appConfig.providers` array.
 | `placeholder` | `string` | `'Search or type a command...'` | Input placeholder text |
 | `autoRegisterRoutes` | `boolean` | `true` | Auto-register routes from Router config |
 | `maxResults` | `number` | `10` | Maximum results shown |
-| `recentCount` | `number` | `5` | Number of recent commands tracked |
+| `trackRecent` | `boolean` | `false` | Track recently used commands and boost them in results |
+| `recentCount` | `number` | `5` | Number of recent commands tracked (requires `trackRecent: true`) |
 | `debounce` | `number` | `0` | Input debounce in milliseconds |
-
-> **Coming soon:** Configurable open/close animations and a headless (renderless) mode. Custom item templates are available now (see [Custom Item Templates](#custom-item-templates)).
+| `animation` | `'scale' \| 'slide' \| 'none'` | `'scale'` | Open animation style |
+| `theme` | `'default' \| 'dark' \| 'github' \| 'linear'` | `'default'` | Built-in colour theme |
 
 ### `CommandPaletteService`
 
@@ -737,7 +795,7 @@ The root component. Add it once in your app root template.
 
 ### `CmdItemTemplateDirective`
 
-> Available from v22.1.0
+> Available from v22.0.1
 
 Structural directive used on `<ng-template>` to define custom item templates.
 
@@ -752,7 +810,7 @@ Structural directive used on `<ng-template>` to define custom item templates.
 
 ### `CmdItemTemplateContext`
 
-> Available from v22.1.0
+> Available from v22.0.1
 
 The type-safe context interface for custom item templates.
 
@@ -762,13 +820,6 @@ interface CmdItemTemplateContext {
   active: boolean;     // Available via let-active="active"
 }
 ```
-
-## Future Plans
-
-- **Headless mode**. Use all the search, routing, and provider logic with your own custom UI
-- **Configurable animations**. Open/close transitions on the backdrop and dialog
-- **Preset themes**. Dark, GitHub-style, Linear-style, and an Angular Material mixin
-- **CI/CD**. GitHub Actions for automated testing and npm publishing
 
 ## License
 
