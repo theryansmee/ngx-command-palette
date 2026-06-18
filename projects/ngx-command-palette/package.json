@@ -3,6 +3,14 @@
 	"version": "21.0.1",
 	"description": "A keyboard-driven command palette for Angular. Auto-registers routes from your Router config, supports custom commands and async search providers.",
 	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/theryansmee/ngx-command-palette.git"
+	},
+	"homepage": "https://theryansmee.github.io/ngx-command-palette/",
+	"bugs": {
+		"url": "https://github.com/theryansmee/ngx-command-palette/issues"
+	},
 	"keywords": [
 		"angular",
 		"angular21",
