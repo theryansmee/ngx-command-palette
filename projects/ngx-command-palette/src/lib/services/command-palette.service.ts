@@ -107,9 +107,10 @@ export class CommandPaletteService {
 	public toggle(): void {
 		if (this.#isOpen()) {
 			this.close();
-		} else {
-			this.open();
+			return;
 		}
+
+		this.open();
 	}
 
 	public updateQuery(query: string): void {

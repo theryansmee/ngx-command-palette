@@ -34,8 +34,18 @@ describe('CommandRegistry', () => {
 	});
 
 	it('should overwrite a command when registering with the same id', () => {
-		registry.register([makeCommand({ id: 'dashboard', label: 'Original' })]);
-		registry.register([makeCommand({ id: 'dashboard', label: 'Updated' })]);
+		registry.register([
+			makeCommand({
+				id: 'dashboard',
+				label: 'Original', 
+			}),
+		]);
+		registry.register([
+			makeCommand({
+				id: 'dashboard',
+				label: 'Updated', 
+			}),
+		]);
 
 		expect(registry.commands().length).toBe(1);
 		expect(registry.commands()[0].label).toBe('Updated');
@@ -98,7 +108,12 @@ describe('CommandRegistry', () => {
 	});
 
 	it('should return the correct command from getById', () => {
-		registry.register([makeCommand({ id: 'target', label: 'Target Label' })]);
+		registry.register([
+			makeCommand({
+				id: 'target',
+				label: 'Target Label', 
+			}),
+		]);
 
 		const result: Command | undefined = registry.getById('target');
 		expect(result).toBeDefined();

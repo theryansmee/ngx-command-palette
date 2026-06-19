@@ -40,8 +40,14 @@ describe('AsyncSearchCoordinator', () => {
 
 		TestBed.configureTestingModule({
 			providers: [
-				{ provide: PLATFORM_ID, useValue: 'browser' },
-				{ provide: COMMAND_PALETTE_CONFIG, useValue: config },
+				{
+					provide: PLATFORM_ID,
+					useValue: 'browser', 
+				},
+				{
+					provide: COMMAND_PALETTE_CONFIG,
+					useValue: config, 
+				},
 			],
 		});
 
@@ -66,8 +72,14 @@ describe('AsyncSearchCoordinator', () => {
 			category: 'Users',
 			debounce: 0,
 			search: () => of([
-				makeCommand({ id: 'user-1', label: 'John Smith' }),
-				makeCommand({ id: 'user-2', label: 'Jane Doe' }),
+				makeCommand({
+					id: 'user-1',
+					label: 'John Smith', 
+				}),
+				makeCommand({
+					id: 'user-2',
+					label: 'Jane Doe', 
+				}),
 			]),
 		}));
 
@@ -87,7 +99,12 @@ describe('AsyncSearchCoordinator', () => {
 			id: 'users',
 			category: 'Users',
 			debounce: 0,
-			search: () => of([makeCommand({ id: 'user-1', label: 'John' })]),
+			search: () => of([
+				makeCommand({
+					id: 'user-1',
+					label: 'John', 
+				}),
+			]),
 		}));
 
 		coordinator.search('john');
@@ -106,7 +123,12 @@ describe('AsyncSearchCoordinator', () => {
 			debounce: 0,
 			search: () => {
 				userSearchCalled = true;
-				return of([makeCommand({ id: 'user-1', label: 'John' })]);
+				return of([
+					makeCommand({
+						id: 'user-1',
+						label: 'John', 
+					}),
+				]);
 			},
 		}));
 
@@ -198,7 +220,12 @@ describe('AsyncSearchCoordinator', () => {
 
 		expect(coordinator.loading()).toBe(true);
 
-		responseSubject.next([makeCommand({ id: 'user-1', label: 'John' })]);
+		responseSubject.next([
+			makeCommand({
+				id: 'user-1',
+				label: 'John', 
+			}),
+		]);
 		responseSubject.complete();
 
 		expect(coordinator.loading()).toBe(false);
@@ -232,7 +259,12 @@ describe('AsyncSearchCoordinator', () => {
 		providerRegistry.register(makeProvider({
 			id: 'users',
 			debounce: 0,
-			search: () => of([makeCommand({ id: 'user-1', label: 'John' })]),
+			search: () => of([
+				makeCommand({
+					id: 'user-1',
+					label: 'John', 
+				}),
+			]),
 		}));
 
 		coordinator.search('john');
@@ -247,7 +279,12 @@ describe('AsyncSearchCoordinator', () => {
 		providerRegistry.register(makeProvider({
 			id: 'users',
 			debounce: 0,
-			search: () => of([makeCommand({ id: 'user-1', label: 'John' })]),
+			search: () => of([
+				makeCommand({
+					id: 'user-1',
+					label: 'John', 
+				}),
+			]),
 		}));
 
 		coordinator.search('john');

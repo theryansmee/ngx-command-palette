@@ -34,8 +34,14 @@ describe('SearchEngine', () => {
 
 		TestBed.configureTestingModule({
 			providers: [
-				{ provide: PLATFORM_ID, useValue: 'browser' },
-				{ provide: COMMAND_PALETTE_CONFIG, useValue: config },
+				{
+					provide: PLATFORM_ID,
+					useValue: 'browser', 
+				},
+				{
+					provide: COMMAND_PALETTE_CONFIG,
+					useValue: config, 
+				},
 				provideRouter([]),
 			],
 		});
@@ -48,8 +54,14 @@ describe('SearchEngine', () => {
 
 	it('should return all commands for an empty query', () => {
 		registry.register([
-			makeCommand({ id: 'a', label: 'Alpha' }),
-			makeCommand({ id: 'b', label: 'Beta' }),
+			makeCommand({
+				id: 'a',
+				label: 'Alpha', 
+			}),
+			makeCommand({
+				id: 'b',
+				label: 'Beta', 
+			}),
 		]);
 
 		const results: ScoredCommand[] = engine.search('');
@@ -58,8 +70,14 @@ describe('SearchEngine', () => {
 
 	it('should rank an exact match higher than a partial match', () => {
 		registry.register([
-			makeCommand({ id: 'settings', label: 'Settings' }),
-			makeCommand({ id: 'settings-billing', label: 'Settings Billing' }),
+			makeCommand({
+				id: 'settings',
+				label: 'Settings', 
+			}),
+			makeCommand({
+				id: 'settings-billing',
+				label: 'Settings Billing', 
+			}),
 		]);
 
 		const results: ScoredCommand[] = engine.search('settings');
@@ -69,7 +87,10 @@ describe('SearchEngine', () => {
 
 	it('should respect the maxResults limit', () => {
 		const commands: Command[] = Array.from({ length: 20 }, (_: unknown, index: number) =>
-			makeCommand({ id: `cmd-${index}`, label: `Command ${index}` }),
+			makeCommand({
+				id: `cmd-${index}`,
+				label: `Command ${index}`, 
+			}),
 		);
 		registry.register(commands);
 
@@ -78,7 +99,12 @@ describe('SearchEngine', () => {
 	});
 
 	it('should return no results when query matches nothing', () => {
-		registry.register([makeCommand({ id: 'a', label: 'Dashboard' })]);
+		registry.register([
+			makeCommand({
+				id: 'a',
+				label: 'Dashboard', 
+			}),
+		]);
 
 		const results: ScoredCommand[] = engine.search('zzzzzzz');
 		expect(results.length).toBe(0);
@@ -86,8 +112,15 @@ describe('SearchEngine', () => {
 
 	it('should cap keyword match scores below label match scores', () => {
 		registry.register([
-			makeCommand({ id: 'by-label', label: 'Billing' }),
-			makeCommand({ id: 'by-keyword', label: 'Payments', keywords: ['billing'] }),
+			makeCommand({
+				id: 'by-label',
+				label: 'Billing', 
+			}),
+			makeCommand({
+				id: 'by-keyword',
+				label: 'Payments',
+				keywords: ['billing'], 
+			}),
 		]);
 
 		const results: ScoredCommand[] = engine.search('billing');
@@ -105,8 +138,16 @@ describe('SearchEngine', () => {
 
 	it('should boost commands with higher priority', () => {
 		registry.register([
-			makeCommand({ id: 'low', label: 'Settings Menu', priority: 0 }),
-			makeCommand({ id: 'high', label: 'Settings Panel', priority: 5 }),
+			makeCommand({
+				id: 'low',
+				label: 'Settings Menu',
+				priority: 0, 
+			}),
+			makeCommand({
+				id: 'high',
+				label: 'Settings Panel',
+				priority: 5, 
+			}),
 		]);
 
 		const results: ScoredCommand[] = engine.search('settings');
@@ -124,8 +165,14 @@ describe('SearchEngine', () => {
 
 	it('should boost recently used commands in search results', () => {
 		registry.register([
-			makeCommand({ id: 'dashboard', label: 'Dashboard' }),
-			makeCommand({ id: 'downloads', label: 'Downloads' }),
+			makeCommand({
+				id: 'dashboard',
+				label: 'Dashboard', 
+			}),
+			makeCommand({
+				id: 'downloads',
+				label: 'Downloads', 
+			}),
 		]);
 
 		recentStore.record('downloads');
@@ -144,7 +191,12 @@ describe('SearchEngine', () => {
 	});
 
 	it('should match case-insensitively', () => {
-		registry.register([makeCommand({ id: 'dashboard', label: 'Dashboard' })]);
+		registry.register([
+			makeCommand({
+				id: 'dashboard',
+				label: 'Dashboard', 
+			}),
+		]);
 
 		const results: ScoredCommand[] = engine.search('DASHBOARD');
 		expect(results.length).toBe(1);
@@ -153,8 +205,14 @@ describe('SearchEngine', () => {
 
 	it('should treat a whitespace-only query as empty', () => {
 		registry.register([
-			makeCommand({ id: 'dashboard', label: 'Dashboard' }),
-			makeCommand({ id: 'settings', label: 'Settings' }),
+			makeCommand({
+				id: 'dashboard',
+				label: 'Dashboard', 
+			}),
+			makeCommand({
+				id: 'settings',
+				label: 'Settings', 
+			}),
 		]);
 
 		const results: ScoredCommand[] = engine.search('   ');
@@ -163,9 +221,21 @@ describe('SearchEngine', () => {
 
 	it('should sort default results by priority when query is empty', () => {
 		registry.register([
-			makeCommand({ id: 'low', label: 'Low', priority: 1 }),
-			makeCommand({ id: 'high', label: 'High', priority: 10 }),
-			makeCommand({ id: 'mid', label: 'Mid', priority: 5 }),
+			makeCommand({
+				id: 'low',
+				label: 'Low',
+				priority: 1, 
+			}),
+			makeCommand({
+				id: 'high',
+				label: 'High',
+				priority: 10, 
+			}),
+			makeCommand({
+				id: 'mid',
+				label: 'Mid',
+				priority: 5, 
+			}),
 		]);
 
 		const results: ScoredCommand[] = engine.search('');
@@ -177,7 +247,10 @@ describe('SearchEngine', () => {
 
 	it('should respect maxResults for empty query', () => {
 		const commands: Command[] = Array.from({ length: 20 }, (_: unknown, index: number) =>
-			makeCommand({ id: `cmd-${index}`, label: `Command ${index}` }),
+			makeCommand({
+				id: `cmd-${index}`,
+				label: `Command ${index}`, 
+			}),
 		);
 		registry.register(commands);
 
@@ -186,7 +259,12 @@ describe('SearchEngine', () => {
 	});
 
 	it('should show commands without a context on any route', () => {
-		registry.register([makeCommand({ id: 'global', label: 'Global Action' })]);
+		registry.register([
+			makeCommand({
+				id: 'global',
+				label: 'Global Action', 
+			}),
+		]);
 
 		const results: ScoredCommand[] = engine.search('global');
 		expect(results.length).toBe(1);
@@ -201,7 +279,10 @@ describe('SearchEngine', () => {
 				label: 'Admin Action',
 				context: { routes: ['/admin/*'] },
 			}),
-			makeCommand({ id: 'global', label: 'Global Action' }),
+			makeCommand({
+				id: 'global',
+				label: 'Global Action', 
+			}),
 		]);
 
 		const results: ScoredCommand[] = engine.search('action');
@@ -255,7 +336,10 @@ describe('SearchEngine', () => {
 				label: 'Conditional Action',
 				context: { when: () => false },
 			}),
-			makeCommand({ id: 'always', label: 'Always Visible' }),
+			makeCommand({
+				id: 'always',
+				label: 'Always Visible', 
+			}),
 		]);
 
 		const results: ScoredCommand[] = engine.search('');
@@ -284,17 +368,26 @@ describe('SearchEngine', () => {
 			makeCommand({
 				id: 'both-pass',
 				label: 'Both Pass',
-				context: { routes: ['/admin/*'], when: () => true },
+				context: {
+					routes: ['/admin/*'],
+					when: () => true, 
+				},
 			}),
 			makeCommand({
 				id: 'route-pass-when-fail',
 				label: 'Route Pass When Fail',
-				context: { routes: ['/admin/*'], when: () => false },
+				context: {
+					routes: ['/admin/*'],
+					when: () => false, 
+				},
 			}),
 			makeCommand({
 				id: 'route-fail-when-pass',
 				label: 'Route Fail When Pass',
-				context: { routes: ['/settings/*'], when: () => true },
+				context: {
+					routes: ['/settings/*'],
+					when: () => true, 
+				},
 			}),
 		]);
 

@@ -21,6 +21,9 @@ export const appConfig: ApplicationConfig = {
 		provideZonelessChangeDetection(),
 		provideRouter(routes),
 		provideCommandPalette(),
-		{ provide: TitleStrategy, useClass: PageTitleStrategy },
+		{
+			provide: TitleStrategy,
+			useClass: PageTitleStrategy, 
+		},
 	],
 };

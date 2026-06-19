@@ -46,6 +46,25 @@ module.exports = tseslint.config(
 					'allowExpressions': true,
 				},
 			],
+			'object-curly-newline': [
+				'error',
+				{
+					'ObjectExpression': {
+						'multiline': true,
+						'minProperties': 2,
+					},
+					'ObjectPattern': {
+						'multiline': true,
+						'minProperties': 4,
+					},
+				},
+			],
+			'object-property-newline': [
+				'error',
+				{
+					'allowAllPropertiesOnSameLine': false,
+				},
+			],
 			'curly': [
 				'error',
 				'all',

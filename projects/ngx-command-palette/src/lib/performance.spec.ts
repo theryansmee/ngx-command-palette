@@ -151,8 +151,14 @@ describe('Performance', () => {
 
 		TestBed.configureTestingModule({
 			providers: [
-				{ provide: PLATFORM_ID, useValue: 'browser' },
-				{ provide: COMMAND_PALETTE_CONFIG, useValue: config },
+				{
+					provide: PLATFORM_ID,
+					useValue: 'browser', 
+				},
+				{
+					provide: COMMAND_PALETTE_CONFIG,
+					useValue: config, 
+				},
 				provideRouter([]),
 			],
 		});
