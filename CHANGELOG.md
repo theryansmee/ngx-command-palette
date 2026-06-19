@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 This project follows [Semantic Versioning](https://semver.org/) with the major version matching the supported Angular version.
 
+## [22.1.0] - 2026-06-19
+
+### Features
+- Prefix-aware input with visual chip. When a user types a prefix character (e.g. `@`), a chip appears in the input, the placeholder updates to the provider's custom text, and pressing Backspace on an empty input exits prefix mode.
+- `placeholder` property on `SearchProvider` for custom input placeholder text when the provider's prefix is active.
+- `emptyMessage` property on `SearchProvider` for per-provider empty state text (defaults to "No results found.").
+- New signals on `CommandPaletteService`: `activeProvider`, `displayQuery`, `activePlaceholder`, `emptyMessage`.
+- CSS custom properties `--cmd-prefix-chip-bg` and `--cmd-prefix-chip-color` for theming the prefix chip across all built-in themes.
+
 ## [22.0.2] - 2026-06-18
 
 ### Fixes
@@ -59,7 +68,7 @@ The library is available for Angular 19 through 22. Each version lives on its ow
 
 | Angular | Package  | Branch       | npm tag     |
 |---------|----------|--------------|-------------|
-| 22      | `22.0.2` | `angular/22` | `latest`    |
+| 22      | `22.1.0` | `angular/22` | `latest`    |
 | 21      | `21.0.1` | `angular/21` | `angular21` |
 | 20      | `20.0.1` | `angular/20` | `angular20` |
 | 19      | `19.0.1` | `angular/19` | `angular19` |
