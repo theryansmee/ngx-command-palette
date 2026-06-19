@@ -1,5 +1,5 @@
 import { ApplicationConfig, Injectable, provideZonelessChangeDetection } from '@angular/core';
-import { provideRouter, TitleStrategy, RouterStateSnapshot } from '@angular/router';
+import { provideRouter, withInMemoryScrolling, TitleStrategy, RouterStateSnapshot } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { provideCommandPalette } from 'ngx-command-palette';
 import { routes } from './app.routes';
@@ -19,7 +19,7 @@ class PageTitleStrategy extends TitleStrategy {
 export const appConfig: ApplicationConfig = {
 	providers: [
 		provideZonelessChangeDetection(),
-		provideRouter(routes),
+		provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top' })),
 		provideCommandPalette(),
 		{
 			provide: TitleStrategy,
