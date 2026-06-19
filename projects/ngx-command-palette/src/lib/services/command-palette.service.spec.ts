@@ -32,8 +32,14 @@ describe('CommandPaletteService', () => {
 
 		TestBed.configureTestingModule({
 			providers: [
-				{ provide: PLATFORM_ID, useValue: 'browser' },
-				{ provide: COMMAND_PALETTE_CONFIG, useValue: config },
+				{
+					provide: PLATFORM_ID,
+					useValue: 'browser', 
+				},
+				{
+					provide: COMMAND_PALETTE_CONFIG,
+					useValue: config, 
+				},
 			],
 		});
 
@@ -92,8 +98,14 @@ describe('CommandPaletteService', () => {
 
 	it('should return search results based on current query', () => {
 		service.register([
-			makeCommand({ id: 'dashboard', label: 'Dashboard' }),
-			makeCommand({ id: 'settings', label: 'Settings' }),
+			makeCommand({
+				id: 'dashboard',
+				label: 'Dashboard', 
+			}),
+			makeCommand({
+				id: 'settings',
+				label: 'Settings', 
+			}),
 		]);
 
 		service.updateQuery('dash');
@@ -105,7 +117,10 @@ describe('CommandPaletteService', () => {
 
 	it('should call the command action, record it as recent, and close on execute', () => {
 		const actionSpy = vi.fn();
-		const command: Command = makeCommand({ id: 'test-cmd', action: actionSpy });
+		const command: Command = makeCommand({
+			id: 'test-cmd',
+			action: actionSpy, 
+		});
 
 		service.open();
 		service.execute(command);

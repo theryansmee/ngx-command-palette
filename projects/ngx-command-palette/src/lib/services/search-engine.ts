@@ -29,7 +29,10 @@ export class SearchEngine {
 			const score: number = this.#scoreCommand(command, query);
 
 			if (score > 0) {
-				scored.push({ command, score });
+				scored.push({
+					command,
+					score,
+				});
 			}
 		}
 
@@ -114,7 +117,10 @@ export class SearchEngine {
 		for (const command of commands) {
 			const recencyBoost: number = this.#recentStore.getBoost(command.id);
 			const priorityBoost: number = (command.priority ?? 0) * 10;
-			scored.push({ command, score: recencyBoost + priorityBoost });
+			scored.push({
+				command,
+				score: recencyBoost + priorityBoost,
+			});
 		}
 
 		scored.sort((first: ScoredCommand, second: ScoredCommand) => second.score - first.score);

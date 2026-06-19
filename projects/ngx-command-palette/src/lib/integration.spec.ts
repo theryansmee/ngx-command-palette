@@ -10,13 +10,28 @@ import { RouterCommandExtractor } from './services/router-extractor';
 import { COMMAND_PALETTE_CONFIG } from './provide';
 import { Command, CommandPaletteConfig, ScoredCommand } from './models/command';
 
-@Component({ standalone: true, template: '' })
+@Component({
+	standalone: true,
+	template: '', 
+})
 class DummyComponent {}
 
 const testRoutes: Routes = [
-	{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-	{ path: 'dashboard', component: DummyComponent, title: 'Dashboard' },
-	{ path: 'settings', component: DummyComponent, title: 'Settings' },
+	{
+		path: '',
+		redirectTo: 'dashboard',
+		pathMatch: 'full', 
+	},
+	{
+		path: 'dashboard',
+		component: DummyComponent,
+		title: 'Dashboard', 
+	},
+	{
+		path: 'settings',
+		component: DummyComponent,
+		title: 'Settings', 
+	},
 	{
 		path: 'settings/billing',
 		component: DummyComponent,
@@ -32,7 +47,11 @@ const testRoutes: Routes = [
 			},
 		},
 	},
-	{ path: 'profile', component: DummyComponent, title: 'Profile' },
+	{
+		path: 'profile',
+		component: DummyComponent,
+		title: 'Profile', 
+	},
 	{
 		path: 'users/:id',
 		component: DummyComponent,
@@ -70,8 +89,14 @@ describe('Integration', () => {
 
 		TestBed.configureTestingModule({
 			providers: [
-				{ provide: PLATFORM_ID, useValue: 'browser' },
-				{ provide: COMMAND_PALETTE_CONFIG, useValue: config },
+				{
+					provide: PLATFORM_ID,
+					useValue: 'browser', 
+				},
+				{
+					provide: COMMAND_PALETTE_CONFIG,
+					useValue: config, 
+				},
 				provideRouter(testRoutes),
 			],
 		});
@@ -128,7 +153,12 @@ describe('Integration', () => {
 		});
 
 		it('should return both route commands and custom commands in results', () => {
-			service.register([makeCommand({ id: 'custom-action', label: 'Export Data' })]);
+			service.register([
+				makeCommand({
+					id: 'custom-action',
+					label: 'Export Data', 
+				}),
+			]);
 			service.updateQuery('');
 
 			const results: ScoredCommand[] = service.results();
@@ -144,7 +174,10 @@ describe('Integration', () => {
 		});
 
 		it('should show contextual commands when on a matching route', () => {
-			Object.defineProperty(router, 'url', { get: () => '/dashboard', configurable: true });
+			Object.defineProperty(router, 'url', {
+				get: () => '/dashboard',
+				configurable: true, 
+			});
 
 			service.register([
 				makeCommand({
@@ -162,7 +195,10 @@ describe('Integration', () => {
 		});
 
 		it('should hide contextual commands when on a different route', () => {
-			Object.defineProperty(router, 'url', { get: () => '/profile', configurable: true });
+			Object.defineProperty(router, 'url', {
+				get: () => '/profile',
+				configurable: true, 
+			});
 
 			service.register([
 				makeCommand({
@@ -180,7 +216,10 @@ describe('Integration', () => {
 		});
 
 		it('should show glob-matched contextual commands on nested routes', () => {
-			Object.defineProperty(router, 'url', { get: () => '/settings/billing', configurable: true });
+			Object.defineProperty(router, 'url', {
+				get: () => '/settings/billing',
+				configurable: true, 
+			});
 
 			service.register([
 				makeCommand({
@@ -198,7 +237,10 @@ describe('Integration', () => {
 		});
 
 		it('should evaluate context.when alongside route matching', () => {
-			Object.defineProperty(router, 'url', { get: () => '/dashboard', configurable: true });
+			Object.defineProperty(router, 'url', {
+				get: () => '/dashboard',
+				configurable: true, 
+			});
 
 			let featureEnabled: boolean = false;
 
@@ -231,13 +273,23 @@ describe('Integration', () => {
 
 	describe('async providers through the service', () => {
 		it('should merge async provider results with static results', () => {
-			service.register([makeCommand({ id: 'static-cmd', label: 'Static Command' })]);
+			service.register([
+				makeCommand({
+					id: 'static-cmd',
+					label: 'Static Command', 
+				}),
+			]);
 
 			service.registerProvider({
 				id: 'test-provider',
 				category: 'Dynamic',
 				debounce: 0,
-				search: () => of([makeCommand({ id: 'dynamic-cmd', label: 'Dynamic Command' })]),
+				search: () => of([
+					makeCommand({
+						id: 'dynamic-cmd',
+						label: 'Dynamic Command', 
+					}),
+				]),
 			});
 
 			service.updateQuery('command');
@@ -261,7 +313,12 @@ describe('Integration', () => {
 				debounce: 0,
 				search: () => {
 					userSearchCalled = true;
-					return of([makeCommand({ id: 'user-1', label: 'Alice' })]);
+					return of([
+						makeCommand({
+							id: 'user-1',
+							label: 'Alice', 
+						}),
+					]);
 				},
 			});
 
@@ -293,7 +350,12 @@ describe('Integration', () => {
 				id: 'slow-provider',
 				category: 'Slow',
 				debounce: 0,
-				search: () => of([makeCommand({ id: 'result', label: 'Result' })]).pipe(delay(500)),
+				search: () => of([
+					makeCommand({
+						id: 'result',
+						label: 'Result', 
+					}),
+				]).pipe(delay(500)),
 			});
 
 			service.updateQuery('test');
@@ -315,7 +377,12 @@ describe('Integration', () => {
 				id: 'test-provider',
 				category: 'Test',
 				debounce: 0,
-				search: () => of([makeCommand({ id: 'async-result', label: 'Async Result' })]),
+				search: () => of([
+					makeCommand({
+						id: 'async-result',
+						label: 'Async Result', 
+					}),
+				]),
 			});
 
 			service.open();
@@ -340,7 +407,12 @@ describe('Integration', () => {
 				id: 'temp-provider',
 				category: 'Temp',
 				debounce: 0,
-				search: () => of([makeCommand({ id: 'temp-result', label: 'Temp' })]),
+				search: () => of([
+					makeCommand({
+						id: 'temp-result',
+						label: 'Temp', 
+					}),
+				]),
 			}, mockDestroyRef);
 
 			service.updateQuery('temp');
@@ -364,7 +436,13 @@ describe('Integration', () => {
 
 		it('should support the full lifecycle: open, search, execute, close', () => {
 			const actionSpy = vi.fn();
-			service.register([makeCommand({ id: 'action', label: 'Run Action', action: actionSpy })]);
+			service.register([
+				makeCommand({
+					id: 'action',
+					label: 'Run Action',
+					action: actionSpy, 
+				}),
+			]);
 
 			service.open();
 			expect(service.isOpen()).toBe(true);
@@ -386,11 +464,21 @@ describe('Integration', () => {
 
 		it('should boost recently executed commands in subsequent searches', () => {
 			service.register([
-				makeCommand({ id: 'alpha', label: 'Command Alpha' }),
-				makeCommand({ id: 'bravo', label: 'Command Bravo' }),
+				makeCommand({
+					id: 'alpha',
+					label: 'Command Alpha', 
+				}),
+				makeCommand({
+					id: 'bravo',
+					label: 'Command Bravo', 
+				}),
 			]);
 
-			service.execute(makeCommand({ id: 'bravo', label: 'Command Bravo', action: (): void => {} }));
+			service.execute(makeCommand({
+				id: 'bravo',
+				label: 'Command Bravo',
+				action: (): void => {}, 
+			}));
 
 			service.open();
 			service.updateQuery('command');
@@ -400,13 +488,23 @@ describe('Integration', () => {
 		});
 
 		it('should combine route commands, custom commands, and async results', () => {
-			service.register([makeCommand({ id: 'custom', label: 'Dashboard Export Tool' })]);
+			service.register([
+				makeCommand({
+					id: 'custom',
+					label: 'Dashboard Export Tool', 
+				}),
+			]);
 
 			service.registerProvider({
 				id: 'async-provider',
 				category: 'Async',
 				debounce: 0,
-				search: () => of([makeCommand({ id: 'async-result', label: 'Dashboard Analytics' })]),
+				search: () => of([
+					makeCommand({
+						id: 'async-result',
+						label: 'Dashboard Analytics', 
+					}),
+				]),
 			});
 
 			service.updateQuery('dash');

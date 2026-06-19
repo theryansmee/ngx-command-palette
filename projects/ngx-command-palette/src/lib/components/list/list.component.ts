@@ -54,9 +54,11 @@ export class CmdListComponent {
 
 		return [...groupMap.entries()].map(([
 			category,
+			items]: [string, ScoredCommand[]
+]) => ({
+			category,
 			items,
-		]: [string, ScoredCommand[]
-]) => ({ category, items }));
+		}));
 	});
 
 	public readonly flatItems: Signal<ScoredCommand[]> = computed<ScoredCommand[]>(() => {
@@ -100,9 +102,11 @@ export class CmdListComponent {
 		const items: ScoredCommand[] = this.flatItems();
 		const index: number = this.#activeIndex();
 
-		if (items.length > 0 && index >= 0 && index < items.length) {
-			this.#palette.execute(items[index].command);
+		if (items.length === 0 || index < 0 || index >= items.length) {
+			return;
 		}
+
+		this.#palette.execute(items[index].command);
 	}
 
 	public onSelect(command: Command): void {

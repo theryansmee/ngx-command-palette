@@ -1,10 +1,11 @@
 import { Injectable, inject, signal, computed, effect, untracked, DestroyRef, Signal, WritableSignal } from '@angular/core';
-import { Command, ScoredCommand, SearchProvider } from '../models/command';
+import { Command, ScoredCommand, SearchProvider, CommandPaletteConfig } from '../models/command';
 import { CommandRegistry } from './command-registry';
 import { SearchEngine } from './search-engine';
 import { RecentCommandsStore } from './recent-store';
 import { ProviderRegistry } from './provider-registry';
 import { AsyncSearchCoordinator } from './async-search';
+import { COMMAND_PALETTE_CONFIG } from '../provide';
 
 @Injectable({ providedIn: 'root' })
 export class CommandPaletteService {
@@ -18,6 +19,8 @@ export class CommandPaletteService {
 
 	readonly #asyncSearch: AsyncSearchCoordinator = inject(AsyncSearchCoordinator);
 
+	readonly #config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
+
 	readonly #isOpen: WritableSignal<boolean> = signal<boolean>(false);
 
 	readonly #query: WritableSignal<string> = signal<string>('');
@@ -27,6 +30,47 @@ export class CommandPaletteService {
 	public readonly query: Signal<string> = this.#query.asReadonly();
 
 	public readonly loading: Signal<boolean> = this.#asyncSearch.loading;
+
+	public readonly activeProvider: Signal<SearchProvider | null> = computed(() => {
+		const query: string = this.#query().trim();
+
+		if (!query) {
+			return null;
+		}
+
+		const prefixes: string[] = this.#providerRegistry.getPrefixes();
+
+		for (const prefix of prefixes) {
+			if (query.startsWith(prefix)) {
+				return this.#providerRegistry.getByPrefix(prefix) ?? null;
+			}
+		}
+
+		return null;
+	});
+
+	public readonly displayQuery: Signal<string> = computed(() => {
+		const provider: SearchProvider | null = this.activeProvider();
+		const query: string = this.#query();
+
+		if (provider?.prefix && query.startsWith(provider.prefix)) {
+			return query.slice(provider.prefix.length);
+		}
+
+		return query;
+	});
+
+	public readonly activePlaceholder: Signal<string> = computed(() => {
+		const provider: SearchProvider | null = this.activeProvider();
+		return provider?.placeholder ?? this.#config.placeholder ?? 'Search or type a command...';
+	});
+
+	public readonly emptyMessage: Signal<string> = computed(() => {
+		const provider: SearchProvider | null = this.activeProvider();
+		return provider?.emptyMessage ?? 'No results found.';
+	});
+
+	public readonly debounceMs: number = this.#config.debounce ?? 0;
 
 	public readonly results: Signal<ScoredCommand[]> = computed<ScoredCommand[]>(() => {
 		const query: string = this.#query();
@@ -63,9 +107,10 @@ export class CommandPaletteService {
 	public toggle(): void {
 		if (this.#isOpen()) {
 			this.close();
-		} else {
-			this.open();
+			return;
 		}
+
+		this.open();
 	}
 
 	public updateQuery(query: string): void {

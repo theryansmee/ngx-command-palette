@@ -1,14 +1,18 @@
-<input
-	#inputEl
-	type="text"
-	role="combobox"
-	aria-label="Search commands"
-	aria-expanded="true"
-	aria-controls="cmd-listbox"
-	aria-autocomplete="list"
-	[attr.aria-activedescendant]="activeDescendantId()"
-	[placeholder]="config.placeholder"
-	[value]="palette.query()"
-	(input)="onInput($event)"
-	(keydown)="inputKeydown.emit($event)"
-/>
+<div class="cmd-input-wrapper">
+	@if (palette.activeProvider(); as provider) {
+		<span class="cmd-prefix-chip">{{ provider.prefix }}</span>
+	}
+	<input
+		#inputEl
+		type="text"
+		role="combobox"
+		aria-label="Search commands"
+		aria-expanded="true"
+		aria-controls="cmd-listbox"
+		aria-autocomplete="list"
+		[attr.aria-activedescendant]="activeDescendantId()"
+		[placeholder]="palette.activePlaceholder()"
+		(input)="onInput($event)"
+		(keydown)="onKeydown($event)"
+	/>
+</div>

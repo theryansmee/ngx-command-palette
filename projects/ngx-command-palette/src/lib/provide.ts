@@ -20,7 +20,10 @@ function initRouterExtractor(): () => void {
 }
 
 export function provideCommandPalette(config: Partial<CommandPaletteConfig> = {}): EnvironmentProviders {
-	const mergedConfig: CommandPaletteConfig = { ...defaultConfig, ...config };
+	const mergedConfig: CommandPaletteConfig = {
+		...defaultConfig,
+		...config, 
+	};
 
 	const providers: Provider[] = [
 		{

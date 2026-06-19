@@ -19,8 +19,14 @@ describe('RecentCommandsStore', () => {
 
 		TestBed.configureTestingModule({
 			providers: [
-				{ provide: PLATFORM_ID, useValue: 'browser' },
-				{ provide: COMMAND_PALETTE_CONFIG, useValue: defaultConfig },
+				{
+					provide: PLATFORM_ID,
+					useValue: 'browser', 
+				},
+				{
+					provide: COMMAND_PALETTE_CONFIG,
+					useValue: defaultConfig, 
+				},
 			],
 		});
 
@@ -108,8 +114,14 @@ describe('RecentCommandsStore', () => {
 		TestBed.resetTestingModule();
 		TestBed.configureTestingModule({
 			providers: [
-				{ provide: PLATFORM_ID, useValue: 'browser' },
-				{ provide: COMMAND_PALETTE_CONFIG, useValue: defaultConfig },
+				{
+					provide: PLATFORM_ID,
+					useValue: 'browser', 
+				},
+				{
+					provide: COMMAND_PALETTE_CONFIG,
+					useValue: defaultConfig, 
+				},
 			],
 		});
 

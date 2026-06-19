@@ -29,8 +29,14 @@ describe('ProviderRegistry', () => {
 	});
 
 	it('should overwrite a provider when registering with the same id', () => {
-		registry.register(makeProvider({ id: 'users', category: 'Original' }));
-		registry.register(makeProvider({ id: 'users', category: 'Updated' }));
+		registry.register(makeProvider({
+			id: 'users',
+			category: 'Original', 
+		}));
+		registry.register(makeProvider({
+			id: 'users',
+			category: 'Updated', 
+		}));
 
 		expect(registry.providers().length).toBe(1);
 		expect(registry.providers()[0].category).toBe('Updated');
@@ -47,8 +53,14 @@ describe('ProviderRegistry', () => {
 	});
 
 	it('should return a provider by its prefix', () => {
-		registry.register(makeProvider({ id: 'users', prefix: '@' }));
-		registry.register(makeProvider({ id: 'tickets', prefix: '#' }));
+		registry.register(makeProvider({
+			id: 'users',
+			prefix: '@', 
+		}));
+		registry.register(makeProvider({
+			id: 'tickets',
+			prefix: '#', 
+		}));
 
 		const result: SearchProvider | undefined = registry.getByPrefix('@');
 		expect(result).toBeDefined();
@@ -60,7 +72,10 @@ describe('ProviderRegistry', () => {
 	});
 
 	it('should return only unprefixed providers', () => {
-		registry.register(makeProvider({ id: 'users', prefix: '@' }));
+		registry.register(makeProvider({
+			id: 'users',
+			prefix: '@', 
+		}));
 		registry.register(makeProvider({ id: 'global-search' }));
 		registry.register(makeProvider({ id: 'docs' }));
 
@@ -73,8 +88,14 @@ describe('ProviderRegistry', () => {
 	});
 
 	it('should return all registered prefixes', () => {
-		registry.register(makeProvider({ id: 'users', prefix: '@' }));
-		registry.register(makeProvider({ id: 'tickets', prefix: '#' }));
+		registry.register(makeProvider({
+			id: 'users',
+			prefix: '@', 
+		}));
+		registry.register(makeProvider({
+			id: 'tickets',
+			prefix: '#', 
+		}));
 		registry.register(makeProvider({ id: 'global-search' }));
 
 		const prefixes: string[] = registry.getPrefixes();

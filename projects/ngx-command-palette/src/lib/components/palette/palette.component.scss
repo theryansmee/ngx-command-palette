@@ -116,6 +116,8 @@
 	--cmd-shadow: 0 16px 70px rgba(0, 0, 0, 0.5);
 	--cmd-input-color: #e8e0d6;
 	--cmd-input-placeholder: #756e65;
+	--cmd-prefix-chip-bg: #2c2724;
+	--cmd-prefix-chip-color: #a09080;
 	--cmd-item-color: #e8e0d6;
 	--cmd-item-hover-bg: #2c2724;
 	--cmd-item-active-bg: #3d3530;
@@ -135,6 +137,8 @@
 	--cmd-shadow: 0 0 0 1px #1f6feb33, 0 16px 48px rgba(1, 4, 9, 0.6);
 	--cmd-input-color: #e6edf3;
 	--cmd-input-placeholder: #6e7681;
+	--cmd-prefix-chip-bg: rgba(56, 139, 253, 0.12);
+	--cmd-prefix-chip-color: #58a6ff;
 	--cmd-item-color: #c9d1d9;
 	--cmd-item-hover-bg: rgba(56, 139, 253, 0.15);
 	--cmd-item-active-bg: rgba(56, 139, 253, 0.25);
@@ -154,6 +158,8 @@
 	--cmd-shadow: 0 0 0 1px rgba(130, 90, 255, 0.1), 0 24px 60px rgba(10, 5, 20, 0.65);
 	--cmd-input-color: #f0eef5;
 	--cmd-input-placeholder: #6e6a8a;
+	--cmd-prefix-chip-bg: rgba(130, 90, 255, 0.1);
+	--cmd-prefix-chip-color: #a78bfa;
 	--cmd-item-color: #dddaf0;
 	--cmd-item-hover-bg: rgba(130, 90, 255, 0.12);
 	--cmd-item-active-bg: rgba(130, 90, 255, 0.22);

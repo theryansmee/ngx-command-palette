@@ -48,16 +48,17 @@ export class CommandRegistry {
 			const updated: Map<string, Set<string>> = new Map(map);
 			const existing: Set<string> | undefined = updated.get(source);
 
-			if (existing) {
-				const filtered: Set<string> = new Set(existing);
-
-				for (const id of commandIds) {
-					filtered.delete(id);
-				}
-
-				updated.set(source, filtered);
+			if (!existing) {
+				return updated;
 			}
 
+			const filtered: Set<string> = new Set(existing);
+
+			for (const id of commandIds) {
+				filtered.delete(id);
+			}
+
+			updated.set(source, filtered);
 			return updated;
 		});
 	}

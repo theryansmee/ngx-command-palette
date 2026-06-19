@@ -44,25 +44,27 @@ export class AsyncSearchCoordinator {
 		const trimmedQuery: string = query.trim();
 		const matchedPrefix: string | undefined = this.#detectPrefix(trimmedQuery);
 
-		if (matchedPrefix) {
-			const provider: SearchProvider | undefined = this.#providerRegistry.getByPrefix(matchedPrefix);
+		if (!matchedPrefix) {
+			const unprefixedProviders: SearchProvider[] = this.#providerRegistry.getUnprefixed();
+			const activeProviderIds: Set<string> = new Set(unprefixedProviders.map((provider: SearchProvider) => provider.id));
+			this.#clearAllExcept(...activeProviderIds);
 
-			if (provider) {
-				const strippedQuery: string = trimmedQuery.slice(matchedPrefix.length).trim();
-				this.#clearAllExcept(provider.id);
-				this.#searchProvider(provider, strippedQuery);
+			for (const provider of unprefixedProviders) {
+				this.#searchProvider(provider, trimmedQuery);
 			}
 
 			return;
 		}
 
-		const unprefixedProviders: SearchProvider[] = this.#providerRegistry.getUnprefixed();
-		const activeProviderIds: Set<string> = new Set(unprefixedProviders.map((provider: SearchProvider) => provider.id));
-		this.#clearAllExcept(...activeProviderIds);
+		const provider: SearchProvider | undefined = this.#providerRegistry.getByPrefix(matchedPrefix);
 
-		for (const provider of unprefixedProviders) {
-			this.#searchProvider(provider, trimmedQuery);
+		if (!provider) {
+			return;
 		}
+
+		const strippedQuery: string = trimmedQuery.slice(matchedPrefix.length).trim();
+		this.#clearAllExcept(provider.id);
+		this.#searchProvider(provider, strippedQuery);
 	}
 
 	public clear(): void {
@@ -77,7 +79,11 @@ export class AsyncSearchCoordinator {
 				providerId,
 				state,
 			] of updated) {
-				updated.set(providerId, { ...state, results: [], loading: false });
+				updated.set(providerId, {
+					...state,
+					results: [],
+					loading: false, 
+				});
 			}
 
 			return updated;
@@ -163,7 +169,10 @@ export class AsyncSearchCoordinator {
 			}
 
 			const updated: Map<string, ProviderState> = new Map(map);
-			updated.set(providerId, { ...state, loading });
+			updated.set(providerId, {
+				...state,
+				loading, 
+			});
 			return updated;
 		});
 	}
@@ -177,7 +186,11 @@ export class AsyncSearchCoordinator {
 			}
 
 			const updated: Map<string, ProviderState> = new Map(map);
-			updated.set(providerId, { ...state, results, loading: false });
+			updated.set(providerId, {
+				...state,
+				results,
+				loading: false, 
+			});
 			return updated;
 		});
 	}
@@ -194,7 +207,11 @@ export class AsyncSearchCoordinator {
 				state,
 			] of updated) {
 				if (!keepSet.has(providerId) && state.results.length > 0) {
-					updated.set(providerId, { ...state, results: [], loading: false });
+					updated.set(providerId, {
+						...state,
+						results: [],
+						loading: false, 
+					});
 					changed = true;
 				}
 			}

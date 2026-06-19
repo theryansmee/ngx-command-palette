@@ -389,7 +389,9 @@ export class AppComponent {
 
 ### Prefixed Provider
 
-A provider with a `prefix` only fires when the user types that prefix. This prevents unnecessary API calls when you have many providers:
+A provider with a `prefix` only fires when the user types that prefix. This prevents unnecessary API calls when you have many providers.
+
+When the user types a prefix character, it appears as a visual chip in the input and the placeholder updates to reflect the active provider. Pressing Backspace on an empty input exits prefix mode.
 
 ```typescript
 this.palette.registerProvider(
@@ -397,6 +399,8 @@ this.palette.registerProvider(
     id: 'user-search',
     category: 'Users',
     prefix: '@',                    // Only fires when query starts with @
+    placeholder: 'Search users...', // Shown in the input when this prefix is active
+    emptyMessage: 'Start typing to search users...', // Shown when there are no results
     minQueryLength: 2,
     debounce: 300,
     search: (query) => this.userService.search(query).pipe(
@@ -416,6 +420,8 @@ this.palette.registerProvider(
     id: 'ticket-search',
     category: 'Tickets',
     prefix: '#',                    // Only fires when query starts with #
+    placeholder: 'Search tickets...',
+    emptyMessage: 'Start typing to search tickets...',
     minQueryLength: 1,
     debounce: 200,
     search: (query) => this.ticketService.search(query).pipe(
@@ -442,6 +448,8 @@ interface SearchProvider {
   category: string;                                  // Group heading for results
   search: (query: string) => Observable<Command[]>;  // The search function
   prefix?: string;                                   // Prefix trigger (e.g. '@', '#')
+  placeholder?: string;                              // Input placeholder when this prefix is active
+  emptyMessage?: string;                             // Message shown when no results (default: 'No results found.')
   debounce?: number;                                 // Debounce in ms (default: 300)
   minQueryLength?: number;                           // Minimum chars before searching (default: 1)
   order?: number;                                    // Category sort order
@@ -693,6 +701,10 @@ cmd-palette {
   --cmd-input-color: #1a1a1a;
   --cmd-input-placeholder: #64748b;
 
+  /* Prefix chip (shown when a prefixed provider is active) */
+  --cmd-prefix-chip-bg: #e2e8f0;
+  --cmd-prefix-chip-color: #475569;
+
   /* Items */
   --cmd-item-padding: 10px 16px;
   --cmd-item-color: #334155;
@@ -774,9 +786,13 @@ The main service for interacting with the palette.
 | Signal | Type | Description |
 |--------|------|-------------|
 | `isOpen` | `Signal<boolean>` | Whether the palette is currently open |
-| `query` | `Signal<string>` | The current search query |
+| `query` | `Signal<string>` | The current search query (including prefix) |
+| `displayQuery` | `Signal<string>` | The query with the active prefix stripped |
 | `results` | `Signal<ScoredCommand[]>` | The current search results (scored and sorted) |
 | `loading` | `Signal<boolean>` | Whether any async provider is currently searching |
+| `activeProvider` | `Signal<SearchProvider \| null>` | The currently active prefixed search provider |
+| `activePlaceholder` | `Signal<string>` | The current input placeholder (provider-specific or default) |
+| `emptyMessage` | `Signal<string>` | The current empty state message (provider-specific or default) |
 
 ### `CmdPaletteComponent`
 
