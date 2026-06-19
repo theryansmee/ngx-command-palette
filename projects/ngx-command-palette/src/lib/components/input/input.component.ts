@@ -1,7 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject, input, output, ElementRef, Signal, viewChild, effect, InputSignal, OutputEmitterRef } from '@angular/core';
 import { CommandPaletteService } from '../../services/command-palette.service';
-import { CommandPaletteConfig } from '../../models/command';
-import { COMMAND_PALETTE_CONFIG } from '../../provide';
 
 @Component({
 	selector: 'cmd-input',
@@ -17,23 +15,31 @@ export class CmdInputComponent {
 
 	public readonly palette: CommandPaletteService = inject(CommandPaletteService);
 
-	public readonly config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
-
 	public readonly inputEl: Signal<ElementRef<HTMLInputElement>> = viewChild.required<ElementRef<HTMLInputElement>>('inputEl');
 
 	#debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-	readonly #debounceMs: number = this.config.debounce ?? 0;
+	readonly #debounceMs: number = this.palette.debounceMs;
 
 	constructor() {
 		this.#focusInputOnOpen();
+		this.#syncDisplayQuery();
 	}
 
 	public onInput(event: Event): void {
-		const value: string = (event.target as HTMLInputElement).value;
+		const nativeInput: HTMLInputElement = event.target as HTMLInputElement;
+		let inputValue: string = nativeInput.value;
+		const activePrefix: string | undefined = this.palette.activeProvider()?.prefix;
+
+		if (activePrefix && inputValue.startsWith(activePrefix)) {
+			inputValue = inputValue.slice(activePrefix.length);
+		}
+
+		const value: string = activePrefix ? activePrefix + inputValue : inputValue;
 
 		if (this.#debounceMs <= 0) {
 			this.palette.updateQuery(value);
+			this.#syncNativeInput(nativeInput);
 			return;
 		}
 
@@ -43,8 +49,41 @@ export class CmdInputComponent {
 
 		this.#debounceTimer = setTimeout(() => {
 			this.palette.updateQuery(value);
+			this.#syncNativeInput(nativeInput);
 			this.#debounceTimer = null;
 		}, this.#debounceMs);
+	}
+
+	#syncNativeInput(nativeInput: HTMLInputElement): void {
+		const displayQuery: string = this.palette.displayQuery();
+
+		if (nativeInput.value !== displayQuery) {
+			nativeInput.value = displayQuery;
+		}
+	}
+
+	public onKeydown(event: KeyboardEvent): void {
+		if (
+			event.key === 'Backspace'
+			&& this.inputEl().nativeElement.value === ''
+			&& this.palette.activeProvider()
+		) {
+			event.preventDefault();
+			this.palette.updateQuery('');
+		}
+
+		this.inputKeydown.emit(event);
+	}
+
+	#syncDisplayQuery(): void {
+		effect(() => {
+			const displayQuery: string = this.palette.displayQuery();
+			const nativeInput: HTMLInputElement = this.inputEl().nativeElement;
+
+			if (nativeInput.value !== displayQuery) {
+				nativeInput.value = displayQuery;
+			}
+		});
 	}
 
 	#focusInputOnOpen(): void {

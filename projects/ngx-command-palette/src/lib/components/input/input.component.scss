@@ -2,9 +2,32 @@
 	display: block;
 }
 
+.cmd-input-wrapper {
+	display: flex;
+	align-items: center;
+}
+
+.cmd-prefix-chip {
+	flex-shrink: 0;
+	margin-left: var(--cmd-input-padding, 16px);
+	padding: 2px 8px;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 500;
+	font-family: inherit;
+	line-height: 1.25;
+	background: var(--cmd-prefix-chip-bg, #e2e8f0);
+	color: var(--cmd-prefix-chip-color, #475569);
+
+	+ input {
+		padding-left: 8px;
+	}
+}
+
 input {
+	flex: 1;
+	min-width: 0;
 	background: transparent;
-	width: 100%;
 	padding: var(--cmd-input-padding, 16px);
 	border: none;
 	outline: none;

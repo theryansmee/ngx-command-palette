@@ -41,7 +41,10 @@ export function fuzzyMatch(query: string, target: string): FuzzyMatchResult {
 			searchFrom = index + 1;
 		}
 
-		return { match: true, score: bestScore };
+		return {
+			match: true,
+			score: bestScore,
+		};
 	}
 
 	let queryIndex: number = 0;
@@ -63,8 +66,14 @@ export function fuzzyMatch(query: string, target: string): FuzzyMatchResult {
 	}
 
 	if (queryIndex === normalizedQuery.length) {
-		return { match: true, score: Math.min(score, 35) };
+		return {
+			match: true,
+			score: Math.min(score, 35),
+		};
 	}
 
-	return { match: false, score: 0 };
+	return {
+		match: false,
+		score: 0,
+	};
 }

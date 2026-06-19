@@ -31,6 +31,8 @@
     id: 'user-search',
     category: 'Users',
     prefix: '&#64;',
+    placeholder: 'Search users...',
+    emptyMessage: 'Start typing to search users...',
     minQueryLength: 2,
     debounce: 300,
     search: (query) =&gt; this.userService.search(query).pipe(
@@ -45,9 +47,11 @@
 );</code></pre>
 
 	<p>
-		With this setup, typing <code>@john</code> only hits the user API. Typing
+		With this setup, typing <code>@</code> enters prefix mode. The prefix appears as a chip
+		and the input placeholder changes to "Search users...". Typing
 		<code>dashboard</code> only searches static commands. Registered prefixes are
-		automatically shown as hints in the palette footer.
+		automatically shown as hints in the palette footer. Pressing Backspace on an empty input
+		exits prefix mode.
 	</p>
 
 	<h2>Provider Interface</h2>
@@ -79,6 +83,16 @@
 				<td><code>prefix</code></td>
 				<td><code>string?</code></td>
 				<td>Prefix trigger (e.g. <code>@</code>, <code>#</code>)</td>
+			</tr>
+			<tr>
+				<td><code>placeholder</code></td>
+				<td><code>string?</code></td>
+				<td>Input placeholder when this prefix is active</td>
+			</tr>
+			<tr>
+				<td><code>emptyMessage</code></td>
+				<td><code>string?</code></td>
+				<td>Message shown when no results (default: "No results found.")</td>
 			</tr>
 			<tr>
 				<td><code>debounce</code></td>

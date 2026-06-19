@@ -29,6 +29,8 @@ export interface SearchProvider {
 	category: string;
 	search: (query: string) => Observable<Command[]>;
 	prefix?: string;
+	placeholder?: string;
+	emptyMessage?: string;
 	debounce?: number;
 	minQueryLength?: number;
 	order?: number;
