@@ -837,6 +837,120 @@ interface CmdItemTemplateContext {
 }
 ```
 
+## Migrating from `@ngxpert/cmdk`
+
+If you're coming from `@ngxpert/cmdk` (or `@ngneat/cmdk`), this section maps the concepts you already know to their equivalents in `ngx-command-palette`.
+
+### Setup
+
+With `@ngxpert/cmdk`, setup involves importing 7+ components and directives, building a custom template, wiring up Angular CDK Overlay for the dialog, and adding a `@HostListener` for the keyboard shortcut. With `ngx-command-palette`, the same result takes two lines:
+
+```typescript
+// app.config.ts
+provideCommandPalette()
+
+// app.component.html
+<cmd-palette />
+```
+
+The overlay, keyboard shortcut, focus trapping, backdrop, and animations are all built in.
+
+### Component and Directive Mapping
+
+| `@ngxpert/cmdk` | `ngx-command-palette` | Notes |
+|---|---|---|
+| `<cmdk-command>` | `<cmd-palette />` | Includes overlay, shortcut listener, and all subcomponents |
+| `<input cmdkInput>` | Built-in | No separate import needed |
+| `<cmdk-list>` | Built-in | Results list is managed internally |
+| `<cmdk-group label="...">` | `category` on `Command` | Groups are created automatically from the `category` property |
+| `<button cmdkItem>` | `Command` object | Items are registered via `CommandPaletteService.register()` instead of template markup |
+| `<div *cmdkEmpty>` | Built-in | Customizable per-provider via `emptyMessage` |
+| `<cmdk-separator>` | Built-in | Automatic separators between category groups |
+| `<div *cmdkLoader>` | Built-in | Loading indicator shows automatically during async searches |
+| `[filter]` on `<cmdk-command>` | Built-in fuzzy scoring | Multi-signal ranking with exact, prefix, boundary, fuzzy, keyword, recency, and priority signals |
+
+### Defining Items
+
+`@ngxpert/cmdk` defines items as template markup with a directive:
+
+```html
+<cmdk-group label="Actions">
+  <button cmdkItem [value]="'create'" (selected)="onCreate()">Create Project</button>
+  <button cmdkItem [value]="'export'" (selected)="onExport()">Export CSV</button>
+</cmdk-group>
+```
+
+`ngx-command-palette` defines items as data objects registered through a service:
+
+```typescript
+this.palette.register([
+  {
+    id: 'create',
+    label: 'Create Project',
+    category: 'Actions',
+    action: () => this.onCreate(),
+  },
+  {
+    id: 'export',
+    label: 'Export CSV',
+    category: 'Actions',
+    action: () => this.onExport(),
+  },
+], this.destroyRef);
+```
+
+This data-driven approach enables features that template-based items cannot support: fuzzy search with scoring, automatic route registration, keyword matching, contextual visibility, recency tracking, and priority boosting.
+
+### Custom Filtering
+
+`@ngxpert/cmdk` accepts a custom filter function on the root component:
+
+```html
+<cmdk-command [filter]="myFilter">
+```
+
+`ngx-command-palette` does not expose a custom filter hook because the built-in search engine handles scoring across multiple signals (exact match, prefix, word boundary, fuzzy, keywords, recency, priority). For API-backed search, use [async search providers](#async-search-providers) instead.
+
+### Dialog and Keyboard Shortcut
+
+`@ngxpert/cmdk` requires you to wire up the dialog overlay and keyboard shortcut yourself, typically using Angular CDK Overlay and `@HostListener`:
+
+```typescript
+// @ngxpert/cmdk - manual setup required
+@HostListener('document:keydown.meta.k', ['$event'])
+openDialog(event: KeyboardEvent): void {
+  event.preventDefault();
+  this.isOpen = true;
+}
+```
+
+`ngx-command-palette` handles this automatically. Configure the shortcut in the provider:
+
+```typescript
+provideCommandPalette({ shortcut: 'mod.k' })
+```
+
+### Route Registration
+
+This is the biggest difference. `@ngxpert/cmdk` has no concept of routes. Every item must be manually added to the template.
+
+`ngx-command-palette` auto-registers all titled routes from your Angular Router config. Set `autoRegisterRoutes: true` (the default) and every route with a `title` becomes searchable with zero additional code. See [Route Configuration](#route-configuration) for details.
+
+### What You Gain
+
+Switching from `@ngxpert/cmdk` to `ngx-command-palette` gives you:
+
+- **Automatic route registration** with lazy-load awareness
+- **Fuzzy search with multi-signal scoring** instead of basic substring matching
+- **Async search providers** with per-provider debounce, prefix routing, and loading states
+- **Contextual commands** scoped to routes or dynamic conditions
+- **Recent command tracking** with recency boosting
+- **Built-in dialog, shortcut, and focus management** with no CDK Overlay boilerplate
+- **Four built-in themes** with full CSS custom property support
+- **WAI-ARIA combobox pattern** implemented out of the box
+- **Custom item templates** for rich result rendering
+- **Active maintenance** across Angular 19, 20, 21, and 22
+
 ## License
 
 MIT
