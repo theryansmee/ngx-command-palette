@@ -1,8 +1,12 @@
 export { Command, CommandContext, SearchProvider, CommandPaletteConfig, CommandPaletteTheme, CommandPaletteAnimation, ScoredCommand, CmdItemTemplateContext } from './lib/models/command';
+export { CommandChildren } from './lib/models/command-children.type';
+export { CommandPage } from './lib/models/command-page.interface';
+export { CommandPageSource } from './lib/models/command-page-source.type';
 export { CmdItemTemplateDirective } from './lib/directives/item-template.directive';
 export { CommandPaletteService } from './lib/services/command-palette.service';
 export { CommandRegistry } from './lib/services/command-registry';
 export { SearchEngine } from './lib/services/search-engine';
+export { SearchEngineOptions } from './lib/services/search-engine-options.interface';
 export { RecentCommandsStore } from './lib/services/recent-store';
 export { RouterCommandExtractor } from './lib/services/router-extractor';
 export { ProviderRegistry } from './lib/services/provider-registry';

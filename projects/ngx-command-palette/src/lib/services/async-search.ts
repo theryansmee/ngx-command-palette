@@ -19,6 +19,10 @@ export class AsyncSearchCoordinator {
 
 	readonly #providerStates: WritableSignal<Map<string, ProviderState>> = signal<Map<string, ProviderState>>(new Map());
 
+	// Plain bookkeeping, not reactive state: the last query dispatched per provider,
+	// used to skip refetching a query whose results are already displayed.
+	readonly #lastDispatchedQueries: Map<string, string> = new Map<string, string>();
+
 	public readonly loading: Signal<boolean> = computed(() => {
 		for (const state of this.#providerStates().values()) {
 			if (state.loading) {
@@ -67,36 +71,50 @@ export class AsyncSearchCoordinator {
 		this.#searchProvider(provider, strippedQuery);
 	}
 
-	public clear(): void {
-		for (const state of this.#providerStates().values()) {
-			state.querySubject.next('');
+	public searchOnly(providerId: string, query: string): void {
+		const provider: SearchProvider | undefined = this.#providerRegistry.getById(providerId);
+
+		if (!provider) {
+			return;
 		}
 
-		this.#providerStates.update((map: Map<string, ProviderState>) => {
-			const updated: Map<string, ProviderState> = new Map(map);
+		this.#clearAllExcept(provider.id);
+		this.#searchProvider(provider, query);
+	}
 
-			for (const [
-				providerId,
-				state,
-			] of updated) {
-				updated.set(providerId, {
-					...state,
-					results: [],
-					loading: false, 
-				});
-			}
+	public clear(): void {
+		// Tearing the states down (rather than just emptying results) kills in-flight
+		// provider searches immediately, so a late response cannot repopulate results
+		// after a page transition. States are lazily rebuilt on the next search.
+		this.#lastDispatchedQueries.clear();
 
-			return updated;
-		});
+		const states: Map<string, ProviderState> = this.#providerStates();
+
+		if (states.size === 0) {
+			return;
+		}
+
+		for (const state of states.values()) {
+			this.#teardownState(state);
+		}
+
+		this.#providerStates.set(new Map<string, ProviderState>());
 	}
 
 	#searchProvider(provider: SearchProvider, query: string): void {
 		const minLength: number = provider.minQueryLength ?? 1;
 
-		if (query.length < minLength) {
+		if (!query || query.length < minLength) {
+			this.#lastDispatchedQueries.delete(provider.id);
 			this.#updateProviderResults(provider.id, []);
 			return;
 		}
+
+		if (this.#lastDispatchedQueries.get(provider.id) === query) {
+			return;
+		}
+
+		this.#lastDispatchedQueries.set(provider.id, query);
 
 		const state: ProviderState = this.#getOrCreateState(provider);
 		state.querySubject.next(query);
@@ -119,14 +137,12 @@ export class AsyncSearchCoordinator {
 
 		const providerDebounce: number = provider.debounce ?? 300;
 
+		// Empty and below-minimum queries never reach the subject; #searchProvider
+		// clears results directly instead.
 		const subscription: Subscription = querySubject.pipe(
 			debounceTime(providerDebounce),
 			tap(() => this.#setLoading(provider.id, true)),
 			switchMap((query: string): Observable<Command[]> => {
-				if (!query) {
-					return of([]);
-				}
-
 				return provider.search(query).pipe(
 					catchError((): Observable<Command[]> => of([])),
 				);
@@ -198,6 +214,12 @@ export class AsyncSearchCoordinator {
 	#clearAllExcept(...keepIds: string[]): void {
 		const keepSet: Set<string> = new Set(keepIds);
 
+		for (const providerId of this.#lastDispatchedQueries.keys()) {
+			if (!keepSet.has(providerId)) {
+				this.#lastDispatchedQueries.delete(providerId);
+			}
+		}
+
 		this.#providerStates.update((map: Map<string, ProviderState>) => {
 			let changed: boolean = false;
 			const updated: Map<string, ProviderState> = new Map(map);
@@ -233,19 +255,25 @@ export class AsyncSearchCoordinator {
 	}
 
 	public destroyProvider(providerId: string): void {
+		this.#lastDispatchedQueries.delete(providerId);
+
 		const state: ProviderState | undefined = this.#providerStates().get(providerId);
 
 		if (!state) {
 			return;
 		}
 
-		state.subscription?.unsubscribe();
-		state.querySubject.complete();
+		this.#teardownState(state);
 
 		this.#providerStates.update((map: Map<string, ProviderState>) => {
 			const updated: Map<string, ProviderState> = new Map(map);
 			updated.delete(providerId);
 			return updated;
 		});
+	}
+
+	#teardownState(state: ProviderState): void {
+		state.subscription?.unsubscribe();
+		state.querySubject.complete();
 	}
 }

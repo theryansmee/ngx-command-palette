@@ -71,6 +71,19 @@ describe('ProviderRegistry', () => {
 		expect(registry.getByPrefix('!')).toBeUndefined();
 	});
 
+	it('should return a provider by its id', () => {
+		registry.register(makeProvider({ id: 'users' }));
+		registry.register(makeProvider({ id: 'tickets' }));
+
+		const result: SearchProvider | undefined = registry.getById('tickets');
+		expect(result).toBeDefined();
+		expect(result!.id).toBe('tickets');
+	});
+
+	it('should return undefined for an unregistered id', () => {
+		expect(registry.getById('missing')).toBeUndefined();
+	});
+
 	it('should return only unprefixed providers', () => {
 		registry.register(makeProvider({
 			id: 'users',
@@ -102,5 +115,21 @@ describe('ProviderRegistry', () => {
 		expect(prefixes).toContain('@');
 		expect(prefixes).toContain('#');
 		expect(prefixes.length).toBe(2);
+	});
+
+	it('should return longer prefixes first so overlapping prefixes cannot shadow each other', () => {
+		registry.register(makeProvider({
+			id: 'commands',
+			prefix: '>',
+		}));
+		registry.register(makeProvider({
+			id: 'admin-commands',
+			prefix: '>>',
+		}));
+
+		expect(registry.getPrefixes()).toEqual([
+			'>>',
+			'>',
+		]);
 	});
 });

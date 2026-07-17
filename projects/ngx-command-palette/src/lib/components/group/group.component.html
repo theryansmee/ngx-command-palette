@@ -1,4 +1,6 @@
-<div class="cmd-group-heading" [id]="'cmd-group-' + heading()">
-	{{ heading() }}
-</div>
+@if (showHeading()) {
+	<div class="cmd-group-heading" [id]="headingId()">
+		{{ heading() }}
+	</div>
+}
 <ng-content />

@@ -5,6 +5,10 @@ import { COMMAND_PALETTE_CONFIG } from '../provide';
 
 const storageKey: string = 'ngx-command-palette-recent';
 
+// Storage holds more ids than the boost window so ids outside the current view
+// (e.g. page children while at root) cannot evict the rest of the history.
+const storedIdsMultiplier: number = 4;
+
 @Injectable({ providedIn: 'root' })
 export class RecentCommandsStore {
 	readonly #platformId: object = inject(PLATFORM_ID);
@@ -13,9 +17,11 @@ export class RecentCommandsStore {
 
 	readonly #enabled: boolean = this.#config.trackRecent ?? false;
 
+	readonly #recentCount: number = this.#config.recentCount ?? 5;
+
 	readonly #recentIds: WritableSignal<string[]> = signal<string[]>(this.#enabled ? this.#load() : []);
 
-	public readonly ids: Signal<string[]> = computed(() => this.#recentIds());
+	public readonly ids: Signal<string[]> = computed(() => this.#recentIds().slice(0, this.#recentCount));
 
 	public record(commandId: string): void {
 		if (!this.#enabled) {
@@ -27,7 +33,7 @@ export class RecentCommandsStore {
 			const updated: string[] = [
 				commandId,
 				...filtered,
-			].slice(0, this.#config.recentCount);
+			].slice(0, this.#recentCount * storedIdsMultiplier);
 
 			this.#save(updated);
 			return updated;
@@ -45,7 +51,35 @@ export class RecentCommandsStore {
 			return 0;
 		}
 
-		return ((this.#config.recentCount ?? 5) - index) * 4;
+		return Math.max(0, (this.#recentCount - index) * 4);
+	}
+
+	// Boost slots go only to ids present in the candidate set, so recorded ids that
+	// are not being scored (e.g. page children while at root) cannot dilute the rest.
+	public getBoostsFor(candidateIds: readonly string[]): Map<string, number> {
+		const boosts: Map<string, number> = new Map<string, number>();
+
+		if (!this.#enabled) {
+			return boosts;
+		}
+
+		const candidateSet: Set<string> = new Set(candidateIds);
+		let assignedCount: number = 0;
+
+		for (const recentId of this.#recentIds()) {
+			if (assignedCount >= this.#recentCount) {
+				break;
+			}
+
+			if (!candidateSet.has(recentId)) {
+				continue;
+			}
+
+			boosts.set(recentId, (this.#recentCount - assignedCount) * 4);
+			assignedCount++;
+		}
+
+		return boosts;
 	}
 
 	#load(): string[] {

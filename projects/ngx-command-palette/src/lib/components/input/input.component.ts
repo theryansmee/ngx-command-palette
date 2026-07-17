@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, input, output, ElementRef, Signal, viewChild, effect, InputSignal, OutputEmitterRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, input, output, ElementRef, Signal, viewChild, effect, computed, InputSignal, OutputEmitterRef } from '@angular/core';
 import { CommandPaletteService } from '../../services/command-palette.service';
 
 @Component({
@@ -21,6 +21,21 @@ export class CmdInputComponent {
 
 	readonly #debounceMs: number = this.palette.debounceMs;
 
+	// Deep stacks collapse to first and last chip so they never crowd out the input.
+	public readonly displayBreadcrumbs: Signal<string[]> = computed(() => {
+		const breadcrumbs: string[] = this.palette.breadcrumbs();
+
+		if (breadcrumbs.length <= 3) {
+			return breadcrumbs;
+		}
+
+		return [
+			breadcrumbs[0],
+			'…',
+			breadcrumbs.at(-1)!,
+		];
+	});
+
 	constructor() {
 		this.#focusInputOnOpen();
 		this.#syncDisplayQuery();
@@ -28,17 +43,10 @@ export class CmdInputComponent {
 
 	public onInput(event: Event): void {
 		const nativeInput: HTMLInputElement = event.target as HTMLInputElement;
-		let inputValue: string = nativeInput.value;
-		const activePrefix: string | undefined = this.palette.activeProvider()?.prefix;
-
-		if (activePrefix && inputValue.startsWith(activePrefix)) {
-			inputValue = inputValue.slice(activePrefix.length);
-		}
-
-		const value: string = activePrefix ? activePrefix + inputValue : inputValue;
+		const inputValue: string = nativeInput.value;
 
 		if (this.#debounceMs <= 0) {
-			this.palette.updateQuery(value);
+			this.palette.updateDisplayQuery(inputValue);
 			this.#syncNativeInput(nativeInput);
 			return;
 		}
@@ -48,7 +56,7 @@ export class CmdInputComponent {
 		}
 
 		this.#debounceTimer = setTimeout(() => {
-			this.palette.updateQuery(value);
+			this.palette.updateDisplayQuery(inputValue);
 			this.#syncNativeInput(nativeInput);
 			this.#debounceTimer = null;
 		}, this.#debounceMs);
@@ -66,10 +74,10 @@ export class CmdInputComponent {
 		if (
 			event.key === 'Backspace'
 			&& this.inputEl().nativeElement.value === ''
-			&& this.palette.activeProvider()
+			&& this.palette.breadcrumbs().length > 0
 		) {
 			event.preventDefault();
-			this.palette.updateQuery('');
+			this.palette.goBack();
 		}
 
 		this.inputKeydown.emit(event);
@@ -77,8 +85,16 @@ export class CmdInputComponent {
 
 	#syncDisplayQuery(): void {
 		effect(() => {
+			// Reading the page cancels pending debounce timers on push and pop, so a
+			// stale callback cannot inject the previous page's query into the new one.
+			this.palette.currentPage();
 			const displayQuery: string = this.palette.displayQuery();
 			const nativeInput: HTMLInputElement = this.inputEl().nativeElement;
+
+			if (this.#debounceTimer !== null) {
+				clearTimeout(this.#debounceTimer);
+				this.#debounceTimer = null;
+			}
 
 			if (nativeInput.value !== displayQuery) {
 				nativeInput.value = displayQuery;

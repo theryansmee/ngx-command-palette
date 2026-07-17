@@ -8,4 +8,7 @@
 	@if (command().shortcut) {
 		<span class="cmd-item-shortcut">{{ command().shortcut }}</span>
 	}
+	@if (command().children) {
+		<span class="cmd-item-chevron" aria-hidden="true">›</span>
+	}
 }

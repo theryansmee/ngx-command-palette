@@ -42,3 +42,11 @@
 	color: var(--cmd-shortcut-color, #64748b);
 	font-size: 12px;
 }
+
+.cmd-item-chevron {
+	flex-shrink: 0;
+
+	color: var(--cmd-group-heading-color, #64748b);
+	font-size: 14px;
+	opacity: 0.7;
+}
