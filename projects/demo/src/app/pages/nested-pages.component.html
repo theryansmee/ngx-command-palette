@@ -1,0 +1,170 @@
+<div class="docs-page">
+	<h1>Nested Pages</h1>
+	<p class="subtitle">Turn a command into a submenu: selecting it opens a scoped child list instead of executing. Available from v22.2.0.</p>
+
+	<p>
+		Give a command <code>children</code> and it becomes a container. Selecting it pushes a page onto
+		the palette: the query clears, a breadcrumb chip appears, and only that page's commands are
+		searchable. Backspace on an empty input goes back one level. Escape closes the palette from any
+		depth. Try it here: press <kbd>Cmd+K</kbd> and pick "Change theme…", "Assign demo issue to…" or
+		"Move demo task to…".
+	</p>
+
+	<h2>Static Children</h2>
+	<p>Pass an array for a fixed submenu. Children are filtered locally as the user types:</p>
+<pre><code>this.palette.register([
+  &#123;
+    id: 'theme',
+    label: 'Change theme…',
+    category: 'Preferences',
+    pagePlaceholder: 'Pick a theme…',
+    children: [
+      &#123; id: 'theme.light', label: 'Light', action: () =&gt; themeService.set('light') &#125;,
+      &#123; id: 'theme.dark', label: 'Dark', action: () =&gt; themeService.set('dark') &#125;,
+      &#123; id: 'theme.system', label: 'System', action: () =&gt; themeService.set('system') &#125;,
+    ],
+  &#125;,
+]);</code></pre>
+
+	<h2>Loaded Children</h2>
+	<p>
+		Pass a function returning an <code>Observable&lt;Command[]&gt;</code> to fetch children when the
+		page opens. The palette shows its loading state while the request is in-flight, then filters the
+		results locally. Results are cached until the palette closes, and popping the page mid-load
+		cancels the request.
+	</p>
+<pre><code>&#123;
+  id: 'assign',
+  label: 'Assign to…',
+  pagePlaceholder: 'Search teammates…',
+  pageEmptyMessage: 'Nobody matches that name.',
+  children: () =&gt; this.userService.getTeamMembers().pipe(
+    map(users =&gt; users.map(user =&gt; (&#123;
+      id: `assign.$&#123;user.id&#125;`,
+      label: user.name,
+      action: () =&gt; this.issueService.assign(user.id),
+    &#125;))),
+  ),
+&#125;</code></pre>
+
+	<p>
+		Children can have children of their own, so multi-step flows come for free. Each level's
+		closures carry the choices made so far:
+	</p>
+<pre><code>&#123;
+  id: 'move',
+  label: 'Move to project…',
+  children: () =&gt; projectService.getAll().pipe(
+    map(projects =&gt; projects.map(project =&gt; (&#123;
+      id: `move.$&#123;project.id&#125;`,
+      label: project.name,
+      children: () =&gt; projectService.getColumns(project.id).pipe(
+        map(columns =&gt; columns.map(column =&gt; (&#123;
+          id: `move.$&#123;project.id&#125;.$&#123;column.id&#125;`,
+          label: column.name,
+          action: () =&gt; taskService.move(project.id, column.id),
+        &#125;))),
+      ),
+    &#125;))),
+  ),
+&#125;</code></pre>
+
+	<h2>Provider Children</h2>
+	<p>
+		Point a command at a registered <a routerLink="/async-providers">search provider</a> and its page
+		round-trips every keystroke through the provider's <code>search</code> function. If the provider
+		also has a <code>prefix</code>, both entry paths land on the same page: typing <code>&#64;</code>
+		and selecting "Assign to…" reach the identical search, placeholder, and empty state.
+	</p>
+<pre><code>this.palette.registerProvider(&#123;
+  id: 'users',
+  category: 'People',
+  prefix: '&#64;',
+  placeholder: 'Search people…',
+  search: (query) =&gt; this.userService.search(query).pipe(map(toCommands)),
+&#125;);
+
+this.palette.register([
+  &#123;
+    id: 'assign',
+    label: 'Assign to…',
+    children: &#123; provider: 'users' &#125;,
+  &#125;,
+]);</code></pre>
+
+	<h2>Opening a Page Programmatically</h2>
+	<p>
+		<code>openPage()</code> opens the palette straight onto a page, for deep links like a toolbar
+		button. Pass the id of a registered command with children, or a full page object. Only top-level
+		command ids can be resolved this way; nested pages are reached by navigating.
+	</p>
+<pre><code>this.palette.openPage('assign');</code></pre>
+
+	<h2>Behaviour Notes</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Topic</th>
+				<th>Behaviour</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Navigation</td>
+				<td>Backspace on an empty input pops one level. Escape closes by default; set <code>escapeBehavior: 'pop'</code> in the config to make it go back one level instead. Closing resets the stack.</td>
+			</tr>
+			<tr>
+				<td>Ordering</td>
+				<td>Pages show all children in authored order at an empty query. Fuzzy ranking kicks in once the user types.</td>
+			</tr>
+			<tr>
+				<td>Result limits</td>
+				<td><code>config.maxResults</code> does not apply inside pages; a submenu is always exhaustive. Cap a page explicitly with <code>CommandPage.maxResults</code> via <code>pushPage()</code>.</td>
+			</tr>
+			<tr>
+				<td>Command ids</td>
+				<td>Child ids must be globally unique. Use a <code>parent.child</code> convention like <code>theme.dark</code>.</td>
+			</tr>
+			<tr>
+				<td>Caching</td>
+				<td>Loader results are cached per palette session and refetched after the palette closes. Failed loads are not cached, so re-entering the page retries.</td>
+			</tr>
+			<tr>
+				<td>Actions</td>
+				<td>A command with both <code>action</code> and <code>children</code> runs the action first, then opens the page. Useful for analytics or cache priming.</td>
+			</tr>
+			<tr>
+				<td>Prefixes</td>
+				<td>Typing a provider sigil inside a page is literal text. Prefix detection only happens at the root.</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<h2>Parent Command Properties</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Property</th>
+				<th>Type</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><code>children</code></td>
+				<td><code>Command[] | (() =&gt; Observable&lt;Command[]&gt;) | &#123; provider: string &#125;</code></td>
+				<td>What the page contains</td>
+			</tr>
+			<tr>
+				<td><code>pagePlaceholder</code></td>
+				<td><code>string?</code></td>
+				<td>Input placeholder while the page is open</td>
+			</tr>
+			<tr>
+				<td><code>pageEmptyMessage</code></td>
+				<td><code>string?</code></td>
+				<td>Message when nothing on the page matches</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

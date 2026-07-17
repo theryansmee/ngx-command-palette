@@ -12,6 +12,7 @@
   debounce: 150,
   animation: 'scale',
   theme: 'default',
+  escapeBehavior: 'close',
 &#125;)</code></pre>
 
 	<h2>Options</h2>
@@ -78,6 +79,12 @@
 				<td><code>'default' | 'dark' | 'github' | 'linear'</code></td>
 				<td><code>'default'</code></td>
 				<td>Built-in colour theme</td>
+			</tr>
+			<tr>
+				<td><code>escapeBehavior</code></td>
+				<td><code>'close' | 'pop'</code></td>
+				<td><code>'close'</code></td>
+				<td>What Escape does inside a nested page: close the palette, or go back one level. Available from v22.2.0</td>
 			</tr>
 		</tbody>
 	</table>

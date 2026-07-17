@@ -329,6 +329,59 @@ describe('SearchEngine', () => {
 		expect(ids).not.toContain('shallow-admin');
 	});
 
+	it('should treat regex metacharacters in route patterns as literal text', () => {
+		Object.defineProperty(router, 'url', { get: () => '/items/(detail)' });
+
+		registry.register([
+			makeCommand({
+				id: 'literal-parens',
+				label: 'Detail Action',
+				context: { routes: ['/items/(detail)'] },
+			}),
+		]);
+
+		const results: ScoredCommand[] = engine.search('detail');
+		expect(results.length).toBe(1);
+		expect(results[0].command.id).toBe('literal-parens');
+	});
+
+	it('should not let a dot in a route pattern match arbitrary characters', () => {
+		Object.defineProperty(router, 'url', { get: () => '/aXb' });
+
+		registry.register([
+			makeCommand({
+				id: 'dotted',
+				label: 'Dotted Action',
+				context: { routes: ['/a.b'] },
+			}),
+		]);
+
+		const results: ScoredCommand[] = engine.search('dotted');
+		expect(results.length).toBe(0);
+	});
+
+	it('should not let recorded ids outside the candidate set dilute recency boosts', () => {
+		registry.register([
+			makeCommand({
+				id: 'dashboard',
+				label: 'Dashboard',
+			}),
+		]);
+
+		// Fill the boost window with unregistered ids, recording the visible command first.
+		recentStore.record('dashboard');
+		recentStore.record('theme.dark');
+		recentStore.record('theme.light');
+		recentStore.record('assign.jane');
+		recentStore.record('assign.john');
+		recentStore.record('move.column');
+
+		const results: ScoredCommand[] = engine.search('');
+
+		// dashboard is the only candidate, so it takes the top boost slot despite its raw position.
+		expect(results[0].score).toBe(20);
+	});
+
 	it('should hide commands when context.when() returns false', () => {
 		registry.register([
 			makeCommand({
@@ -396,5 +449,151 @@ describe('SearchEngine', () => {
 		expect(ids).toContain('both-pass');
 		expect(ids).not.toContain('route-pass-when-fail');
 		expect(ids).not.toContain('route-fail-when-pass');
+	});
+
+	it('should search an explicit commands option instead of the registry', () => {
+		registry.register([
+			makeCommand({
+				id: 'registry-only',
+				label: 'Registry Command',
+			}),
+		]);
+
+		const pageCommands: Command[] = [
+			makeCommand({
+				id: 'page-only',
+				label: 'Page Command',
+			}),
+		];
+
+		const results: ScoredCommand[] = engine.search('command', { commands: pageCommands });
+		const ids: string[] = results.map((result: ScoredCommand) => result.command.id);
+		expect(ids).toEqual(['page-only']);
+	});
+
+	it('should apply context visibility to an explicit commands option', () => {
+		const pageCommands: Command[] = [
+			makeCommand({
+				id: 'hidden',
+				label: 'Hidden Command',
+				context: { when: () => false },
+			}),
+			makeCommand({
+				id: 'visible',
+				label: 'Visible Command',
+			}),
+		];
+
+		const results: ScoredCommand[] = engine.search('', { commands: pageCommands });
+		const ids: string[] = results.map((result: ScoredCommand) => result.command.id);
+		expect(ids).toEqual(['visible']);
+	});
+
+	it('should score and rank an explicit commands option when a query is typed', () => {
+		const pageCommands: Command[] = [
+			makeCommand({
+				id: 'partial',
+				label: 'Dark Reader Mode',
+			}),
+			makeCommand({
+				id: 'exact',
+				label: 'Dark',
+			}),
+		];
+
+		const results: ScoredCommand[] = engine.search('dark', { commands: pageCommands });
+		expect(results[0].command.id).toBe('exact');
+		expect(results[0].score).toBeGreaterThan(results[1].score);
+	});
+
+	it('should return everything when maxResults is null', () => {
+		const pageCommands: Command[] = Array.from({ length: 20 }, (_: unknown, index: number) =>
+			makeCommand({
+				id: `cmd-${index}`,
+				label: `Command ${index}`,
+			}),
+		);
+
+		const emptyQueryResults: ScoredCommand[] = engine.search('', {
+			commands: pageCommands,
+			maxResults: null,
+		});
+		const typedQueryResults: ScoredCommand[] = engine.search('command', {
+			commands: pageCommands,
+			maxResults: null,
+		});
+
+		expect(emptyQueryResults.length).toBe(20);
+		expect(typedQueryResults.length).toBe(20);
+	});
+
+	it('should cap results when maxResults is an explicit number', () => {
+		const pageCommands: Command[] = Array.from({ length: 20 }, (_: unknown, index: number) =>
+			makeCommand({
+				id: `cmd-${index}`,
+				label: `Command ${index}`,
+			}),
+		);
+
+		const results: ScoredCommand[] = engine.search('command', {
+			commands: pageCommands,
+			maxResults: 3,
+		});
+
+		expect(results.length).toBe(3);
+	});
+
+	it('should preserve authored order at an empty query when rankDefaults is false', () => {
+		const pageCommands: Command[] = [
+			makeCommand({
+				id: 'first',
+				label: 'First',
+				priority: 0,
+			}),
+			makeCommand({
+				id: 'second',
+				label: 'Second',
+				priority: 10,
+			}),
+			makeCommand({
+				id: 'third',
+				label: 'Third',
+				priority: 5,
+			}),
+		];
+
+		recentStore.record('third');
+
+		const results: ScoredCommand[] = engine.search('', {
+			commands: pageCommands,
+			rankDefaults: false,
+		});
+		const ids: string[] = results.map((result: ScoredCommand) => result.command.id);
+
+		expect(ids).toEqual([
+			'first',
+			'second',
+			'third',
+		]);
+	});
+
+	it('should still rank by score once a query is typed even when rankDefaults is false', () => {
+		const pageCommands: Command[] = [
+			makeCommand({
+				id: 'partial',
+				label: 'Light Sensor',
+			}),
+			makeCommand({
+				id: 'exact',
+				label: 'Light',
+			}),
+		];
+
+		const results: ScoredCommand[] = engine.search('light', {
+			commands: pageCommands,
+			rankDefaults: false,
+		});
+
+		expect(results[0].command.id).toBe('exact');
 	});
 });

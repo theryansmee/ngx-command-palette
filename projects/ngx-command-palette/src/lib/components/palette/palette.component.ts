@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, Signal, viewChild, computed, HostListener, effect, input, InputSignal, contentChildren } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, isDevMode, Signal, viewChild, computed, HostListener, effect, input, InputSignal, contentChildren, DestroyRef } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { A11yModule } from '@angular/cdk/a11y';
@@ -9,6 +9,9 @@ import { CmdItemTemplateDirective } from '../../directives/item-template.directi
 import { CmdInputComponent } from '../input/input.component';
 import { CmdListComponent } from '../list/list.component';
 import { CmdFooterComponent } from '../footer/footer.component';
+
+// A second instance shares the root-service state and double-fires the global shortcut.
+let activePaletteInstanceCount: number = 0;
 
 interface ParsedShortcut {
 	key: string;
@@ -67,6 +70,16 @@ export class CmdPaletteComponent {
 	});
 
 	constructor() {
+		activePaletteInstanceCount++;
+
+		if (isDevMode() && activePaletteInstanceCount > 1) {
+			console.warn('[ngx-command-palette] Multiple <cmd-palette> instances detected. They share one palette state and the global shortcut will toggle it twice. Render exactly one instance.');
+		}
+
+		inject(DestroyRef).onDestroy(() => {
+			activePaletteInstanceCount--;
+		});
+
 		const config: CommandPaletteConfig = inject(COMMAND_PALETTE_CONFIG);
 
 		this.#configTheme = config.theme ?? 'default';
@@ -141,7 +154,7 @@ export class CmdPaletteComponent {
 				break;
 			case 'Escape':
 				event.preventDefault();
-				this.palette.close();
+				this.palette.handleEscape();
 				break;
 		}
 	}

@@ -1,15 +1,18 @@
 <div class="cmd-input-wrapper">
-	@if (palette.activeProvider(); as provider) {
-		<span class="cmd-prefix-chip">{{ provider.prefix }}</span>
+	@for (breadcrumbTitle of displayBreadcrumbs(); track $index) {
+		@if (!$first) {
+			<span class="cmd-breadcrumb-separator" aria-hidden="true">›</span>
+		}
+		<span class="cmd-breadcrumb-chip">{{ breadcrumbTitle }}</span>
 	}
 	<input
 		#inputEl
 		type="text"
 		role="combobox"
-		aria-label="Search commands"
 		aria-expanded="true"
 		aria-controls="cmd-listbox"
 		aria-autocomplete="list"
+		[attr.aria-label]="palette.inputAriaLabel()"
 		[attr.aria-activedescendant]="activeDescendantId()"
 		[placeholder]="palette.activePlaceholder()"
 		(input)="onInput($event)"

@@ -65,6 +65,19 @@ export class CmdListComponent {
 		return this.groups().flatMap((group: CommandGroup) => group.items);
 	});
 
+	// A page whose children all fall into the default bucket needs no "Commands" header.
+	public readonly showGroupHeadings: Signal<boolean> = computed<boolean>(() => {
+		if (!this.#palette.currentPage()) {
+			return true;
+		}
+
+		const groups: CommandGroup[] = this.groups();
+
+		return groups.length > 1
+			|| (groups.length === 1
+				&& groups[0].category !== 'Commands');
+	});
+
 	public readonly activeCommandId: Signal<string | null> = computed<string | null>(() => {
 		const items: ScoredCommand[] = this.flatItems();
 		const index: number = this.#activeIndex();
@@ -140,7 +153,9 @@ export class CmdListComponent {
 
 	#resetSelectionOnQueryChange(): void {
 		effect(() => {
+			// Track the page too: entering one from an empty query changes the page, not the query.
 			this.#palette.query();
+			this.#palette.currentPage();
 			this.#activeIndex.set(0);
 		});
 	}

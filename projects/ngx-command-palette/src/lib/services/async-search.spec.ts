@@ -295,6 +295,225 @@ describe('AsyncSearchCoordinator', () => {
 		expect(coordinator.results().length).toBe(0);
 	});
 
+	it('should fire only the named provider when searchOnly is used', () => {
+		let usersCalled: boolean = false;
+		let ticketsCalled: boolean = false;
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			debounce: 0,
+			search: () => {
+				usersCalled = true;
+				return of([
+					makeCommand({
+						id: 'user-1',
+						label: 'John',
+					}),
+				]);
+			},
+		}));
+
+		providerRegistry.register(makeProvider({
+			id: 'tickets',
+			debounce: 0,
+			search: () => {
+				ticketsCalled = true;
+				return of([]);
+			},
+		}));
+
+		coordinator.searchOnly('users', 'john');
+		vi.advanceTimersByTime(0);
+
+		expect(usersCalled).toBe(true);
+		expect(ticketsCalled).toBe(false);
+		expect(coordinator.results().length).toBe(1);
+	});
+
+	it('should treat another provider sigil as literal text in searchOnly', () => {
+		let receivedQuery: string = '';
+		let ticketsCalled: boolean = false;
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			debounce: 0,
+			search: (query: string) => {
+				receivedQuery = query;
+				return of([]);
+			},
+		}));
+
+		providerRegistry.register(makeProvider({
+			id: 'tickets',
+			prefix: '#',
+			debounce: 0,
+			search: () => {
+				ticketsCalled = true;
+				return of([]);
+			},
+		}));
+
+		coordinator.searchOnly('users', '#42');
+		vi.advanceTimersByTime(0);
+
+		expect(receivedQuery).toBe('#42');
+		expect(ticketsCalled).toBe(false);
+	});
+
+	it('should honour minQueryLength in searchOnly', () => {
+		let searchCalled: boolean = false;
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			debounce: 0,
+			minQueryLength: 3,
+			search: () => {
+				searchCalled = true;
+				return of([]);
+			},
+		}));
+
+		coordinator.searchOnly('users', 'ab');
+		vi.advanceTimersByTime(0);
+
+		expect(searchCalled).toBe(false);
+	});
+
+	it('should do nothing when searchOnly names an unknown provider', () => {
+		coordinator.searchOnly('missing', 'john');
+		vi.advanceTimersByTime(0);
+
+		expect(coordinator.results().length).toBe(0);
+		expect(coordinator.loading()).toBe(false);
+	});
+
+	it('should clear other providers results when searchOnly is used', () => {
+		providerRegistry.register(makeProvider({
+			id: 'global',
+			debounce: 0,
+			search: () => of([
+				makeCommand({
+					id: 'global-1',
+					label: 'Global Result',
+				}),
+			]),
+		}));
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			debounce: 0,
+			search: () => of([
+				makeCommand({
+					id: 'user-1',
+					label: 'John',
+				}),
+			]),
+		}));
+
+		coordinator.search('john');
+		vi.advanceTimersByTime(0);
+		expect(coordinator.results().length).toBe(2);
+
+		coordinator.searchOnly('users', 'john');
+		vi.advanceTimersByTime(0);
+
+		const ids: string[] = coordinator.results().map((result: ScoredCommand) => result.command.id);
+		expect(ids).toEqual(['user-1']);
+	});
+
+	it('should ignore an in-flight response that arrives after clear()', () => {
+		const responseSubject: Subject<Command[]> = new Subject<Command[]>();
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			debounce: 0,
+			search: () => responseSubject.asObservable(),
+		}));
+
+		coordinator.search('john');
+		vi.advanceTimersByTime(0);
+		expect(coordinator.loading()).toBe(true);
+
+		coordinator.clear();
+
+		responseSubject.next([
+			makeCommand({
+				id: 'user-1',
+				label: 'John',
+			}),
+		]);
+		responseSubject.complete();
+
+		expect(coordinator.results().length).toBe(0);
+		expect(coordinator.loading()).toBe(false);
+	});
+
+	it('should not refetch when the same query is dispatched twice in a row', () => {
+		let callCount: number = 0;
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			debounce: 0,
+			search: () => {
+				callCount++;
+				return of([]);
+			},
+		}));
+
+		coordinator.search('john');
+		vi.advanceTimersByTime(0);
+		coordinator.search('john');
+		vi.advanceTimersByTime(0);
+
+		expect(callCount).toBe(1);
+	});
+
+	it('should refetch a repeated query after clear()', () => {
+		let callCount: number = 0;
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			debounce: 0,
+			search: () => {
+				callCount++;
+				return of([]);
+			},
+		}));
+
+		coordinator.search('john');
+		vi.advanceTimersByTime(0);
+
+		coordinator.clear();
+
+		coordinator.search('john');
+		vi.advanceTimersByTime(0);
+
+		expect(callCount).toBe(2);
+	});
+
+	it('should refetch a repeated query after dipping below minQueryLength', () => {
+		let callCount: number = 0;
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			debounce: 0,
+			minQueryLength: 3,
+			search: () => {
+				callCount++;
+				return of([]);
+			},
+		}));
+
+		coordinator.search('abc');
+		vi.advanceTimersByTime(0);
+		coordinator.search('ab');
+		vi.advanceTimersByTime(0);
+		coordinator.search('abc');
+		vi.advanceTimersByTime(0);
+
+		expect(callCount).toBe(2);
+	});
+
 	it('should not fire unprefixed providers when a prefix query is used', () => {
 		let unprefixedCalled: boolean = false;
 

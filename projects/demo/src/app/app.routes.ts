@@ -49,6 +49,13 @@ export const routes: Routes = [
 		),
 	},
 	{
+		path: 'nested-pages',
+		title: 'Nested Pages',
+		loadComponent: () => import('./pages/nested-pages.component').then(
+			(m: typeof import('./pages/nested-pages.component')) => m.NestedPagesComponent,
+		),
+	},
+	{
 		path: 'theming',
 		title: 'Theming',
 		loadComponent: () => import('./pages/theming.component').then(

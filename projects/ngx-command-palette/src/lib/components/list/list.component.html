@@ -9,7 +9,10 @@
 	}
 } @else {
 	@for (group of groups(); track group.category) {
-		<cmd-group [heading]="group.category">
+		<cmd-group
+			[heading]="group.category"
+			[showHeading]="showGroupHeadings()">
+
 			@for (item of group.items; track item.command.id) {
 				<cmd-item
 					[command]="item.command"

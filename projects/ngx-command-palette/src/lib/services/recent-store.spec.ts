@@ -91,6 +91,74 @@ describe('RecentCommandsStore', () => {
 		expect(store.getBoost('never-used')).toBe(0);
 	});
 
+	it('should keep storing ids beyond recentCount so extra recordings cannot evict the rest', () => {
+		store.record('cmd-1');
+		store.record('cmd-2');
+		store.record('cmd-3');
+		store.record('child-1');
+		store.record('child-2');
+
+		expect(store.ids()).toEqual([
+			'child-2',
+			'child-1',
+			'cmd-3',
+		]);
+
+		// cmd-1 left the visible window but not storage, so it still gets a boost slot here.
+		const boosts: Map<string, number> = store.getBoostsFor([
+			'cmd-1',
+			'cmd-2',
+			'cmd-3',
+		]);
+
+		expect(boosts.get('cmd-3')).toBe(12);
+		expect(boosts.get('cmd-2')).toBe(8);
+		expect(boosts.get('cmd-1')).toBe(4);
+	});
+
+	it('should never return a negative boost for ids deep in storage', () => {
+		store.record('cmd-1');
+		store.record('cmd-2');
+		store.record('cmd-3');
+		store.record('cmd-4');
+		store.record('cmd-5');
+
+		expect(store.getBoost('cmd-1')).toBe(0);
+	});
+
+	it('should assign boost slots only to candidate ids', () => {
+		store.record('cmd-1');
+		store.record('child-1');
+		store.record('child-2');
+
+		const boosts: Map<string, number> = store.getBoostsFor(['cmd-1']);
+
+		expect(boosts.get('cmd-1')).toBe(12);
+		expect(boosts.has('child-1')).toBe(false);
+		expect(boosts.has('child-2')).toBe(false);
+	});
+
+	it('should return an empty boost map when tracking is disabled', () => {
+		TestBed.resetTestingModule();
+		TestBed.configureTestingModule({
+			providers: [
+				{
+					provide: PLATFORM_ID,
+					useValue: 'browser',
+				},
+				{
+					provide: COMMAND_PALETTE_CONFIG,
+					useValue: { trackRecent: false },
+				},
+			],
+		});
+
+		const disabledStore: RecentCommandsStore = TestBed.inject(RecentCommandsStore);
+		disabledStore.record('cmd-1');
+
+		expect(disabledStore.getBoostsFor(['cmd-1']).size).toBe(0);
+	});
+
 	it('should persist recent ids to localStorage', () => {
 		store.record('cmd-1');
 		store.record('cmd-2');

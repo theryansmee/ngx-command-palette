@@ -17,6 +17,7 @@ Inspired by tools like Linear, GitHub, and Raycast.
 - **Lazy-load aware** - re-scans routes as lazy modules load
 - **Async search providers** - register API-backed search sources with per-provider debounce and loading states
 - **Prefix routing** - scope providers behind prefixes (`@` for users, `#` for tickets) so they only fire when needed
+- **Nested pages** - commands with `children` open scoped submenu pages with breadcrumbs and Backspace navigation
 - **Contextual commands** - show or hide commands based on the current route or dynamic conditions
 - **Fuzzy search** - built-in scoring that ranks exact matches, prefix matches, word boundary matches, and character-by-character fuzzy matches
 - **Keyword search** - add extra search terms to any command
@@ -133,6 +134,7 @@ provideCommandPalette({
   debounce: 150,                // Input debounce in milliseconds (default: 0)
   animation: 'scale',           // Open animation: 'scale' | 'slide' | 'none' (default: 'scale')
   theme: 'default',             // Built-in theme: 'default' | 'dark' | 'github' | 'linear'
+  escapeBehavior: 'close',      // Escape inside a page: 'close' the palette or 'pop' one level (default: 'close', v22.2.0+)
 });
 ```
 
@@ -336,15 +338,20 @@ interface Command {
   icon?: string;                           // Icon name or identifier
   keywords?: string[];                     // Additional search terms
   shortcut?: string;                       // Display-only shortcut hint (e.g. "Cmd+N")
-  action: () => void | Promise<void>;      // What happens when the command is executed
+  action?: () => void | Promise<void>;     // What happens when the command is executed
   priority?: number;                       // Ranking boost (higher = appears first)
   context?: {
     routes?: string[];                     // Glob patterns for route visibility
     when?: () => boolean;                  // Dynamic visibility check
   };
+  children?: CommandChildren;              // Turns the command into a submenu page (see Nested Pages, v22.2.0+)
+  pagePlaceholder?: string;                // Input placeholder while this command's page is open (v22.2.0+)
+  pageEmptyMessage?: string;               // Empty message while this command's page is open (v22.2.0+)
   data?: Record<string, unknown>;          // Arbitrary metadata for custom templates
 }
 ```
+
+A command needs an `action`, `children`, or both. With only `children`, selecting it opens its page. With both, the action runs first (analytics, cache priming) and then the page opens.
 
 ## Async Search Providers
 
@@ -463,6 +470,113 @@ The palette shows a "Searching..." indicator while async providers are in-flight
 ```typescript
 const isLoading: boolean = this.palette.loading();
 ```
+
+## Nested Pages
+
+> Available from v22.2.0
+
+Give a command `children` and it becomes a submenu: selecting it opens a scoped page instead of executing. The query clears, a breadcrumb chip appears in the input, and only that page's commands are searchable. Backspace on an empty input goes back one level; Escape closes the palette from any depth (set `escapeBehavior: 'pop'` in the config to make it go back one level instead, Raycast style). Closing always resets to the root.
+
+`children` accepts three shapes:
+
+| Shape | Behaviour | Use case |
+|---|---|---|
+| `Command[]` | Fixed list, filtered locally | "Change theme..." |
+| `() => Observable<Command[]>` | Fetched once when the page opens, then filtered locally | "Assign to..." from a team list |
+| `{ provider: string }` | Every keystroke goes through that `SearchProvider` | Server-side search |
+
+### Static Children
+
+```typescript
+this.palette.register([
+  {
+    id: 'theme',
+    label: 'Change theme...',
+    category: 'Preferences',
+    pagePlaceholder: 'Pick a theme...',
+    children: [
+      { id: 'theme.light', label: 'Light', action: () => themeService.set('light') },
+      { id: 'theme.dark', label: 'Dark', action: () => themeService.set('dark') },
+      { id: 'theme.system', label: 'System', action: () => themeService.set('system') },
+    ],
+  },
+]);
+```
+
+A trailing `...` on the label is stripped from the breadcrumb chip, so "Change theme..." becomes the chip "Change theme".
+
+### Loaded Children
+
+Pass a function returning an `Observable<Command[]>` and the palette fetches the children when the page opens, showing its loading indicator in the meantime:
+
+```typescript
+{
+  id: 'assign',
+  label: 'Assign to...',
+  context: { routes: ['/issues/*'] },
+  pagePlaceholder: 'Search teammates...',
+  pageEmptyMessage: 'Nobody matches that name.',
+  children: () => this.userService.getTeamMembers().pipe(
+    map(users => users.map(user => ({
+      id: `assign.${user.id}`,
+      label: user.name,
+      action: () => this.issueService.assign(user.id),
+    }))),
+  ),
+}
+```
+
+Children can have `children` of their own, so multi-step flows nest to any depth. Each level's closures carry the choices made so far. Loader results are cached until the palette closes; failed loads are not cached, so re-entering the page retries. Popping a page mid-load cancels the request.
+
+### Provider Children: Prefixes Are Bookmarked Pages
+
+Point a command at a registered provider and both entry paths land on the same page. Typing the provider's prefix and selecting the command reach the identical search, placeholder, and empty state:
+
+```typescript
+this.palette.registerProvider({
+  id: 'users',
+  category: 'People',
+  prefix: '@',
+  placeholder: 'Search people...',
+  search: (query) => this.userService.search(query).pipe(map(toCommands)),
+});
+
+this.palette.register([
+  {
+    id: 'assign',
+    label: 'Assign to...',
+    children: { provider: 'users' },
+  },
+]);
+```
+
+This is the mental model for the whole feature: a typed prefix is just a fast path onto a provider page. Inside a page, typing a sigil is literal text; prefix detection only happens at the root.
+
+### Opening a Page Programmatically
+
+`openPage()` opens the palette straight onto a page, for deep links like a toolbar button:
+
+```typescript
+// By the id of a registered command with children
+this.palette.openPage('assign');
+
+// Or with a full page object
+this.palette.openPage({
+  id: 'quick-links',
+  title: 'Quick Links',
+  source: { kind: 'static', commands: quickLinkCommands },
+});
+```
+
+Only top-level command ids can be resolved this way; nested pages are reached by navigating. `openPage` always resets the stack first, so a deep link never stacks on top of wherever the user was.
+
+### Page Behaviour Notes
+
+- **Ordering**: pages show all children in authored order at an empty query, so submenus keep positional muscle memory. Fuzzy ranking (with priority and recency boosts) kicks in once the user types.
+- **Result limits**: `config.maxResults` does not apply inside pages; a submenu is always exhaustive and the list scrolls. Cap a page explicitly with `CommandPage.maxResults` when using `pushPage()`.
+- **Command ids**: child ids must be globally unique. Use a `parent.child` convention like `theme.dark`. The palette warns in dev mode when a static child id collides with a registered command id.
+- **Recents**: executing a child records it and its ancestor commands, so a frequently used submenu rises at the root over time.
+- **Visibility**: `context.routes` and `context.when()` filter children the same way they filter root commands.
 
 ## Custom Item Templates
 
@@ -588,11 +702,21 @@ palette.updateQuery('dashboard');
 // Execute a command programmatically
 palette.execute(someCommand);
 
+// Open the palette straight onto a page (see Nested Pages)
+palette.openPage('assign');
+
+// Navigate the page stack
+palette.pushPage(somePage);
+palette.popPage();
+palette.goBack();
+
 // Read current state (signals)
 const isOpen: boolean = palette.isOpen();
 const query: string = palette.query();
 const results: ScoredCommand[] = palette.results();
 const isLoading: boolean = palette.loading();
+const currentPage: CommandPage | null = palette.currentPage();
+const breadcrumbs: string[] = palette.breadcrumbs();
 ```
 
 ## Keyboard Shortcuts
@@ -600,10 +724,11 @@ const isLoading: boolean = palette.loading();
 | Key | Action |
 |-----|--------|
 | `Cmd+K` / `Ctrl+K` | Open the palette (configurable) |
-| `Escape` | Close the palette |
+| `Escape` | Close the palette; with `escapeBehavior: 'pop'`, go back one page first |
 | `Arrow Down` / `Tab` | Move selection down |
 | `Arrow Up` | Move selection up |
-| `Enter` | Execute the selected command |
+| `Enter` | Execute the selected command, or open its page if it has children |
+| `Backspace` (empty input) | Go back one page, or exit prefix mode at the root |
 
 ## Search & Ranking
 
@@ -779,9 +904,13 @@ The main service for interacting with the palette.
 | `close` | `() => void` | Closes the palette and clears the query |
 | `toggle` | `() => void` | Toggles the palette open/closed |
 | `updateQuery` | `(query: string) => void` | Updates the search query |
-| `execute` | `(command: Command) => void` | Executes a command, records it as recent, and closes |
+| `execute` | `(command: Command) => void` | Executes a command (or opens its page), records it as recent, and closes |
 | `register` | `(commands: Command[], destroyRef?: DestroyRef) => void` | Registers static commands with optional auto-cleanup |
 | `registerProvider` | `(provider: SearchProvider, destroyRef?: DestroyRef) => void` | Registers an async search provider with optional auto-cleanup |
+| `openPage` | `(commandIdOrPage: string \| CommandPage) => void` | Opens the palette straight onto a page, resetting any existing stack (v22.2.0+) |
+| `pushPage` | `(page: CommandPage) => void` | Pushes a page onto the stack and clears the query (v22.2.0+) |
+| `popPage` | `() => void` | Pops the top page and clears the query (v22.2.0+) |
+| `goBack` | `() => void` | Pops one page, or exits prefix mode at the root (v22.2.0+) |
 
 | Signal | Type | Description |
 |--------|------|-------------|
@@ -789,10 +918,12 @@ The main service for interacting with the palette.
 | `query` | `Signal<string>` | The current search query (including prefix) |
 | `displayQuery` | `Signal<string>` | The query with the active prefix stripped |
 | `results` | `Signal<ScoredCommand[]>` | The current search results (scored and sorted) |
-| `loading` | `Signal<boolean>` | Whether any async provider is currently searching |
-| `activeProvider` | `Signal<SearchProvider \| null>` | The currently active prefixed search provider |
-| `activePlaceholder` | `Signal<string>` | The current input placeholder (provider-specific or default) |
-| `emptyMessage` | `Signal<string>` | The current empty state message (provider-specific or default) |
+| `loading` | `Signal<boolean>` | Whether an async provider or page loader is currently working |
+| `activeProvider` | `Signal<SearchProvider \| null>` | The provider behind the current provider page (typed prefix or pushed page) |
+| `activePlaceholder` | `Signal<string>` | The current input placeholder (page-specific, provider-specific, or default) |
+| `emptyMessage` | `Signal<string>` | The current empty state message (page-specific, provider-specific, or default) |
+| `currentPage` | `Signal<CommandPage \| null>` | The active page, or `null` at the root (v22.2.0+) |
+| `breadcrumbs` | `Signal<string[]>` | Titles of the open pages, or the active prefix at the root (v22.2.0+) |
 
 ### `CmdPaletteComponent`
 

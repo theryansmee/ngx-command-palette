@@ -169,3 +169,20 @@
 	--cmd-shortcut-border: rgba(130, 90, 255, 0.25);
 	--cmd-empty-color: #6e6a8a;
 }
+
+// ---------------------------------------------------------------------------
+// Screen-reader-only live region
+// ---------------------------------------------------------------------------
+
+.cmd-sr-only {
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	border: 0;
+	position: absolute;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+
+	white-space: nowrap;
+}

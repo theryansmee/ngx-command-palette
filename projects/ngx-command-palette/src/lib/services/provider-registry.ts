@@ -23,6 +23,10 @@ export class ProviderRegistry {
 		});
 	}
 
+	public getById(providerId: string): SearchProvider | undefined {
+		return this.#providers().get(providerId);
+	}
+
 	public getByPrefix(prefix: string): SearchProvider | undefined {
 		for (const provider of this.#providers().values()) {
 			if (provider.prefix === prefix) {
@@ -38,8 +42,10 @@ export class ProviderRegistry {
 	}
 
 	public getPrefixes(): string[] {
+		// Longest first, so an overlapping prefix like ">>" is matched before ">".
 		return this.providers()
 			.filter((provider: SearchProvider) => !!provider.prefix)
-			.map((provider: SearchProvider) => provider.prefix!);
+			.map((provider: SearchProvider) => provider.prefix!)
+			.sort((first: string, second: string) => second.length - first.length);
 	}
 }
