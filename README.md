@@ -134,7 +134,7 @@ provideCommandPalette({
   debounce: 150,                // Input debounce in milliseconds (default: 0)
   animation: 'scale',           // Open animation: 'scale' | 'slide' | 'none' (default: 'scale')
   theme: 'default',             // Built-in theme: 'default' | 'dark' | 'github' | 'linear'
-  escapeBehavior: 'close',      // Escape inside a page: 'close' the palette or 'pop' one level (default: 'close')
+  escapeBehavior: 'close',      // Escape inside a page: 'close' the palette or 'pop' one level (default: 'close', v22.2.0+)
 });
 ```
 
@@ -344,9 +344,9 @@ interface Command {
     routes?: string[];                     // Glob patterns for route visibility
     when?: () => boolean;                  // Dynamic visibility check
   };
-  children?: CommandChildren;              // Turns the command into a submenu page (see Nested Pages)
-  pagePlaceholder?: string;                // Input placeholder while this command's page is open
-  pageEmptyMessage?: string;               // Empty message while this command's page is open
+  children?: CommandChildren;              // Turns the command into a submenu page (see Nested Pages, v22.2.0+)
+  pagePlaceholder?: string;                // Input placeholder while this command's page is open (v22.2.0+)
+  pageEmptyMessage?: string;               // Empty message while this command's page is open (v22.2.0+)
   data?: Record<string, unknown>;          // Arbitrary metadata for custom templates
 }
 ```
@@ -907,10 +907,10 @@ The main service for interacting with the palette.
 | `execute` | `(command: Command) => void` | Executes a command (or opens its page), records it as recent, and closes |
 | `register` | `(commands: Command[], destroyRef?: DestroyRef) => void` | Registers static commands with optional auto-cleanup |
 | `registerProvider` | `(provider: SearchProvider, destroyRef?: DestroyRef) => void` | Registers an async search provider with optional auto-cleanup |
-| `openPage` | `(commandIdOrPage: string \| CommandPage) => void` | Opens the palette straight onto a page, resetting any existing stack |
-| `pushPage` | `(page: CommandPage) => void` | Pushes a page onto the stack and clears the query |
-| `popPage` | `() => void` | Pops the top page and clears the query |
-| `goBack` | `() => void` | Pops one page, or exits prefix mode at the root |
+| `openPage` | `(commandIdOrPage: string \| CommandPage) => void` | Opens the palette straight onto a page, resetting any existing stack (v22.2.0+) |
+| `pushPage` | `(page: CommandPage) => void` | Pushes a page onto the stack and clears the query (v22.2.0+) |
+| `popPage` | `() => void` | Pops the top page and clears the query (v22.2.0+) |
+| `goBack` | `() => void` | Pops one page, or exits prefix mode at the root (v22.2.0+) |
 
 | Signal | Type | Description |
 |--------|------|-------------|
@@ -922,8 +922,8 @@ The main service for interacting with the palette.
 | `activeProvider` | `Signal<SearchProvider \| null>` | The provider behind the current provider page (typed prefix or pushed page) |
 | `activePlaceholder` | `Signal<string>` | The current input placeholder (page-specific, provider-specific, or default) |
 | `emptyMessage` | `Signal<string>` | The current empty state message (page-specific, provider-specific, or default) |
-| `currentPage` | `Signal<CommandPage \| null>` | The active page, or `null` at the root |
-| `breadcrumbs` | `Signal<string[]>` | Titles of the open pages, or the active prefix at the root |
+| `currentPage` | `Signal<CommandPage \| null>` | The active page, or `null` at the root (v22.2.0+) |
+| `breadcrumbs` | `Signal<string[]>` | Titles of the open pages, or the active prefix at the root (v22.2.0+) |
 
 ### `CmdPaletteComponent`
 
