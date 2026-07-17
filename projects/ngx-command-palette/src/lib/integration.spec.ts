@@ -862,8 +862,7 @@ describe('Integration', () => {
 			service.openPage('move');
 			settle(fixture);
 
-			// The debounce timer holding 'alp' is still pending when Enter pushes the
-			// child page; it must not fire into the new page afterwards.
+			// The timer holding 'alp' is still pending on push; it must not fire into the new page.
 			input.value = 'alp';
 			input.dispatchEvent(new Event('input'));
 			pressKey(fixture, input, 'Enter');

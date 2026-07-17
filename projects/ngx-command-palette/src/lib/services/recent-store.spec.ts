@@ -104,8 +104,7 @@ describe('RecentCommandsStore', () => {
 			'cmd-3',
 		]);
 
-		// cmd-1 fell out of the visible window but not out of storage, so it can
-		// still claim a boost slot when the children are not being scored.
+		// cmd-1 left the visible window but not storage, so it still gets a boost slot here.
 		const boosts: Map<string, number> = store.getBoostsFor([
 			'cmd-1',
 			'cmd-2',

@@ -19,8 +19,7 @@ export class AsyncSearchCoordinator {
 
 	readonly #providerStates: WritableSignal<Map<string, ProviderState>> = signal<Map<string, ProviderState>>(new Map());
 
-	// Plain bookkeeping, not reactive state: the last query dispatched per provider,
-	// used to skip refetching a query whose results are already displayed.
+	// Plain bookkeeping, not reactive state: skips refetching a query already displayed.
 	readonly #lastDispatchedQueries: Map<string, string> = new Map<string, string>();
 
 	public readonly loading: Signal<boolean> = computed(() => {
@@ -83,9 +82,7 @@ export class AsyncSearchCoordinator {
 	}
 
 	public clear(): void {
-		// Tearing the states down (rather than just emptying results) kills in-flight
-		// provider searches immediately, so a late response cannot repopulate results
-		// after a page transition. States are lazily rebuilt on the next search.
+		// Tear the states down so in-flight searches die immediately; they rebuild on the next search.
 		this.#lastDispatchedQueries.clear();
 
 		const states: Map<string, ProviderState> = this.#providerStates();
@@ -137,8 +134,7 @@ export class AsyncSearchCoordinator {
 
 		const providerDebounce: number = provider.debounce ?? 300;
 
-		// Empty and below-minimum queries never reach the subject; #searchProvider
-		// clears results directly instead.
+		// Empty and below-minimum queries never reach the subject; #searchProvider clears directly.
 		const subscription: Subscription = querySubject.pipe(
 			debounceTime(providerDebounce),
 			tap(() => this.#setLoading(provider.id, true)),

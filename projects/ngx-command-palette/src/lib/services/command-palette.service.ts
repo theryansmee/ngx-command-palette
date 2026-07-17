@@ -74,8 +74,7 @@ export class CommandPaletteService {
 			return null;
 		}
 
-		// A typed prefix derives a provider page instead of pushing one, which keeps
-		// query() and displayQuery() behaving exactly as they did before pages existed.
+		// Deriving instead of pushing keeps query() and displayQuery() exactly as they were before pages.
 		return {
 			id: `prefix:${provider.id}`,
 			title: provider.prefix!,
@@ -128,8 +127,7 @@ export class CommandPaletteService {
 	public readonly emptyMessage: Signal<string> = computed(() => {
 		const page: CommandPage | null = this.currentPage();
 
-		// A provider page below its minQueryLength has not searched yet, so the empty
-		// message would read like a failure the moment the user lands on the page.
+		// Below minQueryLength nothing has searched yet, so the empty message would read like a failure.
 		if (page?.source.kind === 'provider') {
 			const provider: SearchProvider | null = this.activeProvider();
 			const minQueryLength: number = provider?.minQueryLength ?? 1;
@@ -258,8 +256,7 @@ export class CommandPaletteService {
 	}
 
 	public handleEscape(): void {
-		// Breadcrumbs cover both pushed pages and typed-prefix mode, so 'pop' walks
-		// the same trail the chips show and only closes once it is empty.
+		// 'pop' walks the same breadcrumb trail the chips show and closes once it is empty.
 		if (this.#config.escapeBehavior === 'pop' && this.breadcrumbs().length > 0) {
 			this.goBack();
 			return;
@@ -396,8 +393,7 @@ export class CommandPaletteService {
 	#recordExecution(command: Command): void {
 		this.#recentStore.record(command.id);
 
-		// Ancestor pages that map to registered commands count too, so a frequently
-		// used submenu rises at root even though opening it is not an execution.
+		// Ancestor pages count too, so a well-used submenu rises at root.
 		for (const pageId of this.#pageStack.pageIds()) {
 			if (this.#registry.getById(pageId)) {
 				this.#recentStore.record(pageId);

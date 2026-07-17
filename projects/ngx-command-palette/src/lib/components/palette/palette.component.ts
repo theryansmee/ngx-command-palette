@@ -10,8 +10,7 @@ import { CmdInputComponent } from '../input/input.component';
 import { CmdListComponent } from '../list/list.component';
 import { CmdFooterComponent } from '../footer/footer.component';
 
-// Palette state lives in root services, so a second instance shares it and its
-// global shortcut listener toggles the palette twice.
+// A second instance shares the root-service state and double-fires the global shortcut.
 let activePaletteInstanceCount: number = 0;
 
 interface ParsedShortcut {

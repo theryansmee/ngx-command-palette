@@ -153,8 +153,7 @@ export class CmdListComponent {
 
 	#resetSelectionOnQueryChange(): void {
 		effect(() => {
-			// Entering a page from an already-empty query changes the page, not the query,
-			// so the page has to be tracked too or the active index can point past the end.
+			// Track the page too: entering one from an empty query changes the page, not the query.
 			this.#palette.query();
 			this.#palette.currentPage();
 			this.#activeIndex.set(0);

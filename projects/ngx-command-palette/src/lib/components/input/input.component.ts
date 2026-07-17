@@ -85,8 +85,7 @@ export class CmdInputComponent {
 
 	#syncDisplayQuery(): void {
 		effect(() => {
-			// Reading the page cancels pending debounce timers on push and pop, so a
-			// stale callback cannot inject the previous page's query into the new one.
+			// Track the page so a pending debounce timer cannot fire a stale query into a new page.
 			this.palette.currentPage();
 			const displayQuery: string = this.palette.displayQuery();
 			const nativeInput: HTMLInputElement = this.inputEl().nativeElement;

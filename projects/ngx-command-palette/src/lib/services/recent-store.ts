@@ -5,8 +5,7 @@ import { COMMAND_PALETTE_CONFIG } from '../provide';
 
 const storageKey: string = 'ngx-command-palette-recent';
 
-// Storage holds more ids than the boost window so ids outside the current view
-// (e.g. page children while at root) cannot evict the rest of the history.
+// Storage exceeds the boost window so out-of-view ids cannot evict the rest of the history.
 const storedIdsMultiplier: number = 4;
 
 @Injectable({ providedIn: 'root' })
@@ -54,8 +53,7 @@ export class RecentCommandsStore {
 		return Math.max(0, (this.#recentCount - index) * 4);
 	}
 
-	// Boost slots go only to ids present in the candidate set, so recorded ids that
-	// are not being scored (e.g. page children while at root) cannot dilute the rest.
+	// Only candidate ids take boost slots, so recorded ids not being scored cannot dilute them.
 	public getBoostsFor(candidateIds: readonly string[]): Map<string, number> {
 		const boosts: Map<string, number> = new Map<string, number>();
 

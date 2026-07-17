@@ -13,8 +13,7 @@ export class PageStack {
 
 	readonly #loaderSubscriptions: Map<number, Subscription> = new Map<number, Subscription>();
 
-	// Keyed by the loader function: re-entering the same loader in a session skips the
-	// refetch, while pages that share an id but have different loaders stay separate.
+	// Keyed by loader function, so same-id pages with different loaders stay separate.
 	readonly #loaderCache: Map<() => Observable<Command[]>, Command[]> = new Map<() => Observable<Command[]>, Command[]>();
 
 	public readonly current: Signal<PageStackEntry | null> = computed(() => this.#entries().at(-1) ?? null);

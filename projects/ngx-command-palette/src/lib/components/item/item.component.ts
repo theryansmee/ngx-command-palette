@@ -12,8 +12,7 @@ import { Command, CmdItemTemplateContext } from '../../models/command';
 		'[id]': '"cmd-item-" + command().id',
 		'[attr.aria-selected]': 'isActive()',
 		'[class.active]': 'isActive()',
-		// Items are not focusable, so a click must not blur the input and kill keyboard
-		// navigation on pages that keep the palette open after selection.
+		// Clicks must not blur the input, or keyboard navigation dies when the palette stays open.
 		'(mousedown)': '$event.preventDefault()',
 		'(click)': 'selected.emit(command())',
 	},

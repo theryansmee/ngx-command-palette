@@ -368,8 +368,7 @@ describe('SearchEngine', () => {
 			}),
 		]);
 
-		// Fill the boost window with ids that are not registered at root,
-		// then record the visible command last.
+		// Fill the boost window with unregistered ids, recording the visible command first.
 		recentStore.record('dashboard');
 		recentStore.record('theme.dark');
 		recentStore.record('theme.light');
@@ -379,8 +378,7 @@ describe('SearchEngine', () => {
 
 		const results: ScoredCommand[] = engine.search('');
 
-		// dashboard is the only candidate, so it takes the top boost slot even
-		// though five other recorded ids sit above it in the raw history.
+		// dashboard is the only candidate, so it takes the top boost slot despite its raw position.
 		expect(results[0].score).toBe(20);
 	});
 
