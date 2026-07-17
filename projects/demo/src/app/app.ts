@@ -107,18 +107,22 @@ export class AppComponent {
 					action: (): void => this.activeTheme.set(theme),
 				})),
 			},
-			...(Object.keys(AppComponent.animationLabels) as CommandPaletteAnimation[]).map((animation: CommandPaletteAnimation) => ({
-				id: `animation-${animation}`,
-				label: `Animation: ${AppComponent.animationLabels[animation]}`,
+			{
+				id: 'change-animation',
+				label: 'Change animation…',
 				category: 'Palette Appearance',
 				keywords: [
 					'animation',
 					'transition',
 					'motion',
-					animation,
 				],
-				action: (): void => this.activeAnimation.set(animation),
-			})),
+				pagePlaceholder: 'Pick an animation…',
+				children: (Object.keys(AppComponent.animationLabels) as CommandPaletteAnimation[]).map((animation: CommandPaletteAnimation) => ({
+					id: `animation-${animation}`,
+					label: AppComponent.animationLabels[animation],
+					action: (): void => this.activeAnimation.set(animation),
+				})),
+			},
 			{
 				id: 'assign-demo-issue',
 				label: 'Assign demo issue to…',
