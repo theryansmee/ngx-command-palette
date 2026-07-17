@@ -10,6 +10,7 @@ const defaultConfig: CommandPaletteConfig = {
 	trackRecent: false,
 	recentCount: 5,
 	animation: 'scale',
+	escapeBehavior: 'close',
 };
 
 export const COMMAND_PALETTE_CONFIG: InjectionToken<CommandPaletteConfig> = new InjectionToken<CommandPaletteConfig>('COMMAND_PALETTE_CONFIG');

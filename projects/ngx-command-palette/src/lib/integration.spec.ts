@@ -902,6 +902,56 @@ describe('Integration', () => {
 			expect(footerText()).not.toContain('@');
 		});
 
+		it('should close the palette on Escape from any depth by default', () => {
+			registerThemeSubmenu();
+
+			const { fixture, input } = openPalette();
+
+			typeQuery(fixture, input, 'theme');
+			pressKey(fixture, input, 'Enter');
+			expect(service.currentPage()?.id).toBe('theme');
+
+			pressKey(fixture, input, 'Escape');
+
+			expect(service.isOpen()).toBe(false);
+		});
+
+		it('should walk back one level per Escape when escapeBehavior is pop', () => {
+			TestBed.resetTestingModule();
+			TestBed.configureTestingModule({
+				providers: [
+					{
+						provide: PLATFORM_ID,
+						useValue: 'browser',
+					},
+					{
+						provide: COMMAND_PALETTE_CONFIG,
+						useValue: {
+							...config,
+							escapeBehavior: 'pop',
+						},
+					},
+					provideRouter(testRoutes),
+				],
+			});
+			service = TestBed.inject(CommandPaletteService);
+
+			registerThemeSubmenu();
+
+			const { fixture, input } = openPalette();
+
+			typeQuery(fixture, input, 'theme');
+			pressKey(fixture, input, 'Enter');
+			expect(service.currentPage()?.id).toBe('theme');
+
+			pressKey(fixture, input, 'Escape');
+			expect(service.isOpen()).toBe(true);
+			expect(service.currentPage()).toBeNull();
+
+			pressKey(fixture, input, 'Escape');
+			expect(service.isOpen()).toBe(false);
+		});
+
 		it('should warn in dev mode when a second palette instance is created', () => {
 			const warnSpy: MockInstance = vi.spyOn(console, 'warn').mockImplementation(() => {});
 

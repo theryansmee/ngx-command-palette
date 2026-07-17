@@ -155,7 +155,7 @@ export class CmdPaletteComponent {
 				break;
 			case 'Escape':
 				event.preventDefault();
-				this.palette.close();
+				this.palette.handleEscape();
 				break;
 		}
 	}

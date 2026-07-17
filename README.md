@@ -134,6 +134,7 @@ provideCommandPalette({
   debounce: 150,                // Input debounce in milliseconds (default: 0)
   animation: 'scale',           // Open animation: 'scale' | 'slide' | 'none' (default: 'scale')
   theme: 'default',             // Built-in theme: 'default' | 'dark' | 'github' | 'linear'
+  escapeBehavior: 'close',      // Escape inside a page: 'close' the palette or 'pop' one level (default: 'close')
 });
 ```
 
@@ -474,7 +475,7 @@ const isLoading: boolean = this.palette.loading();
 
 > Available from v22.2.0
 
-Give a command `children` and it becomes a submenu: selecting it opens a scoped page instead of executing. The query clears, a breadcrumb chip appears in the input, and only that page's commands are searchable. Backspace on an empty input goes back one level; Escape closes the palette from any depth. Closing always resets to the root.
+Give a command `children` and it becomes a submenu: selecting it opens a scoped page instead of executing. The query clears, a breadcrumb chip appears in the input, and only that page's commands are searchable. Backspace on an empty input goes back one level; Escape closes the palette from any depth (set `escapeBehavior: 'pop'` in the config to make it go back one level instead, Raycast style). Closing always resets to the root.
 
 `children` accepts three shapes:
 
@@ -723,7 +724,7 @@ const breadcrumbs: string[] = palette.breadcrumbs();
 | Key | Action |
 |-----|--------|
 | `Cmd+K` / `Ctrl+K` | Open the palette (configurable) |
-| `Escape` | Close the palette (from any page depth) |
+| `Escape` | Close the palette; with `escapeBehavior: 'pop'`, go back one page first |
 | `Arrow Down` / `Tab` | Move selection down |
 | `Arrow Up` | Move selection up |
 | `Enter` | Execute the selected command, or open its page if it has children |

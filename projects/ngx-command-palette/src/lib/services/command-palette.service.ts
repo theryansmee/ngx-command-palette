@@ -257,6 +257,17 @@ export class CommandPaletteService {
 		}
 	}
 
+	public handleEscape(): void {
+		// Breadcrumbs cover both pushed pages and typed-prefix mode, so 'pop' walks
+		// the same trail the chips show and only closes once it is empty.
+		if (this.#config.escapeBehavior === 'pop' && this.breadcrumbs().length > 0) {
+			this.goBack();
+			return;
+		}
+
+		this.close();
+	}
+
 	public openPage(commandIdOrPage: string | CommandPage): void {
 		const page: CommandPage | null = typeof commandIdOrPage === 'string'
 			? this.#pageFromCommandId(commandIdOrPage)

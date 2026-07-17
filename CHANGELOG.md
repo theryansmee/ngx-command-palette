@@ -6,6 +6,34 @@ All notable changes to this project will be documented in this file.
 
 This project follows [Semantic Versioning](https://semver.org/) with the major version matching the supported Angular version.
 
+## [22.2.0] - 2026-07-17
+
+### Features
+- Nested pages / sub-commands. A command with `children` becomes a submenu: selecting it opens a scoped page with its own placeholder, empty message, and breadcrumb chip. Backspace on an empty input goes back one level; Escape closes from any depth.
+- `children` accepts a static `Command[]`, a `() => Observable<Command[]>` loader (fetched once per palette session, cancellable, cached until close), or `{ provider: string }` to reuse a registered search provider as a page.
+- Typing a provider prefix and selecting a command that points at the same provider land on the identical page, so prefixes and submenus share one implementation.
+- `pagePlaceholder` and `pageEmptyMessage` properties on `Command` for configuring the page a command opens.
+- New service API: `openPage`, `pushPage`, `popPage`, `goBack`, and the `currentPage` and `breadcrumbs` signals.
+- Container commands render a chevron in the default item template.
+- The footer shows a Backspace hint while nested and hides prefix hints inside pages.
+- Page titles are announced to screen readers via a polite live region, and the input's `aria-label` follows the page title.
+- `escapeBehavior` config option. `'close'` (default) dismisses the palette from any depth; `'pop'` makes Escape go back one page (or out of prefix mode) per press and only close at the root.
+
+### Notes
+- `Command.action` is now optional to support container commands. If a custom item template calls `command.action()` directly, change it to `command.action?.()`, or better, `palette.execute(command)` so recents tracking works.
+- `activeProvider()` is now also non-null while a provider page entered by selection is active, not only when its prefix is typed. Consumers rendering a prefix chip from it should switch to `breadcrumbs()`.
+- Recency boosts are now computed against the commands actually being scored, so recorded ids that are not visible (for example page children while at the root) no longer consume boost slots. Executing a child also records its ancestor containers, so frequently used submenus rise at the root.
+
+### Bug Fixes
+- Static commands no longer leak into results while a prefix provider is active.
+- Clicking a palette item no longer moves focus out of the search input, which previously killed keyboard navigation when the palette stayed open.
+- Clearing provider results now cancels in-flight searches, so a late response can no longer repopulate results after a page transition or close.
+- Identical consecutive provider queries no longer trigger a duplicate fetch.
+- Overlapping provider prefixes now match longest first, so registering `>` no longer shadows `>>`.
+- Group heading ids are slugified, fixing `aria-labelledby` for category names containing spaces.
+- Regex metacharacters in `context.routes` patterns are now treated as literal text; only `*` and `**` act as wildcards.
+- Pushing a page whose provider id is not registered now warns in dev mode instead of failing silently, as does rendering more than one `<cmd-palette>` instance.
+
 ## [22.1.0] - 2026-06-19
 
 ### Features

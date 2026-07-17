@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { CommandChildren } from './command-children.type';
+import { CommandPaletteEscapeBehavior } from './command-palette-escape-behavior.type';
 
 export interface Command {
 	id: string;
@@ -53,6 +54,7 @@ export interface CommandPaletteConfig {
 	debounce?: number;
 	animation?: CommandPaletteAnimation;
 	theme?: CommandPaletteTheme;
+	escapeBehavior?: CommandPaletteEscapeBehavior;
 }
 
 export interface ScoredCommand {

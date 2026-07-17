@@ -1,5 +1,6 @@
 export { Command, CommandContext, SearchProvider, CommandPaletteConfig, CommandPaletteTheme, CommandPaletteAnimation, ScoredCommand, CmdItemTemplateContext } from './lib/models/command';
 export { CommandChildren } from './lib/models/command-children.type';
+export { CommandPaletteEscapeBehavior } from './lib/models/command-palette-escape-behavior.type';
 export { CommandPage } from './lib/models/command-page.interface';
 export { CommandPageSource } from './lib/models/command-page-source.type';
 export { CmdItemTemplateDirective } from './lib/directives/item-template.directive';

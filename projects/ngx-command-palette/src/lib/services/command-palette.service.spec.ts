@@ -59,11 +59,11 @@ describe('CommandPaletteService', () => {
 			providers: [
 				{
 					provide: PLATFORM_ID,
-					useValue: 'browser', 
+					useValue: 'browser',
 				},
 				{
 					provide: COMMAND_PALETTE_CONFIG,
-					useValue: config, 
+					useValue: config,
 				},
 			],
 		});
@@ -73,6 +73,30 @@ describe('CommandPaletteService', () => {
 		providerRegistry = TestBed.inject(ProviderRegistry);
 		recentStore = TestBed.inject(RecentCommandsStore);
 	});
+
+	function createServiceWithConfig(overrides: Partial<CommandPaletteConfig>): CommandPaletteService {
+		TestBed.resetTestingModule();
+		TestBed.configureTestingModule({
+			providers: [
+				{
+					provide: PLATFORM_ID,
+					useValue: 'browser',
+				},
+				{
+					provide: COMMAND_PALETTE_CONFIG,
+					useValue: {
+						...config,
+						...overrides,
+					},
+				},
+			],
+		});
+
+		registry = TestBed.inject(CommandRegistry);
+		providerRegistry = TestBed.inject(ProviderRegistry);
+		recentStore = TestBed.inject(RecentCommandsStore);
+		return TestBed.inject(CommandPaletteService);
+	}
 
 	it('should start with palette closed and empty query', () => {
 		expect(service.isOpen()).toBe(false);
@@ -371,6 +395,54 @@ describe('CommandPaletteService', () => {
 		service.goBack();
 
 		expect(service.query()).toBe('hello');
+	});
+
+	it('should close from any depth on handleEscape by default', () => {
+		service.open();
+		service.pushPage(makeStaticPage('theme', []));
+
+		service.handleEscape();
+
+		expect(service.isOpen()).toBe(false);
+	});
+
+	it('should pop one level per handleEscape when escapeBehavior is pop', () => {
+		const popService: CommandPaletteService = createServiceWithConfig({ escapeBehavior: 'pop' });
+
+		popService.open();
+		popService.pushPage(makeStaticPage('move', []));
+		popService.pushPage(makeStaticPage('columns', []));
+
+		popService.handleEscape();
+		expect(popService.isOpen()).toBe(true);
+		expect(popService.breadcrumbs()).toEqual(['move']);
+
+		popService.handleEscape();
+		expect(popService.isOpen()).toBe(true);
+		expect(popService.breadcrumbs()).toEqual([]);
+
+		popService.handleEscape();
+		expect(popService.isOpen()).toBe(false);
+	});
+
+	it('should exit prefix mode before closing when escapeBehavior is pop', () => {
+		const popService: CommandPaletteService = createServiceWithConfig({ escapeBehavior: 'pop' });
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			prefix: '@',
+		}));
+
+		popService.open();
+		popService.updateQuery('@jo');
+		expect(popService.breadcrumbs()).toEqual(['@']);
+
+		popService.handleEscape();
+		expect(popService.isOpen()).toBe(true);
+		expect(popService.query()).toBe('');
+
+		popService.handleEscape();
+		expect(popService.isOpen()).toBe(false);
 	});
 
 	it('should open directly onto a page for a registered command id', () => {
