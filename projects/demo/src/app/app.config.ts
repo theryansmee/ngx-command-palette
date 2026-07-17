@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
 	providers: [
 		provideZonelessChangeDetection(),
 		provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top' })),
-		provideCommandPalette(),
+		provideCommandPalette({ escapeBehavior: 'pop' }),
 		{
 			provide: TitleStrategy,
 			useClass: PageTitleStrategy, 
