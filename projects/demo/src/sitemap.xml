@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
-		<loc>https://theryansmee.github.io/ngx-command-palette/</loc>
+		<loc>https://ngx-cmd.com/</loc>
 		<lastmod>2026-06-14</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://theryansmee.github.io/ngx-command-palette/getting-started</loc>
+		<loc>https://ngx-cmd.com/getting-started</loc>
 		<lastmod>2026-06-14</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.8</priority>
 	</url>
 	<url>
-		<loc>https://theryansmee.github.io/ngx-command-palette/configuration</loc>
+		<loc>https://ngx-cmd.com/configuration</loc>
 		<lastmod>2026-06-14</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://theryansmee.github.io/ngx-command-palette/custom-commands</loc>
+		<loc>https://ngx-cmd.com/custom-commands</loc>
 		<lastmod>2026-06-14</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://theryansmee.github.io/ngx-command-palette/custom-templates</loc>
+		<loc>https://ngx-cmd.com/custom-templates</loc>
 		<lastmod>2026-06-18</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://theryansmee.github.io/ngx-command-palette/async-providers</loc>
+		<loc>https://ngx-cmd.com/async-providers</loc>
 		<lastmod>2026-06-14</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://theryansmee.github.io/ngx-command-palette/nested-pages</loc>
+		<loc>https://ngx-cmd.com/nested-pages</loc>
 		<lastmod>2026-07-17</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://theryansmee.github.io/ngx-command-palette/theming</loc>
+		<loc>https://ngx-cmd.com/theming</loc>
 		<lastmod>2026-06-14</lastmod>
 		<changefreq>monthly</changefreq>
 		<priority>0.7</priority>
