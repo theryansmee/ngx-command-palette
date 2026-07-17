@@ -6,7 +6,7 @@
 
 	<p>Press <kbd>Cmd+K</kbd> (or <kbd>Ctrl+K</kbd>) right now to try it. Every page on this site is registered automatically from the router config.</p>
 
-	<p>You can also try "Toggle Dark Mode", "Copy Install Command", or "Open GitHub Repository". Those are custom commands registered in the app component.</p>
+	<p>You can also try "Change theme…" or "Move demo task to…" to step through nested pages, type <code>&#64;</code> to search people through an async provider, or run one-shot commands like "Copy Install Command". All of them are registered in the app component.</p>
 
 	<h2>Features</h2>
 	<ul>
@@ -15,6 +15,7 @@
 		<li><strong>Async search providers</strong> with per-provider debounce and loading states</li>
 		<li><strong>Prefix routing</strong>. Scope providers behind prefixes like <code>@</code> or <code>#</code></li>
 		<li><strong>Contextual commands</strong>. Show or hide commands based on route or dynamic conditions</li>
+		<li><strong>Nested pages</strong>. Commands with <code>children</code> open scoped sub-pages, static, lazy-loaded, or backed by a provider</li>
 		<li><strong>Fuzzy search</strong> with scoring for exact, prefix, word boundary, and character matches</li>
 		<li><strong>Recent commands</strong> tracked in localStorage with a recency boost</li>
 		<li><strong>Custom item templates</strong>. Override row rendering globally or per-category with <code>ng-template</code></li>

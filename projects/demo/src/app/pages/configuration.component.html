@@ -16,111 +16,115 @@
 &#125;)</code></pre>
 
 	<h2>Options</h2>
-	<table>
-		<thead>
-			<tr>
-				<th>Option</th>
-				<th>Type</th>
-				<th>Default</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><code>shortcut</code></td>
-				<td><code>string</code></td>
-				<td><code>'mod.k'</code></td>
-				<td>Keyboard shortcut to open the palette</td>
-			</tr>
-			<tr>
-				<td><code>placeholder</code></td>
-				<td><code>string</code></td>
-				<td><code>'Search or type a command...'</code></td>
-				<td>Input placeholder text</td>
-			</tr>
-			<tr>
-				<td><code>autoRegisterRoutes</code></td>
-				<td><code>boolean</code></td>
-				<td><code>true</code></td>
-				<td>Auto-register routes from Router config</td>
-			</tr>
-			<tr>
-				<td><code>maxResults</code></td>
-				<td><code>number</code></td>
-				<td><code>10</code></td>
-				<td>Maximum results shown</td>
-			</tr>
-			<tr>
-				<td><code>trackRecent</code></td>
-				<td><code>boolean</code></td>
-				<td><code>false</code></td>
-				<td>Track recently executed commands and boost them in results</td>
-			</tr>
-			<tr>
-				<td><code>recentCount</code></td>
-				<td><code>number</code></td>
-				<td><code>5</code></td>
-				<td>Number of recent commands tracked (requires <code>trackRecent: true</code>)</td>
-			</tr>
-			<tr>
-				<td><code>debounce</code></td>
-				<td><code>number</code></td>
-				<td><code>0</code></td>
-				<td>Input debounce in milliseconds</td>
-			</tr>
-			<tr>
-				<td><code>animation</code></td>
-				<td><code>'scale' | 'slide' | 'none'</code></td>
-				<td><code>'scale'</code></td>
-				<td>Open animation style</td>
-			</tr>
-			<tr>
-				<td><code>theme</code></td>
-				<td><code>'default' | 'dark' | 'github' | 'linear'</code></td>
-				<td><code>'default'</code></td>
-				<td>Built-in colour theme</td>
-			</tr>
-			<tr>
-				<td><code>escapeBehavior</code></td>
-				<td><code>'close' | 'pop'</code></td>
-				<td><code>'close'</code></td>
-				<td>What Escape does inside a nested page: close the palette, or go back one level. Available from v22.2.0</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="table-scroll">
+		<table>
+			<thead>
+				<tr>
+					<th>Option</th>
+					<th>Type</th>
+					<th>Default</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><code>shortcut</code></td>
+					<td><code>string</code></td>
+					<td><code>'mod.k'</code></td>
+					<td>Keyboard shortcut to open the palette</td>
+				</tr>
+				<tr>
+					<td><code>placeholder</code></td>
+					<td><code>string</code></td>
+					<td><code>'Search or type a command...'</code></td>
+					<td>Input placeholder text</td>
+				</tr>
+				<tr>
+					<td><code>autoRegisterRoutes</code></td>
+					<td><code>boolean</code></td>
+					<td><code>true</code></td>
+					<td>Auto-register routes from Router config</td>
+				</tr>
+				<tr>
+					<td><code>maxResults</code></td>
+					<td><code>number</code></td>
+					<td><code>10</code></td>
+					<td>Maximum results shown</td>
+				</tr>
+				<tr>
+					<td><code>trackRecent</code></td>
+					<td><code>boolean</code></td>
+					<td><code>false</code></td>
+					<td>Track recently executed commands and boost them in results</td>
+				</tr>
+				<tr>
+					<td><code>recentCount</code></td>
+					<td><code>number</code></td>
+					<td><code>5</code></td>
+					<td>Number of recent commands tracked (requires <code>trackRecent: true</code>)</td>
+				</tr>
+				<tr>
+					<td><code>debounce</code></td>
+					<td><code>number</code></td>
+					<td><code>0</code></td>
+					<td>Input debounce in milliseconds</td>
+				</tr>
+				<tr>
+					<td><code>animation</code></td>
+					<td><code>'scale' | 'slide' | 'none'</code></td>
+					<td><code>'scale'</code></td>
+					<td>Open animation style</td>
+				</tr>
+				<tr>
+					<td><code>theme</code></td>
+					<td><code>'default' | 'dark' | 'github' | 'linear'</code></td>
+					<td><code>'default'</code></td>
+					<td>Built-in colour theme</td>
+				</tr>
+				<tr>
+					<td><code>escapeBehavior</code></td>
+					<td><code>'close' | 'pop'</code></td>
+					<td><code>'close'</code></td>
+					<td>What Escape does inside a nested page: close the palette, or go back one level. Available from v22.2.0</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 	<h2>Shortcut Format</h2>
 	<p>The shortcut string uses dot-separated modifier keys followed by the key.</p>
-	<table>
-		<thead>
-			<tr>
-				<th>Shortcut</th>
-				<th>Keys</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><code>mod.k</code></td>
-				<td>Cmd+K (Mac) / Ctrl+K (Windows/Linux)</td>
-			</tr>
-			<tr>
-				<td><code>meta.k</code></td>
-				<td>Cmd+K (Mac) / Win+K (Windows)</td>
-			</tr>
-			<tr>
-				<td><code>ctrl.k</code></td>
-				<td>Ctrl+K</td>
-			</tr>
-			<tr>
-				<td><code>ctrl.shift.p</code></td>
-				<td>Ctrl+Shift+P</td>
-			</tr>
-			<tr>
-				<td><code>meta.shift.p</code></td>
-				<td>Cmd+Shift+P</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="table-scroll">
+		<table>
+			<thead>
+				<tr>
+					<th>Shortcut</th>
+					<th>Keys</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><code>mod.k</code></td>
+					<td>Cmd+K (Mac) / Ctrl+K (Windows/Linux)</td>
+				</tr>
+				<tr>
+					<td><code>meta.k</code></td>
+					<td>Cmd+K (Mac) / Win+K (Windows)</td>
+				</tr>
+				<tr>
+					<td><code>ctrl.k</code></td>
+					<td>Ctrl+K</td>
+				</tr>
+				<tr>
+					<td><code>ctrl.shift.p</code></td>
+					<td>Ctrl+Shift+P</td>
+				</tr>
+				<tr>
+					<td><code>meta.shift.p</code></td>
+					<td>Cmd+Shift+P</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 	<h2>Route Configuration</h2>
 	<p>Routes with a <code>title</code> property are auto-registered. You can enrich them with extra metadata:</p>

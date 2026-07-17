@@ -63,30 +63,32 @@ export class AppComponent &#123;&#125;</code></pre>
 	<p>This means you can mix and match: provide a per-category template for your search provider results while letting routes and custom commands use the default rendering.</p>
 
 	<h2>Template Context</h2>
-	<table>
-		<thead>
-			<tr>
-				<th>Variable</th>
-				<th>Type</th>
-				<th>Access</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><code>$implicit</code></td>
-				<td><code>Command</code></td>
-				<td><code>let-command</code></td>
-				<td>The command object for this row</td>
-			</tr>
-			<tr>
-				<td><code>active</code></td>
-				<td><code>boolean</code></td>
-				<td><code>let-active="active"</code></td>
-				<td>Whether this row is the currently selected item</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="table-scroll">
+		<table>
+			<thead>
+				<tr>
+					<th>Variable</th>
+					<th>Type</th>
+					<th>Access</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><code>$implicit</code></td>
+					<td><code>Command</code></td>
+					<td><code>let-command</code></td>
+					<td>The command object for this row</td>
+				</tr>
+				<tr>
+					<td><code>active</code></td>
+					<td><code>boolean</code></td>
+					<td><code>let-active="active"</code></td>
+					<td>Whether this row is the currently selected item</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 	<p>
 		The <code>CmdItemTemplateContext</code> interface is exported for type-safe usage in your components.
 	</p>

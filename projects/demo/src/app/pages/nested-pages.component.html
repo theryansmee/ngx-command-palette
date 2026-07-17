@@ -101,70 +101,74 @@ this.palette.register([
 <pre><code>this.palette.openPage('assign');</code></pre>
 
 	<h2>Behaviour Notes</h2>
-	<table>
-		<thead>
-			<tr>
-				<th>Topic</th>
-				<th>Behaviour</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td>Navigation</td>
-				<td>Backspace on an empty input pops one level. Escape closes by default; set <code>escapeBehavior: 'pop'</code> in the config to make it go back one level instead. Closing resets the stack.</td>
-			</tr>
-			<tr>
-				<td>Ordering</td>
-				<td>Pages show all children in authored order at an empty query. Fuzzy ranking kicks in once the user types.</td>
-			</tr>
-			<tr>
-				<td>Result limits</td>
-				<td><code>config.maxResults</code> does not apply inside pages; a submenu is always exhaustive. Cap a page explicitly with <code>CommandPage.maxResults</code> via <code>pushPage()</code>.</td>
-			</tr>
-			<tr>
-				<td>Command ids</td>
-				<td>Child ids must be globally unique. Use a <code>parent.child</code> convention like <code>theme.dark</code>.</td>
-			</tr>
-			<tr>
-				<td>Caching</td>
-				<td>Loader results are cached per palette session and refetched after the palette closes. Failed loads are not cached, so re-entering the page retries.</td>
-			</tr>
-			<tr>
-				<td>Actions</td>
-				<td>A command with both <code>action</code> and <code>children</code> runs the action first, then opens the page. Useful for analytics or cache priming.</td>
-			</tr>
-			<tr>
-				<td>Prefixes</td>
-				<td>Typing a provider sigil inside a page is literal text. Prefix detection only happens at the root.</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="table-scroll">
+		<table>
+			<thead>
+				<tr>
+					<th>Topic</th>
+					<th>Behaviour</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Navigation</td>
+					<td>Backspace on an empty input pops one level. Escape closes by default; set <code>escapeBehavior: 'pop'</code> in the config to make it go back one level instead. Closing resets the stack.</td>
+				</tr>
+				<tr>
+					<td>Ordering</td>
+					<td>Pages show all children in authored order at an empty query. Fuzzy ranking kicks in once the user types.</td>
+				</tr>
+				<tr>
+					<td>Result limits</td>
+					<td><code>config.maxResults</code> does not apply inside pages; a submenu is always exhaustive. Cap a page explicitly with <code>CommandPage.maxResults</code> via <code>pushPage()</code>.</td>
+				</tr>
+				<tr>
+					<td>Command ids</td>
+					<td>Child ids must be globally unique. Use a <code>parent.child</code> convention like <code>theme.dark</code>.</td>
+				</tr>
+				<tr>
+					<td>Caching</td>
+					<td>Loader results are cached per palette session and refetched after the palette closes. Failed loads are not cached, so re-entering the page retries.</td>
+				</tr>
+				<tr>
+					<td>Actions</td>
+					<td>A command with both <code>action</code> and <code>children</code> runs the action first, then opens the page. Useful for analytics or cache priming.</td>
+				</tr>
+				<tr>
+					<td>Prefixes</td>
+					<td>Typing a provider sigil inside a page is literal text. Prefix detection only happens at the root.</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 	<h2>Parent Command Properties</h2>
-	<table>
-		<thead>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><code>children</code></td>
-				<td><code>Command[] | (() =&gt; Observable&lt;Command[]&gt;) | &#123; provider: string &#125;</code></td>
-				<td>What the page contains</td>
-			</tr>
-			<tr>
-				<td><code>pagePlaceholder</code></td>
-				<td><code>string?</code></td>
-				<td>Input placeholder while the page is open</td>
-			</tr>
-			<tr>
-				<td><code>pageEmptyMessage</code></td>
-				<td><code>string?</code></td>
-				<td>Message when nothing on the page matches</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="table-scroll">
+		<table>
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><code>children</code></td>
+					<td><code>Command[] | (() =&gt; Observable&lt;Command[]&gt;) | &#123; provider: string &#125;</code></td>
+					<td>What the page contains</td>
+				</tr>
+				<tr>
+					<td><code>pagePlaceholder</code></td>
+					<td><code>string?</code></td>
+					<td>Input placeholder while the page is open</td>
+				</tr>
+				<tr>
+					<td><code>pageEmptyMessage</code></td>
+					<td><code>string?</code></td>
+					<td>Message when nothing on the page matches</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>

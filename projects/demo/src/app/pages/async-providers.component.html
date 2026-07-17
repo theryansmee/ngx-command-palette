@@ -55,57 +55,59 @@
 	</p>
 
 	<h2>Provider Interface</h2>
-	<table>
-		<thead>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><code>id</code></td>
-				<td><code>string</code></td>
-				<td>Unique identifier</td>
-			</tr>
-			<tr>
-				<td><code>category</code></td>
-				<td><code>string</code></td>
-				<td>Group heading for results</td>
-			</tr>
-			<tr>
-				<td><code>search</code></td>
-				<td><code>(query: string) =&gt; Observable&lt;Command[]&gt;</code></td>
-				<td>The search function</td>
-			</tr>
-			<tr>
-				<td><code>prefix</code></td>
-				<td><code>string?</code></td>
-				<td>Prefix trigger (e.g. <code>@</code>, <code>#</code>)</td>
-			</tr>
-			<tr>
-				<td><code>placeholder</code></td>
-				<td><code>string?</code></td>
-				<td>Input placeholder when this prefix is active</td>
-			</tr>
-			<tr>
-				<td><code>emptyMessage</code></td>
-				<td><code>string?</code></td>
-				<td>Message shown when no results (default: "No results found.")</td>
-			</tr>
-			<tr>
-				<td><code>debounce</code></td>
-				<td><code>number?</code></td>
-				<td>Debounce in ms (default: 300)</td>
-			</tr>
-			<tr>
-				<td><code>minQueryLength</code></td>
-				<td><code>number?</code></td>
-				<td>Minimum chars before searching (default: 1)</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="table-scroll">
+		<table>
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><code>id</code></td>
+					<td><code>string</code></td>
+					<td>Unique identifier</td>
+				</tr>
+				<tr>
+					<td><code>category</code></td>
+					<td><code>string</code></td>
+					<td>Group heading for results</td>
+				</tr>
+				<tr>
+					<td><code>search</code></td>
+					<td><code>(query: string) =&gt; Observable&lt;Command[]&gt;</code></td>
+					<td>The search function</td>
+				</tr>
+				<tr>
+					<td><code>prefix</code></td>
+					<td><code>string?</code></td>
+					<td>Prefix trigger (e.g. <code>@</code>, <code>#</code>)</td>
+				</tr>
+				<tr>
+					<td><code>placeholder</code></td>
+					<td><code>string?</code></td>
+					<td>Input placeholder when this prefix is active</td>
+				</tr>
+				<tr>
+					<td><code>emptyMessage</code></td>
+					<td><code>string?</code></td>
+					<td>Message shown when no results (default: "No results found.")</td>
+				</tr>
+				<tr>
+					<td><code>debounce</code></td>
+					<td><code>number?</code></td>
+					<td>Debounce in ms (default: 300)</td>
+				</tr>
+				<tr>
+					<td><code>minQueryLength</code></td>
+					<td><code>number?</code></td>
+					<td>Minimum chars before searching (default: 1)</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 	<h2>Loading State</h2>
 	<p>The palette shows a "Searching..." indicator while providers are in-flight. You can also read the state programmatically:</p>

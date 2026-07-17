@@ -28,67 +28,69 @@ export class ProjectListComponent &#123;
 &#125;</code></pre>
 
 	<h2>Command Interface</h2>
-	<table>
-		<thead>
-			<tr>
-				<th>Property</th>
-				<th>Type</th>
-				<th>Description</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr>
-				<td><code>id</code></td>
-				<td><code>string</code></td>
-				<td>Unique identifier</td>
-			</tr>
-			<tr>
-				<td><code>label</code></td>
-				<td><code>string</code></td>
-				<td>Display text</td>
-			</tr>
-			<tr>
-				<td><code>category</code></td>
-				<td><code>string?</code></td>
-				<td>Group heading (e.g. "Pages", "Actions")</td>
-			</tr>
-			<tr>
-				<td><code>icon</code></td>
-				<td><code>string?</code></td>
-				<td>Icon name or identifier</td>
-			</tr>
-			<tr>
-				<td><code>keywords</code></td>
-				<td><code>string[]?</code></td>
-				<td>Additional search terms</td>
-			</tr>
-			<tr>
-				<td><code>shortcut</code></td>
-				<td><code>string?</code></td>
-				<td>Display-only shortcut hint</td>
-			</tr>
-			<tr>
-				<td><code>action</code></td>
-				<td><code>() =&gt; void</code></td>
-				<td>What happens when executed</td>
-			</tr>
-			<tr>
-				<td><code>priority</code></td>
-				<td><code>number?</code></td>
-				<td>Ranking boost (higher = appears first)</td>
-			</tr>
-			<tr>
-				<td><code>context</code></td>
-				<td><code>CommandContext?</code></td>
-				<td>Visibility constraints</td>
-			</tr>
-			<tr>
-				<td><code>data</code></td>
-				<td><code>Record&lt;string, unknown&gt;?</code></td>
-				<td>Arbitrary metadata for <a routerLink="/custom-templates">custom item templates</a></td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="table-scroll">
+		<table>
+			<thead>
+				<tr>
+					<th>Property</th>
+					<th>Type</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><code>id</code></td>
+					<td><code>string</code></td>
+					<td>Unique identifier</td>
+				</tr>
+				<tr>
+					<td><code>label</code></td>
+					<td><code>string</code></td>
+					<td>Display text</td>
+				</tr>
+				<tr>
+					<td><code>category</code></td>
+					<td><code>string?</code></td>
+					<td>Group heading (e.g. "Pages", "Actions")</td>
+				</tr>
+				<tr>
+					<td><code>icon</code></td>
+					<td><code>string?</code></td>
+					<td>Icon name or identifier</td>
+				</tr>
+				<tr>
+					<td><code>keywords</code></td>
+					<td><code>string[]?</code></td>
+					<td>Additional search terms</td>
+				</tr>
+				<tr>
+					<td><code>shortcut</code></td>
+					<td><code>string?</code></td>
+					<td>Display-only shortcut hint</td>
+				</tr>
+				<tr>
+					<td><code>action</code></td>
+					<td><code>() =&gt; void</code></td>
+					<td>What happens when executed</td>
+				</tr>
+				<tr>
+					<td><code>priority</code></td>
+					<td><code>number?</code></td>
+					<td>Ranking boost (higher = appears first)</td>
+				</tr>
+				<tr>
+					<td><code>context</code></td>
+					<td><code>CommandContext?</code></td>
+					<td>Visibility constraints</td>
+				</tr>
+				<tr>
+					<td><code>data</code></td>
+					<td><code>Record&lt;string, unknown&gt;?</code></td>
+					<td>Arbitrary metadata for <a routerLink="/custom-templates">custom item templates</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 
 	<h2>Contextual Commands</h2>
 	<p>Commands can be scoped to specific routes or dynamic conditions using the <code>context</code> property.</p>

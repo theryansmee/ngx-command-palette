@@ -86,6 +86,11 @@ export class AppComponent {
 		this.menuOpen = false;
 	}
 
+	public openPalette(): void {
+		this.closeMenu();
+		this.#palette.open();
+	}
+
 	constructor() {
 		this.#registerPeopleProvider();
 

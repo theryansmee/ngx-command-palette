@@ -20,9 +20,9 @@
 			<a routerLink="/theming" routerLinkActive="active" (click)="closeMenu()">Theming</a>
 		</nav>
 		<div class="docs-sidebar-footer">
-			<div class="docs-shortcut-hint">
-				Press <kbd>Cmd+K</kbd> to search
-			</div>
+			<button type="button" class="docs-shortcut-hint" (click)="openPalette()">
+				Press <kbd>Cmd+K</kbd> or click here to search
+			</button>
 			<div class="docs-sidebar-links">
 				<a href="https://github.com/theryansmee/ngx-command-palette" target="_blank" rel="noopener">GitHub</a>
 				<a href="https://www.npmjs.com/package/@theryansmee/ngx-command-palette" target="_blank" rel="noopener">npm</a>
