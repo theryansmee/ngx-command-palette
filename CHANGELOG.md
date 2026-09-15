@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 This project follows [Semantic Versioning](https://semver.org/) with the major version matching the supported Angular version.
 
-## [Unreleased]
+## [20.0.2] - 2026-09-15
 
 ### Bug Fixes
 - A provider search pending in the debounce window no longer fires after the query drops below `minQueryLength` or switches to another provider's prefix, and a response already in flight when that happens is discarded instead of repopulating results.
