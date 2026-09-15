@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed, DestroyRef, WritableSignal, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject, Subscription, switchMap, debounceTime, catchError, of, tap, Observable } from 'rxjs';
+import { Subject, Subscription, switchMap, debounceTime, catchError, filter, map, of, Observable } from 'rxjs';
 import { Command, ScoredCommand, SearchProvider } from '../models/command';
 import { ProviderRegistry } from './provider-registry';
 
@@ -11,6 +11,11 @@ interface ProviderState {
 	querySubject: Subject<string>;
 }
 
+interface ProviderSearchResponse {
+	query: string;
+	commands: Command[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class AsyncSearchCoordinator {
 	readonly #providerRegistry: ProviderRegistry = inject(ProviderRegistry);
@@ -18,6 +23,9 @@ export class AsyncSearchCoordinator {
 	readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
 	readonly #providerStates: WritableSignal<Map<string, ProviderState>> = signal<Map<string, ProviderState>>(new Map());
+
+	// The query each provider was last asked to search, or an empty string once it was cleared.
+	readonly #currentQueries: Map<string, string> = new Map<string, string>();
 
 	public readonly loading: Signal<boolean> = computed(() => {
 		for (const state of this.#providerStates().values()) {
@@ -66,7 +74,11 @@ export class AsyncSearchCoordinator {
 	}
 
 	public clear(): void {
-		for (const state of this.#providerStates().values()) {
+		for (const [
+			providerId,
+			state,
+		] of this.#providerStates()) {
+			this.#currentQueries.set(providerId, '');
 			state.querySubject.next('');
 		}
 
@@ -88,11 +100,12 @@ export class AsyncSearchCoordinator {
 		const minLength: number = provider.minQueryLength ?? 1;
 
 		if (query.length < minLength) {
-			this.#updateProviderResults(provider.id, []);
+			this.#cancelProvider(provider.id);
 			return;
 		}
 
 		const state: ProviderState = this.#getOrCreateState(provider);
+		this.#currentQueries.set(provider.id, query);
 		state.querySubject.next(query);
 	}
 
@@ -113,21 +126,39 @@ export class AsyncSearchCoordinator {
 
 		const providerDebounce: number = provider.debounce ?? 300;
 
+		// A query can go stale mid-debounce or mid-flight, so dispatch and response are both checked.
 		const subscription: Subscription = querySubject.pipe(
 			debounceTime(providerDebounce),
-			tap(() => this.#setLoading(provider.id, true)),
-			switchMap((query: string): Observable<Command[]> => {
+			filter((query: string) => this.#isCurrentQuery(provider.id, query)),
+			switchMap((query: string): Observable<ProviderSearchResponse> => {
 				if (!query) {
-					return of([]);
+					return of({
+						query,
+						commands: [],
+					});
 				}
 
+				this.#setLoading(provider.id, true);
+
 				return provider.search(query).pipe(
-					catchError((): Observable<Command[]> => of([])),
+					map((commands: Command[]): ProviderSearchResponse => ({
+						query,
+						commands,
+					})),
+					catchError((): Observable<ProviderSearchResponse> => of({
+						query,
+						commands: [],
+					})),
 				);
 			}),
 			takeUntilDestroyed(this.#destroyRef),
-		).subscribe((commands: Command[]) => {
-			const scored: ScoredCommand[] = commands.map((command: Command) => ({
+		).subscribe((searchResponse: ProviderSearchResponse) => {
+			if (!this.#isCurrentQuery(provider.id, searchResponse.query)) {
+				this.#setLoading(provider.id, false);
+				return;
+			}
+
+			const scored: ScoredCommand[] = searchResponse.commands.map((command: Command) => ({
 				command: {
 					...command,
 					category: command.category ?? provider.category,
@@ -147,6 +178,23 @@ export class AsyncSearchCoordinator {
 		});
 
 		return state;
+	}
+
+	#isCurrentQuery(providerId: string, query: string): boolean {
+		return (this.#currentQueries.get(providerId) ?? '') === query;
+	}
+
+	// Drops any pending or in-flight search for the provider and clears its results.
+	#cancelProvider(providerId: string): void {
+		const state: ProviderState | undefined = this.#providerStates().get(providerId);
+
+		if (!state) {
+			return;
+		}
+
+		this.#currentQueries.set(providerId, '');
+		state.querySubject.next('');
+		this.#updateProviderResults(providerId, []);
 	}
 
 	#scoreProviderResult(command: Command): number {
@@ -185,22 +233,11 @@ export class AsyncSearchCoordinator {
 	#clearAllExcept(...keepIds: string[]): void {
 		const keepSet: Set<string> = new Set(keepIds);
 
-		this.#providerStates.update((map: Map<string, ProviderState>) => {
-			let changed: boolean = false;
-			const updated: Map<string, ProviderState> = new Map(map);
-
-			for (const [
-				providerId,
-				state,
-			] of updated) {
-				if (!keepSet.has(providerId) && state.results.length > 0) {
-					updated.set(providerId, { ...state, results: [], loading: false });
-					changed = true;
-				}
+		for (const providerId of this.#providerStates().keys()) {
+			if (!keepSet.has(providerId) && this.#currentQueries.get(providerId)) {
+				this.#cancelProvider(providerId);
 			}
-
-			return changed ? updated : map;
-		});
+		}
 	}
 
 	#detectPrefix(query: string): string | undefined {
@@ -224,6 +261,7 @@ export class AsyncSearchCoordinator {
 
 		state.subscription?.unsubscribe();
 		state.querySubject.complete();
+		this.#currentQueries.delete(providerId);
 
 		this.#providerStates.update((map: Map<string, ProviderState>) => {
 			const updated: Map<string, ProviderState> = new Map(map);
