@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/theryansmee/ngx-command-palette.git"
+		"url": "git+https://github.com/theryansmee/ngx-command-palette.git"
 	},
 	"homepage": "https://theryansmee.github.io/ngx-command-palette/",
 	"bugs": {
