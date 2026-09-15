@@ -258,6 +258,109 @@ describe('AsyncSearchCoordinator', () => {
 		expect(coordinator.results().length).toBe(0);
 	});
 
+	it('should not fire a pending debounced search after the query drops below minQueryLength', () => {
+		let searchCalled: boolean = false;
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			debounce: 200,
+			minQueryLength: 3,
+			search: () => {
+				searchCalled = true;
+				return of([makeCommand({ id: 'user-1', label: 'John' })]);
+			},
+		}));
+
+		coordinator.search('abc');
+		vi.advanceTimersByTime(100);
+		coordinator.search('ab');
+		vi.advanceTimersByTime(300);
+
+		expect(searchCalled).toBe(false);
+		expect(coordinator.results().length).toBe(0);
+		expect(coordinator.loading()).toBe(false);
+	});
+
+	it('should ignore an in-flight response that arrives after the query drops below minQueryLength', () => {
+		const responseSubject: Subject<Command[]> = new Subject<Command[]>();
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			debounce: 0,
+			minQueryLength: 3,
+			search: () => responseSubject.asObservable(),
+		}));
+
+		coordinator.search('abc');
+		vi.advanceTimersByTime(0);
+		expect(coordinator.loading()).toBe(true);
+
+		coordinator.search('ab');
+
+		responseSubject.next([makeCommand({ id: 'user-1', label: 'John' })]);
+		responseSubject.complete();
+
+		expect(coordinator.results().length).toBe(0);
+		expect(coordinator.loading()).toBe(false);
+	});
+
+	it('should not fire a pending unprefixed search after switching to a prefixed query', () => {
+		let globalSearchCalled: boolean = false;
+
+		providerRegistry.register(makeProvider({
+			id: 'global',
+			debounce: 200,
+			search: () => {
+				globalSearchCalled = true;
+				return of([]);
+			},
+		}));
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			prefix: '@',
+			debounce: 0,
+			search: () => of([]),
+		}));
+
+		coordinator.search('john');
+		vi.advanceTimersByTime(100);
+		coordinator.search('@jo');
+		vi.advanceTimersByTime(300);
+
+		expect(globalSearchCalled).toBe(false);
+	});
+
+	it('should ignore an in-flight unprefixed response that arrives after switching to a prefixed query', () => {
+		const responseSubject: Subject<Command[]> = new Subject<Command[]>();
+
+		providerRegistry.register(makeProvider({
+			id: 'global',
+			debounce: 0,
+			search: () => responseSubject.asObservable(),
+		}));
+
+		providerRegistry.register(makeProvider({
+			id: 'users',
+			prefix: '@',
+			debounce: 0,
+			search: () => of([]),
+		}));
+
+		coordinator.search('john');
+		vi.advanceTimersByTime(0);
+		expect(coordinator.loading()).toBe(true);
+
+		coordinator.search('@jo');
+		vi.advanceTimersByTime(0);
+
+		responseSubject.next([makeCommand({ id: 'user-1', label: 'John' })]);
+		responseSubject.complete();
+
+		expect(coordinator.results().length).toBe(0);
+		expect(coordinator.loading()).toBe(false);
+	});
+
 	it('should not fire unprefixed providers when a prefix query is used', () => {
 		let unprefixedCalled: boolean = false;
 

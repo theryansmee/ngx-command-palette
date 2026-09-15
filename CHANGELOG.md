@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 This project follows [Semantic Versioning](https://semver.org/) with the major version matching the supported Angular version.
 
+## [Unreleased]
+
+### Bug Fixes
+- A provider search pending in the debounce window no longer fires after the query drops below `minQueryLength` or switches to another provider's prefix, and a response already in flight when that happens is discarded instead of repopulating results.
+
 ## [21.0.1] - 2026-06-18
 
 > **Note**: Version 21.0.0 has been retracted from npm. 21.0.1 is the first available stable release for Angular 21.
